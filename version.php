@@ -13,3 +13,4 @@ $plugin->version   = 2015093001;                // The current plugin version (D
 $plugin->requires  = 2015050500;                // Requires this Moodle version.
 $plugin->component = 'tool_coursearchiver';     // Full name of the plugin (used for diagnostics).
 $plugin->release  = '2.x (Build: 2015093001)';
+$plugin->maturity  = MATURITY_STABLE;
