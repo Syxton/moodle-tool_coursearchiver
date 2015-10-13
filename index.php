@@ -1,4 +1,19 @@
 <?php
+// This file is part of
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Step 1(Search form).
  *
@@ -19,46 +34,48 @@ $error          = optional_param('error', false, PARAM_RAW);
 
 $mform = new tool_coursearchiver_step1_form(null);
 
-if($mform->is_submitted()){
-    //echo " SUBMITTED";
-    if($mform->is_validated()){
-        //echo " VALID";
+if ($mform->is_submitted()) {
+    if ($mform->is_validated()) {
         $formdata = $mform->get_data();
 
         // Data to set in the form.
         if (!empty($formdata)) {
 
             // Get search criteria from the first form to pass it onto the second.
-            if(!empty($formdata->lastaccessenabled)){
+            if (!empty($formdata->lastaccessenabled)) {
                 $formdata->searches["access"] = $formdata->access;
             }
-            
+
             // Get search criteria from the first form to pass it onto the second.
-            if(!empty($formdata->emptyonly)){
+            if (!empty($formdata->emptyonly)) {
                 $formdata->searches["emptyonly"] = true;
             }
 
             $data["formdata"] = serialize($formdata->searches);
-            
+
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php', $data);
             redirect($returnurl);
         } else { // Form 1 data did not come across correctly.
             echo $OUTPUT->header();
-            echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');
+            echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'),
+                                            'coursearchiver',
+                                            'tool_coursearchiver');
             if (!empty($error)) {
-                echo $OUTPUT->container($error, 'myformerror');   
+                echo $OUTPUT->container($error, 'coursearchiver_myformerror');
             }
-            echo $OUTPUT->container(get_string('erroremptysearch', 'tool_coursearchiver'), 'myformerror');   
+            echo $OUTPUT->container(get_string('erroremptysearch', 'tool_coursearchiver'), 'coursearchiver_myformerror');
             $mform->display();
             echo $OUTPUT->footer();
-        }         
+        }
     } else {
         echo $OUTPUT->header();
-        echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');
+        echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'),
+                                        'coursearchiver',
+                                        'tool_coursearchiver');
         if (!empty($error)) {
-            echo $OUTPUT->container($error, 'myformerror');   
+            echo $OUTPUT->container($error, 'coursearchiver_myformerror');
         }
-        echo $OUTPUT->container(get_string('erroremptysearch', 'tool_coursearchiver'), 'myformerror');
+        echo $OUTPUT->container(get_string('erroremptysearch', 'tool_coursearchiver'), 'coursearchiver_myformerror');
         $mform->display();
         echo $OUTPUT->footer();
     }
@@ -66,8 +83,8 @@ if($mform->is_submitted()){
     echo $OUTPUT->header();
     echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');
     if (!empty($error)) {
-        echo $OUTPUT->container($error, 'myformerror');   
+        echo $OUTPUT->container($error, 'coursearchiver_myformerror');
     }
     $mform->display();
     echo $OUTPUT->footer();
-} 
+}

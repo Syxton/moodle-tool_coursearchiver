@@ -1,4 +1,19 @@
 <?php
+// This file is part of
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * CLI Bulk course archive script.
  *
@@ -85,12 +100,12 @@ if (!isset($options['mode']) || empty($modes[$options['mode']])) {
 
 $processoroptions['mode'] = $modes[$options['mode']];
 
-if(!empty($options['id']) && !is_numeric($options['id'])) {
+if (!empty($options['id']) && !is_numeric($options['id'])) {
     echo get_string('errornonnumericid', 'tool_coursearchiver'). "\n";
     die();
 }
 
-if(!empty($options['access']) && !is_numeric($options['access'])) {
+if (!empty($options['access']) && !is_numeric($options['access'])) {
     echo get_string('errornonnumericaccess', 'tool_coursearchiver'). "\n";
     die();
 }
@@ -100,72 +115,78 @@ $question = "";
 switch ($processoroptions['mode']) {
     case tool_coursearchiver_processor::MODE_COURSELIST:
         // Show courselist and die...
-        $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST, "data" => $options));
-        if(!empty($options['empty'])) {
+        $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST,
+                                                             "data" => $options));
+        if (!empty($options['empty'])) {
             $processor->emptyonly = true;
         }
         $processor->execute(tool_coursearchiver_tracker::OUTPUT_CLI);
         die();
     break;
     case tool_coursearchiver_processor::MODE_GETEMAILS:
-        // get courses
-        $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST, "data" => $options));
-        if(!empty($options['empty'])) {
+        $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST,
+                                                             "data" => $options));
+        if (!empty($options['empty'])) {
             $processor->emptyonly = true;
         }
         $courses = $processor->execute($output);
-        
-        if(!empty($courses)){
-            $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_GETEMAILS, "data" => $courses));
-            $processor->execute(tool_coursearchiver_tracker::OUTPUT_CLI);            
+
+        if (!empty($courses)) {
+            $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_GETEMAILS,
+                                                                 "data" => $courses));
+            $processor->execute(tool_coursearchiver_tracker::OUTPUT_CLI);
         } else {
             echo get_string('cli_cannot_continue', 'tool_coursearchiver');
         }
         die();
     break;
     case tool_coursearchiver_processor::MODE_HIDEEMAIL:
-    case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:       
-        $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST, "data" => $options));
-        if(!empty($options['empty'])) {
+    case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+        $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST,
+                                                             "data" => $options));
+        if (!empty($options['empty'])) {
             $processor->emptyonly = true;
         }
         $courses = $processor->execute($output);
-        
-        if(!empty($courses)){
-            $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_GETEMAILS, "data" => $courses));
+
+        if (!empty($courses)) {
+            $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_GETEMAILS,
+                                                                 "data" => $courses));
             $selected = $processor->execute(tool_coursearchiver_tracker::OUTPUT_CLI);
         }
-        
-        if(empty($courses) || empty($selected)) { // No courses matched the search or no owners exist on the courses that do match
+
+        // No courses matched the search or no owners exist on the courses that do match.
+        if (empty($courses) || empty($selected)) {
             echo get_string('cli_cannot_continue', 'tool_coursearchiver');
             die();
         }
-        
+
         $question = get_string('cli_question_'.$options['mode'], 'tool_coursearchiver', count($selected));
     break;
     case tool_coursearchiver_processor::MODE_HIDE:
     case tool_coursearchiver_processor::MODE_ARCHIVE:
         // Show courselist and die...
-        $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST, "data" => $options));
-        if(!empty($options['empty'])) {
+        $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST,
+                                                             "data" => $options));
+        if (!empty($options['empty'])) {
             $processor->emptyonly = true;
         }
         $courses = $processor->execute($output);
-        
-        if(empty($courses)){ // No courses matched the search
+
+        if (empty($courses)) { // No courses matched the search.
             echo "\nNot enough data to continue.";
             die();
         }
-        
+
         $question = get_string('cli_question_'.$options['mode'], 'tool_coursearchiver', count($courses));
     break;
 }
 
-// ASK FOR PERMISSION TO CONTINUE
-if(!empty($question)){
+// ASK FOR PERMISSION TO CONTINUE.
+if (!empty($question)) {
     echo "\n$question  Type 'yes' to continue: ";
     $line = fgets(STDIN);
-    if(trim($line) != 'yes'){
+    if (trim($line) != 'yes') {
         echo "\nSTOPPED\n";
         exit;
     }
@@ -180,24 +201,24 @@ switch ($processoroptions['mode']) {
         break;
     case tool_coursearchiver_processor::MODE_ARCHIVE:
         $processor = new tool_coursearchiver_processor(array("mode" => $processoroptions['mode'], "data" => $courses));
-        if(!empty($options['location'])){
-            $processor->folder = $options['location'];    
+        if (!empty($options['location'])) {
+            $processor->folder = $options['location'];
         }
         $processor->execute(tool_coursearchiver_tracker::OUTPUT_CLI);
         break;
     case tool_coursearchiver_processor::MODE_HIDEEMAIL:
     case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
         $owners = array();
-        foreach($selected as $s) {
+        foreach ($selected as $s) {
             $t = explode("_", $s);
-            if(count($t) == 2){ //both a course and an owner are needed
-                if(array_key_exists($t[1], $owners)){
+            if (count($t) == 2) { // Both a course and an owner are needed.
+                if (array_key_exists($t[1], $owners)) {
                     $temp = $owners[$t[1]]['courses'];
                     $owners[$t[1]]['courses'] = array_merge($temp, array($t[0] => get_course($t[0])));
                 } else {
                     $owners[$t[1]]['courses'] = array($t[0] => get_course($t[0]));
                     $owners[$t[1]]['user'] = $DB->get_record("user", array("id" => $t[1]));
-                }    
+                }
             }
         }
         $processor = new tool_coursearchiver_processor(array("mode" => $processoroptions['mode'], "data" => $owners));

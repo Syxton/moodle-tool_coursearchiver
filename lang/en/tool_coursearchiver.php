@@ -1,4 +1,19 @@
 <?php
+// This file is part of
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Strings for component 'tool_coursearchiver'.
  *
@@ -63,7 +78,7 @@ $string['results_archive'] = 'Archived courses: {$a}';
 $string['errors_count'] = 'Errors: {$a}';
 $string['notices_count'] = 'Notices: {$a}';
 
-// OUTPUT
+// OUTPUT.
 $string['outselected'] = 'Selected';
 $string['outid'] = 'ID';
 $string['outshortname'] = 'Shortname';
@@ -90,20 +105,20 @@ $string['email'] = 'Send Email';
 $string['archive'] = 'Archive Courses';
 $string['archiveemail'] = 'Send "Course to be Archived" Emails';
 
-// CLI
+// CLI.
 $string['cli_cannot_continue'] = "\nSTOPPED: Not enough data to continue.\n";
 $string['cli_question_hide'] = 'Hide these {$a} courses?';
 $string['cli_question_archive'] = 'Archive and delete these {$a} courses?';
 $string['cli_question_hideemail'] = 'Send these {$a} users a "Course to be hidden" email?';
 $string['cli_question_archiveemail'] = 'Send these {$a} users a "Course to be archived" email?';
 
-// SETTINGS
+// SETTINGS.
 $string['coursearchiver_settings'] = 'Course Archiver Settings';
 $string['hidewarningemailsetting'] = 'Default Email Warning for Course Hiding';
 $string['hidewarningemailsetting_help'] = 'This is the contents of an email that will be sent to all teachers of a course that is selected to be hidden.';
 $string['hidewarningemailsettingdefault'] = '%to
 
-We would like to inform you that the following Moodle course(s) that you have taught are soon to be hidden.  
+We would like to inform you that the following Moodle course(s) that you have taught are soon to be hidden.
 This means that students who are still enrolled in the course will no longer have access to the courses.  If you would like to opt out of this process for one of the following courses, please click the link beside the course you wish to opt out of.
 
 %courses
@@ -115,7 +130,7 @@ $string['archivewarningemailsetting'] = 'Default Email Warning for Course Archiv
 $string['archivewarningemailsetting_help'] = 'This is the contents of an email that will be sent to all teachers of a course that is selected to be archived.';
 $string['archivewarningemailsettingdefault'] = '%to
 
-We would like to inform you that the following Moodle course(s) that you have taught are soon to be archived.  
+We would like to inform you that the following Moodle course(s) that you have taught are soon to be archived.
 This means that the course will be backed up in its current state and then removed from Moodle.  If you would like to opt out of this process for one of the following courses, please click the link beside the course you wish to opt out of.
 
 %courses

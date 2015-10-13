@@ -1,4 +1,4 @@
-.myformerror {
+.coursearchiver_myformerror {
     padding: 20px;
     margin: 20px;
     font-size: 1.1em;
@@ -7,7 +7,7 @@
     background-color: #FDF5E6;
 }
 
-.myformconfirm {
+.coursearchiver_myformconfirm {
     padding: 20px;
     margin: 20px;
     font-size: 1.1em;
@@ -25,21 +25,21 @@
     color: #FFFFFF;    
 }
 
-.error_text {
+.coursearchiver_error_text {
     background-color: whitesmoke;
     padding: 5px;
     margin: 5px;
     color: #800000;
 }
 
-.notice_text {
+.coursearchiver_notice_text {
     background-color: yellow;
     padding: 5px;
     margin: 5px;
     color: black;
 }
 
-.completedmsg {
+.coursearchiver_completedmsg {
     font-size: 1.5em;
     padding: 20px;
     font-weight: bold;
@@ -47,11 +47,11 @@
     background-color: whitesmoke;   
 }
 
-.alreadyhidden {
+.coursearchiver_alreadyhidden {
     opacity: .5;
 }
 
-.progress_bar {
+.coursearchiver_progress_bar {
     position: relative;
     width: 100%;
     text-align: center;
@@ -60,7 +60,7 @@
     border: 2px solid black;    
 }
 
-.bar {
+.coursearchiver_bar {
     padding: 20px 0;
     font-size: 3em;
     background-color:red;
