@@ -720,13 +720,21 @@ class tool_coursearchiver_processor {
         }
         
         $sql = "SELECT c.id, c.fullname, c.shortname, c.idnumber,
-                       c.visible, COALESCE(a.timeaccess,0) as lastaccess 
-                  FROM {course} c 
-             LEFT JOIN (SELECT courseid, timeaccess
-                          FROM {user_lastaccess}) AS a ON c.id = a.courseid
-                 WHERE c.id > 1 $searchsql
-              GROUP BY c.id
-              ORDER BY lastaccess";
+                       c.visible, a.timeaccess
+                    FROM {course} c 
+                LEFT JOIN (
+                    SELECT a.courseid, a.timeaccess
+                    FROM {user_lastaccess} as a
+                    JOIN (
+                        SELECT courseid, MAX(timeaccess) as timeaccess
+                        FROM {user_lastaccess} as b
+                        GROUP BY courseid
+                    ) AS b ON (a.courseid = b.courseid AND a.timeaccess = b.timeaccess) 
+                ) AS a ON c.id = a.courseid
+                WHERE c.id > 1 $searchsql
+                GROUP BY c.id
+                ORDER BY a.timeaccess";
+
         $return  = $DB->get_records_sql($sql, $params);
 
         return $return;
