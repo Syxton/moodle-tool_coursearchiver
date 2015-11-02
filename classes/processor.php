@@ -340,10 +340,15 @@ class tool_coursearchiver_processor {
                  WHERE a.id IN (SELECT userid
                                  FROM {role_assignments} b
                                 WHERE b.roleid = :roleid
-                                      AND b.contextid IN (SELECT c.id
-                                                            FROM {context} c
-                                                           WHERE c.contextlevel = 50
-                                                                 AND c.instanceid = :courseid))';
+                                      AND 
+                                      b.contextid IN (
+                                                      SELECT c.id
+                                                        FROM {context} c
+                                                       WHERE c.contextlevel = 50
+                                                             AND 
+                                                             c.instanceid = :courseid
+                                                     )
+                               )';
 
         foreach ($this->data as $course) {
             if ($this->exists($course)) {
@@ -367,15 +372,19 @@ class tool_coursearchiver_processor {
         $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
         $sql = 'SELECT a.id, a.email, a.firstname, a.lastname
                   FROM {user} a
-                 WHERE a.id IN (SELECT userid
+                 WHERE a.id IN (
+                                SELECT userid
                                   FROM {role_assignments} b
                                  WHERE b.roleid = :roleid
                                        AND
-                                       b.contextid IN (SELECT c.id
+                                       b.contextid IN (
+                                                       SELECT c.id
                                                          FROM {context} c
                                                         WHERE c.contextlevel = 50
                                                               AND
-                                                              c.instanceid = :courseid))';
+                                                              c.instanceid = :courseid
+                                                        )
+                               )';
         foreach ($this->data as $course) {
             $params = array('roleid' => $role->id, 'courseid' => $course);
             $users = $DB->get_records_sql($sql, $params);
@@ -655,14 +664,29 @@ class tool_coursearchiver_processor {
         $sql = "SELECT *
                   FROM {course} c
                  WHERE c.id = :courseid
-                       AND (c.id IN (SELECT course
-                                       FROM {course_modules})
-                        OR c.id IN (SELECT courseid
-                                      FROM {grade_categories})
-                        OR c.id IN (SELECT courseid
-                                      FROM {grade_items}))";
+                       AND (
+                            c.id IN (
+                                     SELECT course
+                                       FROM {course_modules}
+                                      WHERE 1 < (
+                                                 SELECT count(*)
+                                                   FROM {course_modules}
+                                                  WHERE course = :courseid2
+                                                 )
+                                     )
+                            OR c.id IN (
+                                        SELECT courseid
+                                          FROM {grade_categories}
+                                        )
+                            OR c.id IN (
+                                        SELECT courseid
+                                          FROM {grade_items}
+                                        )
+                       )";
 
         $params['courseid'] = $courseid;
+        $params['courseid2'] = $courseid;
+
         if ($DB->get_records_sql($sql, $params)) {
             return false;
         } else {
@@ -721,16 +745,20 @@ class tool_coursearchiver_processor {
         
         $sql = "SELECT c.id, c.fullname, c.shortname, c.idnumber,
                        c.visible, a.timeaccess
-                    FROM {course} c 
-                LEFT JOIN (
-                    SELECT a.courseid, a.timeaccess
-                    FROM {user_lastaccess} as a
-                    JOIN (
-                        SELECT courseid, MAX(timeaccess) as timeaccess
-                        FROM {user_lastaccess} as b
-                        GROUP BY courseid
-                    ) AS b ON (a.courseid = b.courseid AND a.timeaccess = b.timeaccess) 
-                ) AS a ON c.id = a.courseid
+                  FROM {course} c 
+             LEFT JOIN (
+                        SELECT a.courseid, a.timeaccess
+                          FROM {user_lastaccess} as a
+                          JOIN (
+                                SELECT courseid, MAX(timeaccess) as timeaccess
+                                  FROM {user_lastaccess} as b
+                              GROUP BY courseid
+                                ) AS b ON (
+                                           a.courseid = b.courseid
+                                           AND
+                                           a.timeaccess = b.timeaccess
+                                           ) 
+                       ) AS a ON c.id = a.courseid
                 WHERE c.id > 1 $searchsql
                 ORDER BY a.timeaccess";
 
