@@ -732,7 +732,6 @@ class tool_coursearchiver_processor {
                     ) AS b ON (a.courseid = b.courseid AND a.timeaccess = b.timeaccess) 
                 ) AS a ON c.id = a.courseid
                 WHERE c.id > 1 $searchsql
-                GROUP BY c.id
                 ORDER BY a.timeaccess";
 
         $return  = $DB->get_records_sql($sql, $params);
