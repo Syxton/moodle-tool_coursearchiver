@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Output tracker.
@@ -185,7 +185,7 @@ class tool_coursearchiver_tracker {
                     $buffer->output($error);
                 }
             }
-            
+
             if (!empty($notices)) {
                 $buffer->output("\n".get_string('notices', 'tool_coursearchiver')."\n");
                 foreach ($notices as $notice) {
@@ -194,8 +194,8 @@ class tool_coursearchiver_tracker {
             }
 
         } else if ($this->outputmode == self::OUTPUT_HTML) {
-            $buffer->output('<div class="coursearchiver_stats"><strong>' . 
-                            get_string('results', 'tool_coursearchiver') . 
+            $buffer->output('<div class="coursearchiver_stats"><strong>' .
+                            get_string('results', 'tool_coursearchiver') .
                             ':</strong><br />');
             foreach ($message as $msg) {
                 $buffer->output($msg);
@@ -203,8 +203,8 @@ class tool_coursearchiver_tracker {
             }
 
             if (!empty($errors)) {
-                $buffer->output('<div class="coursearchiver_error_text"><strong>' . 
-                                get_string('errors', 'tool_coursearchiver') . 
+                $buffer->output('<div class="coursearchiver_error_text"><strong>' .
+                                get_string('errors', 'tool_coursearchiver') .
                                 ':</strong><br />');
                 foreach ($errors as $error) {
                     $buffer->output('<div>' . $error . '</div>');
@@ -213,8 +213,8 @@ class tool_coursearchiver_tracker {
             }
 
             if (!empty($notices)) {
-                $buffer->output('<div class="coursearchiver_notice_text"><strong>' . 
-                                get_string('notices', 'tool_coursearchiver') . 
+                $buffer->output('<div class="coursearchiver_notice_text"><strong>' .
+                                get_string('notices', 'tool_coursearchiver') .
                                 ':</strong><br />');
                 foreach ($notices as $notice) {
                     $buffer->output('<div>' . $notice . '</div>');
@@ -313,18 +313,18 @@ class tool_coursearchiver_tracker {
                             </style>';
                     $this->mform->addElement('html', $style .
                                                      html_writer::start_tag('table', array('style' => 'width:100%')) .
-                                                        html_writer::start_tag('tr', array('style' => 'text-align:left;')) .
-                                                            html_writer::tag('th',
-                                                                    get_string('outselected', 'tool_coursearchiver'),
-                                                                    array('style' => 'width:10%;text-align:center;')) .
-                                                            html_writer::tag('th',
-                                                                    get_string('outemail', 'tool_coursearchiver'),
-                                                                    array('style' => 'width:40%')) .
-                                                            html_writer::tag('th',
-                                                                    get_string('outfirstname', 'tool_coursearchiver'),
-                                                                    array('style' => 'width:15%')) .
-                                                            html_writer::tag('th', get_string('outlastname', 'tool_coursearchiver')) .
-                                                        html_writer::end_tag('tr') .
+                                                     html_writer::start_tag('tr', array('style' => 'text-align:left;')) .
+                                                     html_writer::tag('th',
+                                                            get_string('outselected', 'tool_coursearchiver'),
+                                                            array('style' => 'width:10%;text-align:center;')) .
+                                                     html_writer::tag('th',
+                                                            get_string('outemail', 'tool_coursearchiver'),
+                                                            array('style' => 'width:40%')) .
+                                                     html_writer::tag('th',
+                                                            get_string('outfirstname', 'tool_coursearchiver'),
+                                                            array('style' => 'width:15%')) .
+                                                     html_writer::tag('th', get_string('outlastname', 'tool_coursearchiver')) .
+                                                     html_writer::end_tag('tr') .
                                                      html_writer::end_tag('table'));
                     break;
                 case tool_coursearchiver_processor::MODE_HIDE:
@@ -395,7 +395,9 @@ class tool_coursearchiver_tracker {
                     $out = $this->get_progressbar();
                     do {
                         $this->buffer->output($out);
-                        if($this->progress == 100) { exit; }
+                        if ($this->progress == 100) {
+                            exit;
+                        }
                         $out = $this->get_progressbar();
                     } while ($out);
                     break;
@@ -419,7 +421,7 @@ class tool_coursearchiver_tracker {
                     $this->mform->addElement('html', html_writer::end_tag('td') .
                                                      html_writer::tag('td', $data->id, array('style' => 'width:10%')) .
                                                      html_writer::tag('td',
-                                                        '<a ' . $empty . ' href="' . $CFG->wwwroot . '/course/view.php?id=' . 
+                                                        '<a ' . $empty . ' href="' . $CFG->wwwroot . '/course/view.php?id=' .
                                                             $data->id.'">' . $fullname . '</a>',
                                                         array('style' => 'width:38%',
                                                           'class' => empty($data->visible) ? 'coursearchiver_alreadyhidden' : '')) .
@@ -510,7 +512,7 @@ class tool_coursearchiver_tracker {
         if ($this->outputmode == self::OUTPUT_CLI) {
             $this->buffer->output(str_repeat('-', 50));
         }
-      
+
         if ($this->outputmode == self::OUTPUT_HTML) {
             switch ($this->mode) {
                 case tool_coursearchiver_processor::MODE_COURSELIST:

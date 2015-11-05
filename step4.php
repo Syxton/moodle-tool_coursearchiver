@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Step 4(Confirmation and Action).
@@ -45,7 +45,7 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 3 SUBMIT
     }
 
     if (!empty($error)) {
-        echo $OUTPUT->container($error, 'coursearchiver_myformerror');   
+        echo $OUTPUT->container($error, 'coursearchiver_myformerror');
     }
 
     if ($submitted == get_string('confirm', 'tool_coursearchiver')) {
@@ -119,7 +119,7 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 3 SUBMIT
         }
     }
 
-} else if (!empty($formdata) && !empty($mode)) {  // FORM 3 SUBMITTED, SHOW FORM 4.     
+} else if (!empty($formdata) && !empty($mode)) {  // FORM 3 SUBMITTED, SHOW FORM 4.
     header('X-Accel-Buffering: no');
     echo $OUTPUT->header();
     echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');

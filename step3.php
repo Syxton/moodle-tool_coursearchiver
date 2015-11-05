@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Step 3(Selected users).
@@ -48,13 +48,13 @@ if (!empty($submitted)) { // FORM 3 SUBMITTED.
     $users = array();
     foreach ($selected as $c) {
         if (!empty($c)) {
-            $users[] = $c;       
+            $users[] = $c;
         }
     }
 
     // Fully develope array.
     $owners = array();
-    foreach($users as $s) {
+    foreach ($users as $s) {
         $t = explode("_", $s);
         if (count($t) == 2) { // Both a course and an owner are needed.
             if (array_key_exists($t[1], $owners)) {

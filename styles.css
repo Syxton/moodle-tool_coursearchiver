@@ -22,7 +22,7 @@
     border: 1px dotted #808080;
     padding: 5px;
     background-color: #C0C0C0;
-    color: #FFFFFF;    
+    color: #FFFFFF;
 }
 
 .coursearchiver_error_text {
@@ -44,7 +44,7 @@
     padding: 20px;
     font-weight: bold;
     text-align: center;
-    background-color: whitesmoke;   
+    background-color: whitesmoke;
 }
 
 .coursearchiver_alreadyhidden {
@@ -57,7 +57,7 @@
     text-align: center;
     margin-top: -64px;
     box-sizing: border-box;
-    border: 2px solid black;    
+    border: 2px solid black;
 }
 
 .coursearchiver_bar {

@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * File containing processor class.
@@ -196,7 +196,7 @@ class tool_coursearchiver_processor {
                         if (!empty($currentcourse["owners"])) {
                             foreach ($currentcourse["owners"] as $owner) {
                                 $owner->course = $currentcourse["course"]->id;
-                                $tracker->output($owner);  //Output users.
+                                $tracker->output($owner);  // Output users.
                                 $unique[$owner->id] = $owner->id;
                                 $return[] = $currentcourse["course"]->id . "_" . $owner->id;
                                 $this->total++;
@@ -340,12 +340,12 @@ class tool_coursearchiver_processor {
                  WHERE a.id IN (SELECT userid
                                  FROM {role_assignments} b
                                 WHERE b.roleid = :roleid
-                                      AND 
+                                      AND
                                       b.contextid IN (
                                                       SELECT c.id
                                                         FROM {context} c
                                                        WHERE c.contextlevel = 50
-                                                             AND 
+                                                             AND
                                                              c.instanceid = :courseid
                                                      )
                                )';
@@ -441,7 +441,7 @@ class tool_coursearchiver_processor {
         } else {
             $admin = get_admin();
         }
-        
+
         $coursetobackup = $obj["course"]->id; // Set this to one existing choice cmid in your dev site.
         $userdoingthebackup   = $admin->id; // Set this to the id of your admin account.
 
@@ -476,7 +476,7 @@ class tool_coursearchiver_processor {
             // If the path doesn't exist, make it so!
             if (!is_dir($path)) {
                 umask(0000);
-                // create the directory for CourseArchival.
+                // Create the directory for CourseArchival.
                 if (!mkdir($path, $CFG->directorypermissions, true)) {
                     throw new Exception('Archive path could not be created');
                 }
@@ -594,7 +594,7 @@ class tool_coursearchiver_processor {
         if (!empty($courses)) {
             $c = "";
             foreach ($courses as $coursetext) {
-                $c .= $coursetext;    
+                $c .= $coursetext;
             }
 
             // Make sure both the %to variable and the %courses variable exist in the message template.
@@ -742,10 +742,10 @@ class tool_coursearchiver_processor {
                 }
             }
         }
-        
+
         $sql = "SELECT c.id, c.fullname, c.shortname, c.idnumber,
                        c.visible, a.timeaccess
-                  FROM {course} c 
+                  FROM {course} c
              LEFT JOIN (
                         SELECT a.courseid, a.timeaccess
                           FROM {user_lastaccess} as a
@@ -757,7 +757,7 @@ class tool_coursearchiver_processor {
                                            a.courseid = b.courseid
                                            AND
                                            a.timeaccess = b.timeaccess
-                                           ) 
+                                           )
                        ) AS a ON c.id = a.courseid
                 WHERE c.id > 1 $searchsql
                 ORDER BY a.timeaccess";
@@ -793,7 +793,7 @@ class tool_coursearchiver_processor {
                                                                 'Course Name: ' .$course->fullname));
         foreach ($obj["courses"] as $course) {
             // Only add courses that are visible if mode is HIDEEMAIL.
-            if($this->mode == self::MODE_ARCHIVEEMAIL || $course->visible) {
+            if ($this->mode == self::MODE_ARCHIVEEMAIL || $course->visible) {
                 $courses[] = '<div>' . $course->fullname . ' (<a href="mailto:'.$admin->email.
                 '?subject='.get_string($optoutsubject, 'tool_coursearchiver').
                 '&body='.$displaycourse.'">Ask to opt out</a>)</div>';

@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Step 1 form.
@@ -71,7 +71,13 @@ class tool_coursearchiver_step1_form extends moodleform {
         $this->add_action_buttons(false, get_string('search', 'tool_coursearchiver'));
     }
 
-    // Make sure at least 1 of the search fields is not empty.
+    /**
+     * Validate search form.
+     *
+     * @param array $data array of form field data.
+     * @param array $files optional form file uploads.
+     * @return void
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
@@ -84,7 +90,7 @@ class tool_coursearchiver_step1_form extends moodleform {
 
         if (!empty($data["lastaccessenabled"])) {
             $timecode = mktime(null, null, null, $data["access"]["month"],
-                               $data["access"]["day"], $data["access"]["year"]);    
+                               $data["access"]["day"], $data["access"]["year"]);
         }
         $searchstring .= $timecode;
 
