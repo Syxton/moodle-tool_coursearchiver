@@ -480,7 +480,6 @@ class tool_coursearchiver_processor {
                 if (!mkdir($path, $CFG->directorypermissions, true)) {
                     throw new Exception('Archive path could not be created');
                 }
-                @chmod($path, $dirpermissions);
             }
 
             // Perform Backup.
