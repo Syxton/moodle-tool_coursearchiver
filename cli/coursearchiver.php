@@ -36,6 +36,7 @@ list($options, $unrecognized) = cli_get_params(array(
     'id' => false,
     'idnum' => false,
     'help' => false,
+    'createdbefore' => false,
     'access' => false,
     'mode' => false,
     'location' => false,
@@ -48,6 +49,7 @@ array(
     'i' => 'id',
     'n' => 'idnum',
     'h' => 'help',
+    'c' => 'createdbefore',
     'a' => 'access',
     'm' => 'mode',
     'l' => 'location',
@@ -64,15 +66,16 @@ $help =
 "\nCourse Archiver Helper:
 
 Options:
--s, --short     Search for courses matching the Moodle course shortname
--f, --full      Search for courses matching the Moodle course fullname
--i, --id        Search for courses matching the Moodle course id
--n, --idnum     Search for courses matching the Moodle course idnumber
--a, --access    Last accessed before UNIX TIMESTAMP
--m, --mode      courselist,emaillist,hide,archive,hideemail,archiveemail
--l, --location  Folder name to store archived courses (optional)
--e, --empty     Only return empty courses
--v, --verbose   Maximum output from tool (optional)
+-s, --short             Search for courses matching the Moodle course shortname
+-f, --full              Search for courses matching the Moodle course fullname
+-i, --id                Search for courses matching the Moodle course id
+-n, --idnum             Search for courses matching the Moodle course idnumber
+-c, --createdbefore     Last accessed before UNIX TIMESTAMP
+-a, --access            Last accessed before UNIX TIMESTAMP
+-m, --mode              courselist,emaillist,hide,archive,hideemail,archiveemail
+-l, --location          Folder name to store archived courses (optional)
+-e, --empty             Only return empty courses
+-v, --verbose           Maximum output from tool (optional)
 
 Example:
 php admin/tool/coursearchiver/cli/coursearchiver.php --short=ma101 --idnum=2012 --mode=archive --verbose

@@ -93,6 +93,7 @@ class tool_coursearchiver_processor {
         "short" => "shortname",
         "full" => "fullname",
         "idnum" => "idnumber",
+        "createdbefore" => "timecreated",
         "access" => "timeaccess",
         "emptyonly" => "emptyonly");
 
@@ -681,6 +682,13 @@ class tool_coursearchiver_processor {
                                         SELECT courseid
                                           FROM {grade_items}
                                         )
+                            OR c.id IN (
+                                        SELECT customint1
+                                          FROM {enrol}
+                                         WHERE enrol = 'meta'
+                                               AND
+                                               status = 0
+                                        )
                        )";
 
         $params['courseid'] = $courseid;
@@ -725,6 +733,11 @@ class tool_coursearchiver_processor {
                     if ($truekey == "id") {
                         $params[$truekey] = $value;
                         $searchsql .= " AND c.$truekey = :$truekey";
+                    } else if ($truekey == "timecreated") {
+                        $params['createdbefore'] = $value;
+                        // Course had to be created prior to this date.
+                        $searchsql .= " AND c.timecreated < :createdbefore";
+                        $params[$truekey] = $value;
                     } else if ($truekey == "timeaccess") {
                         $params['olderthan'] = $value;
                         // Course had to be old enough to have access.

@@ -60,6 +60,12 @@ class tool_coursearchiver_step1_form extends moodleform {
         $mform->addRule('searches[id]', null, 'numeric', null, 'client');
         $mform->setDefault('searches[id]', "");
 
+        $createdbefore = array();
+        $createdbefore[] =& $mform->createElement('date_selector', 'createdbefore');
+        $createdbefore[] =& $mform->createElement('checkbox', 'createdbeforeenabled', '', get_string('enable'));
+        $mform->addGroup($createdbefore, 'createdbefore', get_string('createdbefore', 'tool_coursearchiver'), ' ', false);
+        $mform->disabledIf('createdbefore', 'createdbeforeenabled');
+
         $lastaccessgroup = array();
         $lastaccessgroup[] =& $mform->createElement('date_selector', 'access');
         $lastaccessgroup[] =& $mform->createElement('checkbox', 'lastaccessenabled', '', get_string('enable'));
@@ -87,6 +93,12 @@ class tool_coursearchiver_step1_form extends moodleform {
         foreach ($data["searches"] as $key => $value) {
             $searchstring .= $value;
         }
+
+        if (!empty($data["createdbeforeenabled"])) {
+            $timecode = mktime(null, null, null, $data["createdbefore"]["month"],
+                               $data["createdbefore"]["day"], $data["createdbefore"]["year"]);
+        }
+        $searchstring .= $timecode;
 
         if (!empty($data["lastaccessenabled"])) {
             $timecode = mktime(null, null, null, $data["access"]["month"],
