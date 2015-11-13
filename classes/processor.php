@@ -661,38 +661,50 @@ class tool_coursearchiver_processor {
     protected function is_empty_course($courseid) {
         global $DB;
 
+        // THIS FUNCTION IS BEING MODULARIZED SO THAT IN THE FUTURE WE CAN
+        // SELECT AT SEARCH TIME WHAT CONSTITUTES AN EMPTY COURSE.
+
+        // Course module count.
+        $modularsql = "1 < (
+                            SELECT count(*)
+                              FROM {course_modules}
+                             WHERE course = :courseid1
+                           )";
+        $params['courseid1'] = $courseid;
+
+        // Grade category count.
+        $modularsql .= !empty($modularsql) ? " OR " : "";
+        $modularsql .= "1 < (
+                            SELECT count(*)
+                              FROM {grade_categories}
+                             WHERE courseid = :courseid2
+                           )";
+        $params['courseid2'] = $courseid;
+
+        // Grade items count.
+        $modularsql .= !empty($modularsql) ? " OR " : "";
+        $modularsql .= "1 < (
+                            SELECT count(*)
+                              FROM {grade_items}
+                             WHERE courseid = :courseid3
+                           )";
+        $params['courseid3'] = $courseid;
+
+        // Check to see if course is meta child.
+        $modularsql .= !empty($modularsql) ? " OR " : "";
+        $modularsql .= "c.id IN (
+                                SELECT customint1
+                                  FROM {enrol}
+                                 WHERE enrol = 'meta'
+                                       AND
+                                       status = 0
+                                )";
+
         $sql = "SELECT *
                   FROM {course} c
                  WHERE c.id = :courseid
-                       AND (
-                            c.id IN (
-                                     SELECT course
-                                       FROM {course_modules}
-                                      WHERE 1 < (
-                                                 SELECT count(*)
-                                                   FROM {course_modules}
-                                                  WHERE course = :courseid2
-                                                 )
-                                     )
-                            OR c.id IN (
-                                        SELECT courseid
-                                          FROM {grade_categories}
-                                        )
-                            OR c.id IN (
-                                        SELECT courseid
-                                          FROM {grade_items}
-                                        )
-                            OR c.id IN (
-                                        SELECT customint1
-                                          FROM {enrol}
-                                         WHERE enrol = 'meta'
-                                               AND
-                                               status = 0
-                                        )
-                       )";
-
+                       AND ($modularsql)";
         $params['courseid'] = $courseid;
-        $params['courseid2'] = $courseid;
 
         if ($DB->get_records_sql($sql, $params)) {
             return false;
