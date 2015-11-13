@@ -36,6 +36,7 @@ $string['coursefullname'] = 'Course fullname';
 $string['courseidnum'] = 'Course idnumber';
 $string['courseid'] = 'Course ID';
 $string['access'] = 'Last accessed before';
+$string['createdbefore'] = 'Created before';
 $string['emptyonly'] = 'Only return empty courses';
 
 $string['coursearchiver_help'] = "Search for courses using the following criteria: match shortname, fullname, idnumber, courseid, date of last course access, or *empty courses.\n

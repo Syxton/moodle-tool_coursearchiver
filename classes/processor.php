@@ -93,6 +93,7 @@ class tool_coursearchiver_processor {
         "short" => "shortname",
         "full" => "fullname",
         "idnum" => "idnumber",
+        "createdbefore" => "timecreated",
         "access" => "timeaccess",
         "emptyonly" => "emptyonly");
 
@@ -660,31 +661,50 @@ class tool_coursearchiver_processor {
     protected function is_empty_course($courseid) {
         global $DB;
 
+        // THIS FUNCTION IS BEING MODULARIZED SO THAT IN THE FUTURE WE CAN
+        // SELECT AT SEARCH TIME WHAT CONSTITUTES AN EMPTY COURSE.
+
+        // Course module count.
+        $modularsql = "1 < (
+                            SELECT count(*)
+                              FROM {course_modules}
+                             WHERE course = :courseid1
+                           )";
+        $params['courseid1'] = $courseid;
+
+        // Grade category count.
+        $modularsql .= !empty($modularsql) ? " OR " : "";
+        $modularsql .= "1 < (
+                            SELECT count(*)
+                              FROM {grade_categories}
+                             WHERE courseid = :courseid2
+                           )";
+        $params['courseid2'] = $courseid;
+
+        // Grade items count.
+        $modularsql .= !empty($modularsql) ? " OR " : "";
+        $modularsql .= "1 < (
+                            SELECT count(*)
+                              FROM {grade_items}
+                             WHERE courseid = :courseid3
+                           )";
+        $params['courseid3'] = $courseid;
+
+        // Check to see if course is meta child.
+        $modularsql .= !empty($modularsql) ? " OR " : "";
+        $modularsql .= "c.id IN (
+                                SELECT customint1
+                                  FROM {enrol}
+                                 WHERE enrol = 'meta'
+                                       AND
+                                       status = 0
+                                )";
+
         $sql = "SELECT *
                   FROM {course} c
                  WHERE c.id = :courseid
-                       AND (
-                            c.id IN (
-                                     SELECT course
-                                       FROM {course_modules}
-                                      WHERE 1 < (
-                                                 SELECT count(*)
-                                                   FROM {course_modules}
-                                                  WHERE course = :courseid2
-                                                 )
-                                     )
-                            OR c.id IN (
-                                        SELECT courseid
-                                          FROM {grade_categories}
-                                        )
-                            OR c.id IN (
-                                        SELECT courseid
-                                          FROM {grade_items}
-                                        )
-                       )";
-
+                       AND ($modularsql)";
         $params['courseid'] = $courseid;
-        $params['courseid2'] = $courseid;
 
         if ($DB->get_records_sql($sql, $params)) {
             return false;
@@ -725,6 +745,11 @@ class tool_coursearchiver_processor {
                     if ($truekey == "id") {
                         $params[$truekey] = $value;
                         $searchsql .= " AND c.$truekey = :$truekey";
+                    } else if ($truekey == "timecreated") {
+                        $params['createdbefore'] = $value;
+                        // Course had to be created prior to this date.
+                        $searchsql .= " AND c.timecreated < :createdbefore";
+                        $params[$truekey] = $value;
                     } else if ($truekey == "timeaccess") {
                         $params['olderthan'] = $value;
                         // Course had to be old enough to have access.

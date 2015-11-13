@@ -42,6 +42,10 @@ if ($mform->is_submitted()) {
         if (!empty($formdata)) {
 
             // Get search criteria from the first form to pass it onto the second.
+            if (!empty($formdata->createdbeforeenabled)) {
+                $formdata->searches["createdbefore"] = $formdata->createdbefore;
+            }
+
             if (!empty($formdata->lastaccessenabled)) {
                 $formdata->searches["access"] = $formdata->access;
             }
