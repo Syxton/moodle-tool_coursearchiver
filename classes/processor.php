@@ -810,6 +810,9 @@ class tool_coursearchiver_processor {
             $optoutsubject = 'optoutarchivesubject';
             $optoutmessage = 'optoutarchivemessage';
         }
+
+        // If a support email is given, let's use it.
+        $supportemail = !empty($CFG->supportemail) ? $CFG->supportemail : $admin->email;
         $courses = array();
         foreach ($obj["courses"] as $course) {
             $displaycourse = str_replace("\n", '%0D%0A', get_string($optoutmessage,
@@ -821,7 +824,7 @@ class tool_coursearchiver_processor {
             if ($this->mode == self::MODE_ARCHIVEEMAIL || $course->visible) {
                 $courses[] = '<div>' .
                 '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '">' . $course->fullname . '</a>' .
-                ' (<a href="mailto:' . $admin->email .
+                ' (<a href="mailto:' . $supportemail .
                 '?subject=' . get_string($optoutsubject, 'tool_coursearchiver') .
                 '&body=' . $displaycourse . '">Ask to opt out</a>)' .
                 '</div>';
