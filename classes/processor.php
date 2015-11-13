@@ -801,7 +801,7 @@ class tool_coursearchiver_processor {
      * @return array $courses
      */
     public function get_email_courses($obj, $admin) {
-        global $DB;
+        global $CFG, $DB;
 
         if ($this->mode == self::MODE_HIDEEMAIL) {
             $optoutsubject = 'optouthidesubject';
@@ -811,16 +811,20 @@ class tool_coursearchiver_processor {
             $optoutmessage = 'optoutarchivemessage';
         }
         $courses = array();
-        $displaycourse = str_replace("\n", '%0D%0A', get_string($optoutmessage,
+        foreach ($obj["courses"] as $course) {
+            $displaycourse = str_replace("\n", '%0D%0A', get_string($optoutmessage,
                                                                 'tool_coursearchiver',
                                                                 'Course ID: '. $course->id . "\n" .
                                                                 'Course Name: ' .$course->fullname));
-        foreach ($obj["courses"] as $course) {
+
             // Only add courses that are visible if mode is HIDEEMAIL.
             if ($this->mode == self::MODE_ARCHIVEEMAIL || $course->visible) {
-                $courses[] = '<div>' . $course->fullname . ' (<a href="mailto:'.$admin->email.
-                '?subject='.get_string($optoutsubject, 'tool_coursearchiver').
-                '&body='.$displaycourse.'">Ask to opt out</a>)</div>';
+                $courses[] = '<div>' .
+                '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '">' . $course->fullname . '</a>' .
+                ' (<a href="mailto:' . $admin->email .
+                '?subject=' . get_string($optoutsubject, 'tool_coursearchiver') .
+                '&body=' . $displaycourse . '">Ask to opt out</a>)' .
+                '</div>';
             } else { // This course is not included in the email.
                 $this->notices[] = get_string('noticecoursehidden', 'tool_coursearchiver', $course);
             }
