@@ -30,7 +30,9 @@ require_once($CFG->libdir . '/adminlib.php');
 require_login();
 admin_externalpage_setup('toolcoursearchiver');
 
-$error          = optional_param('error', false, PARAM_RAW);
+$error  = isset($_SESSION['error']) ? $_SESSION['error'] : optional_param('error', false, PARAM_RAW);
+
+unset($_SESSION['error']);
 
 $mform = new tool_coursearchiver_step1_form(null);
 
@@ -55,9 +57,8 @@ if ($mform->is_submitted()) {
                 $formdata->searches["emptyonly"] = true;
             }
 
-            $data["formdata"] = serialize($formdata->searches);
-
-            $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php', $data);
+            $_SESSION['formdata'] = serialize($formdata->searches);
+            $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php');
             redirect($returnurl);
         } else { // Form 1 data did not come across correctly.
             echo $OUTPUT->header();

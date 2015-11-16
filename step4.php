@@ -30,16 +30,22 @@ require_once($CFG->libdir . '/adminlib.php');
 require_login();
 admin_externalpage_setup('toolcoursearchiver');
 
-$formdata       = optional_param('formdata', false, PARAM_RAW);
-$error          = optional_param('error', false, PARAM_RAW);
-$submitted      = optional_param('submit_button', false, PARAM_RAW);
-$mode           = optional_param('mode', false, PARAM_INT);
-$folder         = optional_param('folder', false, PARAM_TEXT);
+$formdata   = isset($_SESSION['formdata']) ? $_SESSION['formdata'] : optional_param('formdata', false, PARAM_RAW);
+$error      = isset($_SESSION['error']) ? $_SESSION['error'] : optional_param('error', false, PARAM_RAW);
+$mode       = isset($_SESSION['mode']) ? $_SESSION['mode'] : optional_param('mode', false, PARAM_INT);
+$folder     = optional_param('folder', false, PARAM_TEXT);
+$submitted  = optional_param('submit_button', false, PARAM_RAW);
 
+unset($_SESSION['formdata']);
+unset($_SESSION['error']);
+unset($_SESSION['mode']);
 
-if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 3 SUBMITTED.
+if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMITTED.
 
     if ($submitted == get_string('back', 'tool_coursearchiver')) { // Button to start over has been pressed.
+        unset($_SESSION['formdata']);
+        unset($_SESSION['mode']);
+        unset($_SESSION['error']);
         $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
         redirect($returnurl);
     }
@@ -81,9 +87,9 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 3 SUBMIT
                 }
 
                 if (!is_array($owners) || empty($owners)) { // If 0 courses are selected, show message and form again.
-                    $returnurl = new moodle_url('/admin/tool/coursearchiver/step3.php',
-                                                array("formdata" => $formdata,
-                                                      "error" => get_string('nousersselected', 'tool_coursearchiver')));
+                    $_SESSION["formdata"] = $formdata;
+                    $_SESSION["error"] = get_string('nousersselected', 'tool_coursearchiver');
+                    $returnurl = new moodle_url('/admin/tool/coursearchiver/step3.php');
                     redirect($returnurl);
                 }
                 $processor = new tool_coursearchiver_processor(array("mode" => $mode, "data" => $owners));
@@ -100,9 +106,9 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 3 SUBMIT
 
                 $courses = unserialize($formdata);
                 if (!is_array($courses) || empty($courses)) { // If 0 courses are selected, show message and form again.
-                    $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php',
-                                                array("formdata" => $formdata,
-                                                      "error" => get_string('nocoursesselected', 'tool_coursearchiver')));
+                    $_SESSION["formdata"] = $formdata;
+                    $_SESSION["error"] = get_string('nocoursesselected', 'tool_coursearchiver');
+                    $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php');
                     redirect($returnurl);
                 }
                 $processor = new tool_coursearchiver_processor(array("mode" => $mode, "data" => $courses));
@@ -113,8 +119,8 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 3 SUBMIT
                 echo $OUTPUT->footer();
                 break;
             default:
-                $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php',
-                                            array("error" => get_string('unknownerror', 'tool_coursearchiver')));
+                $_SESSION["error"] = get_string('unknownerror', 'tool_coursearchiver');
+                $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
                 redirect($returnurl);
         }
     }
@@ -134,7 +140,7 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 3 SUBMIT
     $mform->display();
     echo $OUTPUT->footer();
 } else { // IN THE EVENT OF A FAILURE, JUST GO BACK TO THE BEGINNING.
-    $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php',
-                                array("error" => get_string('unknownerror', 'tool_coursearchiver')));
+    $_SESSION["error"] = get_string('unknownerror', 'tool_coursearchiver');
+    $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
     redirect($returnurl);
 }
