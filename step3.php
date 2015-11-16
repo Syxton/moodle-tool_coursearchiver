@@ -76,7 +76,7 @@ if (!empty($submitted)) { // FORM 3 SUBMITTED.
 
     if (empty($owners)) { // If 0 courses are selected, show message and form again.
         $_SESSION["formdata"] = $formdata;
-        $_SESSION["error"] =  get_string('nousersselected', 'tool_coursearchiver');
+        $_SESSION["error"] = get_string('nousersselected', 'tool_coursearchiver');
         $returnurl = new moodle_url('/admin/tool/coursearchiver/step3.php');
         redirect($returnurl);
     }
