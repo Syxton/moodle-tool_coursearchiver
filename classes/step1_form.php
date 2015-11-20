@@ -90,7 +90,7 @@ class tool_coursearchiver_step1_form extends moodleform {
         $searchstring = "";
         $timecode = "";
 
-        foreach ($data["searches"] as $key => $value) {
+        foreach ($data["searches"] as $value) {
             $searchstring .= $value;
         }
 

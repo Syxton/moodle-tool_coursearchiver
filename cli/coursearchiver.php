@@ -62,8 +62,7 @@ if ($unrecognized) {
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
-$help =
-"\nCourse Archiver Helper:
+$help = "\nCourse Archiver Helper:
 
 Options:
 -s, --short             Search for courses matching the Moodle course shortname

@@ -250,7 +250,7 @@ class tool_coursearchiver_processor {
                     // Loop over the course array.
                     $tracker->jobsize = count($courses);
                     foreach ($courses as $currentcourse) {
-                        if ($this->archivecourse($currentcourse, $this->folder)) {
+                        if ($this->archivecourse($currentcourse)) {
                             $tracker->error = false;
                             $this->total++;
                         } else {
@@ -432,7 +432,7 @@ class tool_coursearchiver_processor {
      * @param string $folder name of folder (optional)
      * @return bool of courses that match the search
      */
-    protected function archivecourse($obj, $folder = false) {
+    protected function archivecourse($obj) {
         global $CFG;
         require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
         require_once($CFG->dirroot . '/backup/controller/backup_controller.class.php');
@@ -462,14 +462,7 @@ class tool_coursearchiver_processor {
                                        get_config('tool_coursearchiver', 'coursearchiverpath'));
 
             // Check for custom folder.
-            if (!empty($folder)) {
-                $folder = str_replace(str_split('\\/:*?"<>|'), '', $folder);
-            }
-
-            // If no custom folder is given, use the current year.
-            if (empty($folder)) {
-                $folder = date('Y');
-            }
+            $folder = $this->get_archive_folder();
 
             // Final full path of file.
             $path = $CFG->dataroot . '/' . $archivepath . '/' . $folder;
@@ -495,44 +488,11 @@ class tool_coursearchiver_processor {
 
             // The backup file will have already been moved, so I have to find it.
             if (!empty($dir)) {
-                // Calculate backup filename regex, ignoring the date/time/info parts that can be
-                // variable, depending of languages, formats and automated backup settings.
-                $filename = backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' . $obj["course"]->id . '-';
-                $regex = '#' . preg_quote($filename, '#') . '.*\.mbz#';
-
-                // Store all the matching files into filename => timemodified array.
-                $files = array();
-                foreach (scandir($dir) as $file) {
-                    // Skip files not matching the naming convention.
-                    if (!preg_match($regex, $file, $matches)) {
-                        continue;
-                    }
-
-                    // Read the information contained in the backup itself.
-                    try {
-                        $bcinfo = backup_general_helper::get_backup_information_from_mbz($dir . '/' . $file);
-                    } catch (backup_helper_exception $e) {
-                        throw new Exception('Error: ' . $file . ' does not appear to be a valid backup (' . $e->errorcode . ')');
-                        continue;
-                    }
-
-                    // Make sure this backup concerns the course and site we are looking for.
-                    if ($bcinfo->format === backup::FORMAT_MOODLE &&
-                            $bcinfo->type === backup::TYPE_1COURSE &&
-                            $bcinfo->original_course_id == $obj["course"]->id &&
-                            backup_general_helper::backup_is_samesite($bcinfo)) {
-                        $files[$file] = $bcinfo->backup_date;
-                    }
-                }
-
-                // Sort by values descending (newer to older filemodified).
-                arsort($files);
-                foreach ($files as $filename => $backupdate) {
-                    // Make sure the backup is from today.
-                    if (date('m/d/Y', $backupdate) == date('m/d/Y')) {
-                        rename($dir . '/' . $filename, $path . '/' . $archivefile);
-                    }
-                    break; // Just the last backup...thanks!
+                $file = find_course_file($obj["course"]->id, $dir);
+                if (!empty($file)) {
+                    rename($dir . '/' . $file, $path . '/' . $archivefile);
+                } else {
+                    throw new Exception('Backup failed');
                 }
             } else {
                 $file = $results['backup_destination'];
@@ -560,13 +520,77 @@ class tool_coursearchiver_processor {
     }
 
     /**
+     * Find and return the path to the last course archive file.
+     *
+     * @param int $courseid Moodle course id.
+     * @param string $dir path to course archives.
+     * @return string $filename name of the file path to rename.
+     */
+    protected function find_course_file($courseid, $dir) {
+        // Calculate backup filename regex, ignoring the date/time/info parts that can be
+        // variable, depending of languages, formats and automated backup settings.
+        $filename = backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' . $courseid . '-';
+        $regex = '#' . preg_quote($filename, '#') . '.*\.mbz#';
+
+        // Store all the matching files into filename => timemodified array.
+        $files = array();
+        foreach (scandir($dir) as $file) {
+            // Skip files not matching the naming convention.
+            if (!preg_match($regex, $file)) {
+                continue;
+            }
+
+            // Read the information contained in the backup itself.
+            try {
+                $bcinfo = backup_general_helper::get_backup_information_from_mbz($dir . '/' . $file);
+            } catch (backup_helper_exception $e) {
+                throw new Exception('Error: ' . $file . ' does not appear to be a valid backup (' . $e->errorcode . ')');
+                continue;
+            }
+
+            // Make sure this backup concerns the course and site we are looking for.
+            if ($bcinfo->format === backup::FORMAT_MOODLE &&
+                    $bcinfo->type === backup::TYPE_1COURSE &&
+                    $bcinfo->original_course_id == $obj["course"]->id &&
+                    backup_general_helper::backup_is_samesite($bcinfo)) {
+                $files[$file] = $bcinfo->backup_date;
+            }
+        }
+
+        // Sort by values descending (newer to older filemodified).
+        arsort($files);
+        foreach ($files as $filename => $backupdate) {
+            // Make sure the backup is from today.
+            if (date('m/d/Y', $backupdate) == date('m/d/Y')) {
+                return $filename;
+            }
+            break; // Just the last backup...thanks!
+        }
+        return false;
+    }
+
+    /**
+     * Find and return archived course files.
+     *
+     * @return string of the folder name to be used.
+     */
+    protected function get_archive_folder() {
+        if (!empty($this->folder)) {
+            $this->folder = str_replace(str_split('\\/:*?"<>|'), '', $this->folder);
+        } else { // If no custom folder is given, use the current year.
+            $this->folder = date('Y');
+        }
+        return $this->folder;
+    }
+
+    /**
      * Sends an email to each owner
      *
      * @param object $obj user array with courses attached
      * @return array of courses that match the search
      */
     protected function sendemail($obj) {
-        global $CFG, $DB;
+        global $CFG;
 
         if (empty($CFG->siteadmins)) {  // Should not happen on an ordinary site.
             return false;
@@ -630,7 +654,7 @@ class tool_coursearchiver_processor {
             $event->replyto = $admin->email;
 
             try {
-                $messageid = message_send($event);
+                message_send($event);
             } catch (Exception $e) {
                 $this->errors[] = get_string('errorsendingemail', 'tool_coursearchiver', $obj["user"]);
                 return false;
@@ -736,7 +760,7 @@ class tool_coursearchiver_processor {
     public function get_courselist() {
         global $DB;
 
-        $params = array(); $searchsql = $neveraccessed = "";
+        $params = array(); $searchsql = "";
 
         foreach ($this->data as $key => $value) {
             if (!empty($value)) {
@@ -797,11 +821,10 @@ class tool_coursearchiver_processor {
      *
      * @param object $obj an array of courses
      * @param object $admin is the user object for the admin user
-     * 
      * @return array $courses
      */
     public function get_email_courses($obj, $admin) {
-        global $CFG, $DB;
+        global $CFG;
 
         if ($this->mode == self::MODE_HIDEEMAIL) {
             $optoutsubject = 'optouthidesubject';
