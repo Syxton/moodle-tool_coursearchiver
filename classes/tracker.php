@@ -163,7 +163,8 @@ class tool_coursearchiver_tracker {
                 $modetext = "archive";
                 break;
             default:
-                die("Mode not given for results.");
+                throw new Exception('Mode not given for results.');
+                return;
         }
 
         $message = array(
@@ -396,7 +397,7 @@ class tool_coursearchiver_tracker {
                     do {
                         $this->buffer->output($out);
                         if ($this->progress == 100) {
-                            exit;
+                            return;
                         }
                         $out = $this->get_progressbar();
                     } while ($out);

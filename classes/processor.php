@@ -439,9 +439,9 @@ class tool_coursearchiver_processor {
 
         if (empty($CFG->siteadmins)) {  // Should not happen on an ordinary site.
             return false;
-        } else {
-            $admin = get_admin();
         }
+
+        $admin = get_admin();
 
         $coursetobackup = $obj["course"]->id; // Set this to one existing choice cmid in your dev site.
         $userdoingthebackup   = $admin->id; // Set this to the id of your admin account.
@@ -551,7 +551,7 @@ class tool_coursearchiver_processor {
             // Make sure this backup concerns the course and site we are looking for.
             if ($bcinfo->format === backup::FORMAT_MOODLE &&
                     $bcinfo->type === backup::TYPE_1COURSE &&
-                    $bcinfo->original_course_id == $obj["course"]->id &&
+                    $bcinfo->original_course_id == $courseid &&
                     backup_general_helper::backup_is_samesite($bcinfo)) {
                 $files[$file] = $bcinfo->backup_date;
             }
