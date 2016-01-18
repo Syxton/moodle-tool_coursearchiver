@@ -456,7 +456,7 @@ class tool_coursearchiver_processor {
                 $suffix = '-ID-'.$obj["course"]->id.'-IDNUM-'.$obj["course"]->idnumber;
             }
 
-            $archivefile = date("Y-m-d") . "{$suffix}-{$safeshort}.zip";
+            $archivefile = date("Y-m-d") . "{$suffix}-{$safeshort}.mbz";
             $archivepath = str_replace(str_split('\\/:*?"<>|'),
                                        '',
                                        get_config('tool_coursearchiver', 'coursearchiverpath'));
