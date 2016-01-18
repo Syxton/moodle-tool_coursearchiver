@@ -1,5 +1,6 @@
 # Course Archiver
 This tool is used to search for courses, notify the course owners, and mass hide or archive (backup and remove) courses.
+The courses are stored with Moodle's backup file extension ".mbz".  These files can then be manually found in the user defined folder and can be restored using Moodle's built in restore feature.
 
 ## Install
 copy the coursearchiver folder into the admin/tool folder.
