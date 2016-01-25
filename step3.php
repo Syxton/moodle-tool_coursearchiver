@@ -112,7 +112,6 @@ if (!empty($submitted)) { // FORM 3 SUBMITTED.
         redirect($returnurl);
     }
 
-    header('X-Accel-Buffering: no');
     echo $OUTPUT->header();
     echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');
 

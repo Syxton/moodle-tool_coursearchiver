@@ -65,7 +65,6 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
         switch($mode){
             case tool_coursearchiver_processor::MODE_HIDEEMAIL:
             case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
-                header('X-Accel-Buffering: no');
                 echo $OUTPUT->header();
                 echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'),
                                                 'coursearchiver',
@@ -98,7 +97,6 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
                 break;
             case tool_coursearchiver_processor::MODE_HIDE:
             case tool_coursearchiver_processor::MODE_ARCHIVE:
-                header('X-Accel-Buffering: no');
                 echo $OUTPUT->header();
                 echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'),
                                                 'coursearchiver',
@@ -126,7 +124,6 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
     }
 
 } else if (!empty($formdata) && !empty($mode)) {  // FORM 3 SUBMITTED, SHOW FORM 4.
-    header('X-Accel-Buffering: no');
     echo $OUTPUT->header();
     echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');
 

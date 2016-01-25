@@ -84,8 +84,6 @@ if (!empty($submitted)) { // FORM 2 SUBMITTED.
     }
 
 } else if (!empty($formdata)) {  // FORM 1 SUBMITTED, SHOW FORM 2.
-
-    header('X-Accel-Buffering: no');
     echo $OUTPUT->header();
     echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');
 

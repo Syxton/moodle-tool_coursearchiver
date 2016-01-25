@@ -488,7 +488,7 @@ class tool_coursearchiver_processor {
 
             // The backup file will have already been moved, so I have to find it.
             if (!empty($dir)) {
-                $file = find_course_file($obj["course"]->id, $dir);
+                $file = $this->find_course_file($obj["course"]->id, $dir);
                 if (!empty($file)) {
                     rename($dir . '/' . $file, $path . '/' . $archivefile);
                 } else {
