@@ -408,85 +408,107 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_COURSELIST:
                     $fullname = $this->empty ? '<strike>' . $data->fullname . '</strike>' : $data->fullname;
                     $empty = $this->empty ? 'title="Empty Course"' : '';
-                    $this->mform->addElement('html', html_writer::start_tag('table', array('style' => 'width:100%')) .
-                                                     html_writer::start_tag('tr') .
-                                                     html_writer::start_tag('td',
-                                                            array('style' => 'width:10%;text-align:center;')));
+                    $this->mform->addElement('html',
+                                             html_writer::start_tag('table', array('style' => 'width:100%')) .
+                                             html_writer::start_tag('tr') .
+                                             html_writer::start_tag('td',
+                                                    array('style' => 'width:10%;text-align:center;')
+                                             )
+                    );
                     $this->mform->addElement('advcheckbox',
                                              'course_selected[]',
                                              '',
                                              null,
                                              array('group' => 1),
-                                             array(0, $data->id));
+                                             array(0, $data->id)
+                    );
                     $this->mform->setDefault('course_selected[]', 0);
-                    $this->mform->addElement('html', html_writer::end_tag('td') .
-                                                     html_writer::tag('td', $data->id, array('style' => 'width:10%')) .
-                                                     html_writer::tag('td',
-                                                        '<a ' . $empty . ' href="' . $CFG->wwwroot . '/course/view.php?id=' .
-                                                            $data->id.'">' . $fullname . '</a>',
-                                                        array('style' => 'width:38%',
-                                                          'class' => empty($data->visible) ? 'coursearchiver_alreadyhidden' : '')) .
-                                                     html_writer::tag('td',
-                                                        $data->shortname,
-                                                        array('style' => 'width:22%',
-                                                          'class' => empty($data->visible) ? 'coursearchiver_alreadyhidden' : '')) .
-                                                     html_writer::tag('td',
-                                                        $data->idnumber,
-                                                        array('style' => 'width:10%',
-                                                          'class' => empty($data->visible) ? 'coursearchiver_alreadyhidden' : '')) .
-                                                     html_writer::tag('td',
-                                                        empty($data->timeaccess) ? "Never" : date('m/d/Y', $data->timeaccess),
-                                                        array('style' => 'width:10%;text-align:center',
-                                                          'class' => empty($data->visible) ? 'coursearchiver_alreadyhidden' : '')) .
-                                                     html_writer::end_tag('tr') .
-                                                     html_writer::end_tag('table'));
+                    $hiddenclass = empty($data->visible) ? 'coursearchiver_alreadyhidden' : '';
+                    $this->mform->addElement('html',
+                                             html_writer::end_tag('td') .
+                                             html_writer::tag('td', $data->id, array('style' => 'width:10%')) .
+                                             html_writer::tag('td',
+                                                              '<a ' . $empty . ' href="' . $CFG->wwwroot . '/course/view.php?id=' .
+                                                              $data->id.'">' . $fullname . '</a>',
+                                                              array('style' => 'width:38%', 'class' => $hiddenclass)
+                                             ) .
+                                             html_writer::tag('td',
+                                                $data->shortname,
+                                                array('style' => 'width:22%', 'class' => $hiddenclass)
+                                             ) .
+                                             html_writer::tag('td',
+                                                $data->idnumber,
+                                                array('style' => 'width:10%', 'class' => $hiddenclass)
+                                             ) .
+                                             html_writer::tag('td',
+                                                empty($data->timeaccess) ? "Never" : date('m/d/Y', $data->timeaccess),
+                                                array('style' => 'width:10%;text-align:center', 'class' => $hiddenclass)
+                                             ) .
+                                             html_writer::end_tag('tr') .
+                                             html_writer::end_tag('table')
+                    );
                     break;
                 case tool_coursearchiver_processor::MODE_GETEMAILS:
                     if ($info) {
-                        $this->mform->addElement('html', '<br />' .
-                                                         html_writer::start_tag('table', array('style' => 'width:100%',
-                                                                                               'class' => 'courseheader')) .
-                                                         html_writer::start_tag('tr') .
-                                                         html_writer::tag('td',
-                                                         '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$data["course"]->id.'">'.
-                                                         $data["course"]->fullname . ' (' . $data["course"]->shortname . ')</a>',
-                                                         array('style' => 'width:30%;text-align:left;font-weight:bold;')) .
-                                                         html_writer::end_tag('tr') .
-                                                         html_writer::end_tag('table'));
+                        $this->mform->addElement('html',
+                                                 '<br />' .
+                                                 html_writer::start_tag('table', array('style' => 'width:100%',
+                                                                                       'class' => 'courseheader')
+                                                 ) .
+                                                 html_writer::start_tag('tr') .
+                                                 html_writer::tag('td',
+                                                    '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$data["course"]->id.'">'.
+                                                    $data["course"]->fullname . ' (' . $data["course"]->shortname . ')</a>',
+                                                    array('style' => 'width:30%;text-align:left;font-weight:bold;')
+                                                 ) .
+                                                 html_writer::end_tag('tr') .
+                                                 html_writer::end_tag('table')
+                        );
 
                         if (empty($data["owners"])) {
-                            $this->mform->addElement('html', html_writer::start_tag('table', array('style' => 'width:100%')) .
-                                                             html_writer::start_tag('tr') .
-                                                             html_writer::tag('td',
-                                                                    get_string('nousersfound', 'tool_coursearchiver'),
-                                                                    array('style' => '',
-                                                                          'class' => 'coursearchiver_myformerror')) .
-                                                             html_writer::end_tag('tr'),
-                                                             html_writer::end_tag('table'));
+                            $this->mform->addElement('html',
+                                                     html_writer::start_tag('table', array('style' => 'width:100%')) .
+                                                     html_writer::start_tag('tr') .
+                                                     html_writer::tag('td',
+                                                        get_string('nousersfound', 'tool_coursearchiver'),
+                                                        array('style' => '', 'class' => 'coursearchiver_myformerror')
+                                                     ) .
+                                                     html_writer::end_tag('tr'),
+                                                     html_writer::end_tag('table')
+                            );
                         }
                     } else {
-                        $this->mform->addElement('html', html_writer::start_tag('table',
-                                                            array('style' => 'width:100%')) .
-                                                         html_writer::start_tag('tr') .
-                                                         html_writer::start_tag('td',
-                                                            array('style' => 'width:10%;text-align:center;')));
+                        $this->mform->addElement('html',
+                                                 html_writer::start_tag('table',
+                                                    array('style' => 'width:100%')
+                                                 ) .
+                                                 html_writer::start_tag('tr') .
+                                                 html_writer::start_tag('td', 
+                                                    array('style' => 'width:10%;text-align:center;')
+                                                 )
+                        );
                         $this->mform->addElement('advcheckbox',
                                                  'user_selected[]',
                                                  '',
                                                  null,
                                                  array('group' => 1),
-                                                 array(0, $data->course . "_" . $data->id));
+                                                 array(0, $data->course . "_" . $data->id)
+                        );
                         $this->mform->setDefault('user_selected[]', 1);
-                        $this->mform->addElement('html', html_writer::end_tag('td') .
-                                                         html_writer::tag('td',
-                                                                          $data->email,
-                                                                          array('style' => 'width:40%')) .
-                                                         html_writer::tag('td',
-                                                                          $data->firstname,
-                                                                          array('style' => 'width:15%')) .
-                                                         html_writer::tag('td', $data->lastname) .
-                                                         html_writer::end_tag('tr') .
-                                                         html_writer::end_tag('table'));
+                        $this->mform->addElement('html',
+                                                 html_writer::end_tag('td') .
+                                                 html_writer::tag('td',
+                                                                  $data->email,
+                                                                  array('style' => 'width:40%')
+                                                 ) .
+                                                 html_writer::tag('td',
+                                                                  $data->firstname,
+                                                                  array('style' => 'width:15%')
+                                                 ) .
+                                                 html_writer::tag('td', $data->lastname) .
+                                                 html_writer::end_tag('tr') .
+                                                 html_writer::end_tag('table')
+                        );
                     }
                     break;
                 case tool_coursearchiver_processor::MODE_HIDE:
@@ -520,26 +542,32 @@ class tool_coursearchiver_tracker {
                     if ($this->jobsdone > 1) {
                         $this->form->add_checkbox_controller(1);
                     } else if (empty($this->jobsize)) {
-                        $this->mform->addElement('html', html_writer::start_tag('table', array('style' => 'width:100%')) .
-                                                         html_writer::start_tag('tr') .
-                                                         html_writer::tag('td',
-                                                                        get_string('nocoursesfound', 'tool_coursearchiver'),
-                                                                        array('class' => 'coursearchiver_myformerror')) .
-                                                         html_writer::end_tag('tr') .
-                                                         html_writer::end_tag('table'));
+                        $this->mform->addElement('html',
+                                                 html_writer::start_tag('table', array('style' => 'width:100%')) .
+                                                 html_writer::start_tag('tr') .
+                                                 html_writer::tag('td',
+                                                                  get_string('nocoursesfound', 'tool_coursearchiver'),
+                                                                  array('class' => 'coursearchiver_myformerror')
+                                                 ) .
+                                                 html_writer::end_tag('tr') .
+                                                 html_writer::end_tag('table')
+                        );
                     }
                     break;
                 case tool_coursearchiver_processor::MODE_GETEMAILS:
                     if ($this->jobsdone > 1) {
                         $this->form->add_checkbox_controller(1);
                     } else if (empty($this->jobsize)) {
-                        $this->mform->addElement('html', html_writer::start_tag('table', array('style' => 'width:100%')) .
-                                                         html_writer::start_tag('tr') .
-                                                         html_writer::tag('td',
-                                                                        get_string('nousersfound', 'tool_coursearchiver'),
-                                                                        array('class' => 'coursearchiver_myformerror')) .
-                                                         html_writer::end_tag('tr') .
-                                                         html_writer::end_tag('table'));
+                        $this->mform->addElement('html',
+                                                 html_writer::start_tag('table', array('style' => 'width:100%')) .
+                                                 html_writer::start_tag('tr') .
+                                                 html_writer::tag('td',
+                                                                  get_string('nousersfound', 'tool_coursearchiver'),
+                                                                  array('class' => 'coursearchiver_myformerror')
+                                                 ) .
+                                                 html_writer::end_tag('tr') .
+                                                 html_writer::end_tag('table')
+                        );
                     }
                     break;
                 case tool_coursearchiver_processor::MODE_HIDE:
