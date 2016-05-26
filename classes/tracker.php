@@ -483,7 +483,7 @@ class tool_coursearchiver_tracker {
                                                     array('style' => 'width:100%')
                                                  ) .
                                                  html_writer::start_tag('tr') .
-                                                 html_writer::start_tag('td', 
+                                                 html_writer::start_tag('td',
                                                     array('style' => 'width:10%;text-align:center;')
                                                  )
                         );
