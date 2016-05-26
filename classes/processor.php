@@ -846,7 +846,8 @@ class tool_coursearchiver_processor {
                                                     'tool_coursearchiver',
                                                     get_string('courseid', 'tool_coursearchiver') . ": " . $course->id . "\n" .
                                                     get_string('coursefullname', 'tool_coursearchiver') . ": " . $course->fullname
-                                         ));
+                                         )
+            );
 
             // Only add courses that are visible if mode is HIDEEMAIL.
             if ($this->mode == self::MODE_ARCHIVEEMAIL || $course->visible) {
