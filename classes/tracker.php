@@ -241,12 +241,24 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_COURSELIST:
                     $this->buffer->output("\n\n" . str_repeat('-', 50));
                     $this->buffer->output("Search Results");
-                    $this->buffer->output(sprintf($this->maskcourses, 'Status', 'ID', 'Shortname', 'Fullname', 'Last Use'));
+                    $this->buffer->output(sprintf($this->maskcourses,
+                                                  get_string('status', 'tool_coursearchiver'),
+                                                  get_string('outid', 'tool_coursearchiver'),
+                                                  get_string('outshortname', 'tool_coursearchiver'),
+                                                  get_string('outfullname', 'tool_coursearchiver'),
+                                                  get_string('outuse', 'tool_coursearchiver')
+                                          )
+                    );
                     break;
                 case tool_coursearchiver_processor::MODE_GETEMAILS:
                     $this->buffer->output("\n\n" . str_repeat('-', 50));
-                    $this->buffer->output("Course Owners");
-                    $this->buffer->output(sprintf($this->maskusers, 'Firstname', 'Lastname', 'Email'));
+                    $this->buffer->output(get_string('outowners', 'tool_coursearchiver'));
+                    $this->buffer->output(sprintf($this->maskusers,
+                                                  get_string('outfirstname', 'tool_coursearchiver'),
+                                                  get_string('outlastname', 'tool_coursearchiver'),
+                                                  get_string('outemail', 'tool_coursearchiver')
+                                          )
+                    );
                     break;
                 case tool_coursearchiver_processor::MODE_HIDE:
                 case tool_coursearchiver_processor::MODE_ARCHIVE:
@@ -326,22 +338,26 @@ class tool_coursearchiver_tracker {
                                                             array('style' => 'width:15%')) .
                                                      html_writer::tag('th', get_string('outlastname', 'tool_coursearchiver')) .
                                                      html_writer::end_tag('tr') .
-                                                     html_writer::end_tag('table'));
+                                                     html_writer::end_tag('table')
+                    );
                     break;
                 case tool_coursearchiver_processor::MODE_HIDE:
                     $buffer = new progress_trace_buffer(new text_progress_trace());
-                    $buffer->output('<h3>Hiding selected courses</h3><div style="margin-bottom: 60px;"></div><br />');
+                    $buffer->output('<h3>' . get_string('processhiding', 'tool_coursearchiver') .
+                                    '</h3><div style="margin-bottom: 60px;"></div><br />');
                     $buffer->finished();
                     break;
                 case tool_coursearchiver_processor::MODE_ARCHIVE:
                     $buffer = new progress_trace_buffer(new text_progress_trace());
-                    $buffer->output('<h3>Archiving selected courses</h3><div style="margin-bottom: 60px;"></div><br />');
+                    $buffer->output('<h3>' . get_string('processarchiving', 'tool_coursearchiver') .
+                                    '</h3><div style="margin-bottom: 60px;"></div><br />');
                     $buffer->finished();
                     break;
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
                     $buffer = new progress_trace_buffer(new text_progress_trace());
-                    $buffer->output('<h3>Sending Emails</h3><div style="margin-bottom: 60px;"></div><br />');
+                    $buffer->output('<h3>' . get_string('processemailing', 'tool_coursearchiver') .
+                                    '</h3><div style="margin-bottom: 60px;"></div><br />');
                     $buffer->finished();
                     break;
             }
@@ -369,17 +385,21 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_COURSELIST:
                     $cliicon = empty($data->visible) ? "hide " : "show ";
                     $empty = $this->empty ? "MT " : "";
+                    $date = get_string('never', 'tool_coursearchiver');
+                    if (!empty($data->timeaccess)) {
+                        $date = date("m/d/y", $data->timeaccess);
+                    }
                     $this->buffer->output(sprintf($this->maskcourses,
                                                   $cliicon . $empty,
                                                   $data->id,
                                                   $data->shortname,
                                                   $data->fullname,
-                                                  empty($data->timeaccess) ? "Never" : date("m/d/y", $data->timeaccess)));
+                                                  $date));
                     break;
                 case tool_coursearchiver_processor::MODE_GETEMAILS:
                     if ($info) {
                         $this->buffer->output("\n" . sprintf($this->maskcourseheader,
-                                              'Course ',
+                                              get_string('course') . " ",
                                               $data["course"]->shortname,
                                               $data["course"]->fullname));
                         if (empty($data["owners"])) {
@@ -407,7 +427,7 @@ class tool_coursearchiver_tracker {
             switch ($this->mode) {
                 case tool_coursearchiver_processor::MODE_COURSELIST:
                     $fullname = $this->empty ? '<strike>' . $data->fullname . '</strike>' : $data->fullname;
-                    $empty = $this->empty ? 'title="Empty Course"' : '';
+                    $empty = $this->empty ? 'title="'.get_string('emptycourse', 'tool_coursearchiver').'"' : '';
                     $this->mform->addElement('html',
                                              html_writer::start_tag('table', array('style' => 'width:100%')) .
                                              html_writer::start_tag('tr') .
@@ -424,6 +444,10 @@ class tool_coursearchiver_tracker {
                     );
                     $this->mform->setDefault('course_selected[]', 0);
                     $hiddenclass = empty($data->visible) ? 'coursearchiver_alreadyhidden' : '';
+                    $date = get_string('never', 'tool_coursearchiver');
+                    if (!empty($data->timeaccess)) {
+                        $date = date("m/d/y", $data->timeaccess);
+                    }
                     $this->mform->addElement('html',
                                              html_writer::end_tag('td') .
                                              html_writer::tag('td', $data->id, array('style' => 'width:10%')) .
@@ -441,7 +465,7 @@ class tool_coursearchiver_tracker {
                                                 array('style' => 'width:10%', 'class' => $hiddenclass)
                                              ) .
                                              html_writer::tag('td',
-                                                empty($data->timeaccess) ? "Never" : date('m/d/Y', $data->timeaccess),
+                                                $date,
                                                 array('style' => 'width:10%;text-align:center', 'class' => $hiddenclass)
                                              ) .
                                              html_writer::end_tag('tr') .
@@ -574,7 +598,9 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_ARCHIVE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
-                    $this->buffer->output('<div class="coursearchiver_completedmsg">Process Complete</div>');
+                    $this->buffer->output('<div class="coursearchiver_completedmsg">' .
+                                          get_string('processcomplete', 'tool_coursearchiver') .
+                                          '</div>');
                     break;
             }
         }

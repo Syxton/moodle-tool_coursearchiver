@@ -130,7 +130,7 @@ class tool_coursearchiver_processor {
      */
     public function execute($outputtype = tool_coursearchiver_tracker::NO_OUTPUT, $tracker = null, $mform = null, $form = null) {
         if ($this->processstarted) {
-            throw new coding_exception('Process has already been started');
+            throw new coding_exception(get_string('processstarted', 'tool_coursearchiver'));
         }
         $this->processstarted = true;
 
@@ -141,7 +141,7 @@ class tool_coursearchiver_processor {
         if ($outputtype == tool_coursearchiver_tracker::OUTPUT_HTML) {
             if (!in_array($this->mode, array(self::MODE_HIDE, self::MODE_ARCHIVE, self::MODE_HIDEEMAIL, self::MODE_ARCHIVEEMAIL))) {
                 if (empty($mform)) {
-                    throw new coding_exception('Form not given');
+                    throw new coding_exception(get_string('errornoform', 'tool_coursearchiver'));
                 } else {
                     $tracker->form = $form;
                     $tracker->mform = $mform;
@@ -472,7 +472,7 @@ class tool_coursearchiver_processor {
                 umask(0000);
                 // Create the directory for CourseArchival.
                 if (!mkdir($path, $CFG->directorypermissions, true)) {
-                    throw new Exception('Archive path could not be created');
+                    throw new Exception(get_string('errorarchivepath', 'tool_coursearchiver'));
                 }
             }
 
@@ -492,14 +492,14 @@ class tool_coursearchiver_processor {
                 if (!empty($file)) {
                     rename($dir . '/' . $file, $path . '/' . $archivefile);
                 } else {
-                    throw new Exception('Backup failed');
+                    throw new Exception(get_string('errorbackup', 'tool_coursearchiver'));
                 }
             } else {
                 $file = $results['backup_destination'];
                 if (!empty($file)) {
                     $file->copy_content_to($path . '/' . $archivefile);
                 } else {
-                    throw new Exception('Backup failed');
+                    throw new Exception(get_string('errorbackup', 'tool_coursearchiver'));
                 }
             }
 
@@ -510,7 +510,7 @@ class tool_coursearchiver_processor {
                 // Remove Course.
                 delete_course($obj["course"]->id, false);
             } else {
-                throw new Exception('Course archive file does not exist');
+                throw new Exception(get_string('errorarchivefile', 'tool_coursearchiver'));
             }
 
         } catch (Exception $e) {
@@ -544,7 +544,9 @@ class tool_coursearchiver_processor {
             try {
                 $bcinfo = backup_general_helper::get_backup_information_from_mbz($dir . '/' . $file);
             } catch (backup_helper_exception $e) {
-                throw new Exception('Error: ' . $file . ' does not appear to be a valid backup (' . $e->errorcode . ')');
+                throw new Exception('Error: ' . $file . ' ' .
+                                    get_string('errorvalidarchive', 'tool_coursearchiver') .
+                                    ' (' . $e->errorcode . ')');
                 continue;
             }
 
@@ -650,7 +652,7 @@ class tool_coursearchiver_processor {
             $event->smallmessage = $subject;
             $event->notification = '1';
             $event->contexturl = $CFG->wwwroot;
-            $event->contexturlname = 'Course Archiver';
+            $event->contexturlname = get_string('coursearchiver', 'tool_coursearchiver');
             $event->replyto = $admin->email;
 
             try {
@@ -838,10 +840,13 @@ class tool_coursearchiver_processor {
         $supportemail = !empty($CFG->supportemail) ? $CFG->supportemail : $admin->email;
         $courses = array();
         foreach ($obj["courses"] as $course) {
-            $displaycourse = str_replace("\n", '%0D%0A', get_string($optoutmessage,
-                                                                'tool_coursearchiver',
-                                                                'Course ID: '. $course->id . "\n" .
-                                                                'Course Name: ' .$course->fullname));
+            $displaycourse = str_replace("\n",
+                                         '%0D%0A',
+                                         get_string($optoutmessage,
+                                                    'tool_coursearchiver',
+                                                    get_string('courseid', 'tool_coursearchiver') . ": " . $course->id . "\n" .
+                                                    get_string('coursefullname', 'tool_coursearchiver') . ": " . $course->fullname
+                                         ));
 
             // Only add courses that are visible if mode is HIDEEMAIL.
             if ($this->mode == self::MODE_ARCHIVEEMAIL || $course->visible) {
@@ -849,7 +854,7 @@ class tool_coursearchiver_processor {
                 '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '">' . $course->fullname . '</a>' .
                 ' (<a href="mailto:' . $supportemail .
                 '?subject=' . get_string($optoutsubject, 'tool_coursearchiver') .
-                '&body=' . $displaycourse . '">Ask to opt out</a>)' .
+                '&body=' . $displaycourse . '">' . get_string('optout', 'tool_coursearchiver') .'</a>)' .
                 '</div>';
             } else { // This course is not included in the email.
                 $this->notices[] = get_string('noticecoursehidden', 'tool_coursearchiver', $course);
