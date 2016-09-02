@@ -23,6 +23,7 @@
  */
 
 define('NO_OUTPUT_BUFFERING', true);
+header('X-Accel-Buffering: no');
 
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');

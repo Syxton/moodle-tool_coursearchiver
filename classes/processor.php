@@ -485,19 +485,20 @@ class tool_coursearchiver_processor {
 
             $config = get_config('backup');
             $dir = $config->backup_auto_destination;
+            $file = $results['backup_destination'];
 
-            // The backup file will have already been moved, so I have to find it.
-            if (!empty($dir)) {
-                $file = $this->find_course_file($obj["course"]->id, $dir);
-                if (!empty($file)) {
-                    rename($dir . '/' . $file, $path . '/' . $archivefile);
-                } else {
-                    throw new Exception(get_string('errorbackup', 'tool_coursearchiver'));
-                }
+            if (!empty($file)) {
+                $file->copy_content_to($path . '/' . $archivefile);
             } else {
-                $file = $results['backup_destination'];
-                if (!empty($file)) {
-                    $file->copy_content_to($path . '/' . $archivefile);
+                $config = get_config('backup');
+                $dir = $config->backup_auto_destination;
+                if (!empty($dir)) { // The backup file will have already been moved, so I have to find it.
+                    $file = $this->find_course_file($obj["course"]->id, $dir);
+                    if (!empty($file)) {
+                        rename($dir . '/' . $file, $path . '/' . $archivefile);
+                    } else {
+                        throw new Exception(get_string('errorbackup', 'tool_coursearchiver'));
+                    }
                 } else {
                     throw new Exception(get_string('errorbackup', 'tool_coursearchiver'));
                 }
