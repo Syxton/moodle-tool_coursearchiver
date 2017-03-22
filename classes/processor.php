@@ -429,7 +429,6 @@ class tool_coursearchiver_processor {
      * Return an array of owners and a list of each course they are teachers of.
      *
      * @param object $obj course obj
-     * @param string $folder name of folder (optional)
      * @return bool of courses that match the search
      */
     protected function archivecourse($obj) {

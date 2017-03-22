@@ -23,10 +23,11 @@
  */
 
 define('NO_OUTPUT_BUFFERING', true);
-header('X-Accel-Buffering: no');
 
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
+
+header('X-Accel-Buffering: no');
 
 require_login();
 admin_externalpage_setup('toolcoursearchiver');
