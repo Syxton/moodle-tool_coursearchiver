@@ -271,35 +271,8 @@ class tool_coursearchiver_processor {
                 $tracker->results($this->mode, $this->total, $this->errors, $this->notices);
                 break;
             case self::MODE_HIDEEMAIL:
-                $tracker->start();
-                if (!empty($this->data)) {
-                    // Loop over the user array.
-                    $tracker->jobsize = count($this->data);
-
-                    foreach ($this->data as $user) {
-                        $info = $this->sendemail($user);
-                        if ($info !== false) {
-                            $tracker->error = false;
-                            $this->total += $info;
-                        } else {
-                            $tracker->error = true;
-                            $this->errors[] = get_string('errorsendingemail', 'tool_coursearchiver', $user["user"]);
-                        }
-                        $tracker->jobsdone++;
-                        $tracker->output(false);
-                    }
-                } else {
-                    $tracker->jobsize = 1;
-                    $tracker->jobsdone++;
-                    $tracker->output(false);
-                    $this->errors[] = get_string('errorinsufficientdata', 'tool_coursearchiver');
-                }
-                $tracker->finish();
-                $tracker->results($this->mode, $this->total, $this->errors, $this->notices);
-                break;
             case self::MODE_ARCHIVEEMAIL:
                 $tracker->start();
-
                 if (!empty($this->data)) {
                     // Loop over the user array.
                     $tracker->jobsize = count($this->data);
