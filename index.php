@@ -27,12 +27,15 @@ define('NO_OUTPUT_BUFFERING', true);
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
+header('X-Accel-Buffering: no');
+
 require_login();
 admin_externalpage_setup('toolcoursearchiver');
 
-$error  = isset($_SESSION['error']) ? $_SESSION['error'] : optional_param('error', false, PARAM_RAW);
+global $SESSION;
+$error  = isset($SESSION->error) ? $SESSION->error : optional_param('error', false, PARAM_RAW);
 
-unset($_SESSION['error']);
+unset($SESSION->error);
 
 $mform = new tool_coursearchiver_step1_form(null);
 
@@ -57,7 +60,7 @@ if ($mform->is_submitted()) {
                 $formdata->searches["emptyonly"] = true;
             }
 
-            $_SESSION['formdata'] = serialize($formdata->searches);
+            $SESSION->formdata = serialize($formdata->searches);
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php');
             redirect($returnurl);
         } else { // Form 1 data did not come across correctly.
