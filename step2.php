@@ -32,13 +32,14 @@ header('X-Accel-Buffering: no');
 require_login();
 admin_externalpage_setup('toolcoursearchiver');
 
-$formdata   = isset($_SESSION['formdata']) ? $_SESSION['formdata'] : optional_param('formdata', false, PARAM_RAW);
-$error      = isset($_SESSION['error']) ? $_SESSION['error'] : optional_param('error', false, PARAM_RAW);
+$sessinfo = $_SESSION;
+$formdata   = isset($sessinfo['formdata']) ? $sessinfo['formdata'] : optional_param('formdata', false, PARAM_RAW);
+$error      = isset($sessinfo['error']) ? $sessinfo['error'] : optional_param('error', false, PARAM_RAW);
 $selected   = optional_param_array('course_selected', array(), PARAM_INT);
 $submitted  = optional_param('submit_button', false, PARAM_RAW);
 
-unset($_SESSION['formdata']);
-unset($_SESSION['error']);
+unset($sessinfo['formdata']);
+unset($sessinfo['error']);
 
 if (!empty($submitted)) { // FORM 2 SUBMITTED.
     // Clean selected course array.
@@ -51,37 +52,43 @@ if (!empty($submitted)) { // FORM 2 SUBMITTED.
 
     if ($submitted == get_string('back', 'tool_coursearchiver')) { // Button to start over has been pressed.
         $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
+        $_SESSION = $sessinfo;
         redirect($returnurl);
     }
 
     if (empty($courses)) { // If 0 courses are selected, show message and form again.
-        $_SESSION["formdata"] = $formdata;
-        $_SESSION["error"] = get_string('nocoursesselected', 'tool_coursearchiver');
+        $sessinfo["formdata"] = $formdata;
+        $sessinfo["error"] = get_string('nocoursesselected', 'tool_coursearchiver');
         $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php');
+        $_SESSION = $sessinfo;
         redirect($returnurl);
     }
 
     switch($submitted){
         case get_string('email', 'tool_coursearchiver'):
-            $_SESSION["formdata"] = serialize($courses);
+            $sessinfo["formdata"] = serialize($courses);
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step3.php');
+            $_SESSION = $sessinfo;
             redirect($returnurl);
             break;
         case get_string('hide', 'tool_coursearchiver'):
-            $_SESSION["mode"] = tool_coursearchiver_processor::MODE_HIDE;
-            $_SESSION["formdata"] = serialize($courses);
+            $sessinfo["mode"] = tool_coursearchiver_processor::MODE_HIDE;
+            $sessinfo["formdata"] = serialize($courses);
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step4.php');
+            $_SESSION = $sessinfo;
             redirect($returnurl);
             break;
         case get_string('archive', 'tool_coursearchiver'):
-            $_SESSION["mode"] = tool_coursearchiver_processor::MODE_ARCHIVE;
-            $_SESSION["formdata"] = serialize($courses);
+            $sessinfo["mode"] = tool_coursearchiver_processor::MODE_ARCHIVE;
+            $sessinfo["formdata"] = serialize($courses);
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step4.php');
+            $_SESSION = $sessinfo;
             redirect($returnurl);
             break;
         default:
-            $_SESSION["error"] = get_string('unknownerror', 'tool_coursearchiver');
+            $sessinfo["error"] = get_string('unknownerror', 'tool_coursearchiver');
             $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
+            $_SESSION = $sessinfo;
             redirect($returnurl);
     }
 
@@ -105,7 +112,9 @@ if (!empty($submitted)) { // FORM 2 SUBMITTED.
     $mform->display();
     echo $OUTPUT->footer();
 } else { // IN THE EVENT OF A FAILURE, JUST GO BACK TO THE BEGINNING.
-    $_SESSION["error"] = get_string('unknownerror', 'tool_coursearchiver');
+    $sessinfo["error"] = get_string('unknownerror', 'tool_coursearchiver');
     $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
+    $_SESSION = $sessinfo;
     redirect($returnurl);
 }
+$_SESSION = $sessinfo;

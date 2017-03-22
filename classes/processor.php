@@ -114,8 +114,8 @@ class tool_coursearchiver_processor {
         }
 
         // Force int to make sure === comparison work as expected.
-        $this->mode     = (int) $options['mode'];
-        $this->data     = (array) $options['data'];
+        $this->mode     = (int)$options['mode'];
+        $this->data     = (array)$options['data'];
         $this->reset();
     }
 
@@ -762,7 +762,8 @@ class tool_coursearchiver_processor {
     public function get_courselist() {
         global $DB;
 
-        $params = array(); $searchsql = "";
+        $params = array();
+        $searchsql = "";
 
         foreach ($this->data as $key => $value) {
             if (!empty($value)) {
