@@ -54,6 +54,11 @@ class tool_coursearchiver_processor {
     const MODE_ARCHIVE = 4;
 
     /**
+     * Delete courses.
+     */
+    const MODE_DELETE = 7;
+
+    /**
      * Send emails about pending course hides.
      */
     const MODE_HIDEEMAIL = 5;
@@ -108,6 +113,7 @@ class tool_coursearchiver_processor {
                                                                           self::MODE_GETEMAILS,
                                                                           self::MODE_HIDE,
                                                                           self::MODE_ARCHIVE,
+                                                                          self::MODE_DELETE,
                                                                           self::MODE_HIDEEMAIL,
                                                                           self::MODE_ARCHIVEEMAIL))) {
             throw new coding_exception('Unknown process mode');
@@ -139,7 +145,11 @@ class tool_coursearchiver_processor {
         }
 
         if ($outputtype == tool_coursearchiver_tracker::OUTPUT_HTML) {
-            if (!in_array($this->mode, array(self::MODE_HIDE, self::MODE_ARCHIVE, self::MODE_HIDEEMAIL, self::MODE_ARCHIVEEMAIL))) {
+            if (!in_array($this->mode, array(self::MODE_HIDE,
+                                             self::MODE_ARCHIVE,
+                                             self::MODE_DELETE,
+                                             self::MODE_HIDEEMAIL,
+                                             self::MODE_ARCHIVEEMAIL))) {
                 if (empty($mform)) {
                     throw new coding_exception(get_string('errornoform', 'tool_coursearchiver'));
                 } else {
@@ -256,6 +266,35 @@ class tool_coursearchiver_processor {
                         } else {
                             $tracker->error = true;
                             $this->errors[] = get_string('errorarchivingcourse', 'tool_coursearchiver', $currentcourse["course"]);
+                        }
+                        $tracker->jobsdone++;
+                        $tracker->output($currentcourse);
+                    }
+                    $tracker->finish();
+                } else {
+                    $tracker->jobsize = 1;
+                    $tracker->jobsdone++;
+                    $tracker->output(false);
+                    $this->errors[] = get_string('errorinsufficientdata', 'tool_coursearchiver');
+                }
+
+                $tracker->results($this->mode, $this->total, $this->errors, $this->notices);
+                break;
+            case self::MODE_DELETE:
+                $tracker->start();
+                $courses = $this->get_courses_and_their_owners();
+
+                if (!empty($courses)) {
+                    // Loop over the course array.
+                    $tracker->jobsize = count($courses);
+                    foreach ($courses as $currentcourse) {
+                        // Remove Course.
+                        if (delete_course($currentcourse["course"]->id, false)) {
+                            $tracker->error = false;
+                            $this->total++;
+                        } else {
+                            $tracker->error = true;
+                            $this->errors[] = get_string('errordeletingcourse', 'tool_coursearchiver', $currentcourse["course"]);
                         }
                         $tracker->jobsdone++;
                         $tracker->output($currentcourse);

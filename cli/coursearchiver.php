@@ -71,7 +71,7 @@ Options:
 -n, --idnum             Search for courses matching the Moodle course idnumber
 -c, --createdbefore     Last accessed before UNIX TIMESTAMP
 -a, --access            Last accessed before UNIX TIMESTAMP
--m, --mode              courselist,emaillist,hide,archive,hideemail,archiveemail
+-m, --mode              courselist,emaillist,hide,archive,delete,hideemail,archiveemail
 -l, --location          Folder name to store archived courses (optional)
 -e, --empty             Only return empty courses
 -v, --verbose           Maximum output from tool (optional)
@@ -92,7 +92,8 @@ $modes = array(
     'hideemail' => tool_coursearchiver_processor::MODE_HIDEEMAIL,
     'hide' => tool_coursearchiver_processor::MODE_HIDE,
     'archiveemail' => tool_coursearchiver_processor::MODE_ARCHIVEEMAIL,
-    'archive' => tool_coursearchiver_processor::MODE_ARCHIVE
+    'archive' => tool_coursearchiver_processor::MODE_ARCHIVE,
+    'delete' => tool_coursearchiver_processor::MODE_DELETE,
 );
 
 if (!isset($options['mode']) || empty($modes[$options['mode']])) {
@@ -167,6 +168,7 @@ switch ($processoroptions['mode']) {
     break;
     case tool_coursearchiver_processor::MODE_HIDE:
     case tool_coursearchiver_processor::MODE_ARCHIVE:
+    case tool_coursearchiver_processor::MODE_DELETE:
         // Show courselist and die...
         $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST,
                                                              "data" => $options));
@@ -198,6 +200,7 @@ if (!empty($question)) {
 
 switch ($processoroptions['mode']) {
     case tool_coursearchiver_processor::MODE_HIDE:
+    case tool_coursearchiver_processor::MODE_DELETE:
         $processor = new tool_coursearchiver_processor(array("mode" => $processoroptions['mode'], "data" => $courses));
         $processor->execute(tool_coursearchiver_tracker::OUTPUT_CLI);
         break;

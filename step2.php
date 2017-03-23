@@ -80,6 +80,12 @@ if (!empty($submitted)) { // FORM 2 SUBMITTED.
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step4.php');
             redirect($returnurl);
             break;
+        case get_string('delete', 'tool_coursearchiver'):
+            $SESSION->mode = tool_coursearchiver_processor::MODE_DELETE;
+            $SESSION->formdata = serialize($courses);
+            $returnurl = new moodle_url('/admin/tool/coursearchiver/step4.php');
+            redirect($returnurl);
+            break;
         default:
             $SESSION->error = get_string('unknownerror', 'tool_coursearchiver');
             $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');

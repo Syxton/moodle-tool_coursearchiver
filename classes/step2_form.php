@@ -57,6 +57,7 @@ class tool_coursearchiver_step2_form extends moodleform {
             $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('email', 'tool_coursearchiver'));
             $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('hide', 'tool_coursearchiver'));
             $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('archive', 'tool_coursearchiver'));
+            $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('delete', 'tool_coursearchiver'));
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
             $mform->closeHeaderBefore('buttonar');
         }
