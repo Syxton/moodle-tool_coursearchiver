@@ -173,17 +173,21 @@ class tool_coursearchiver_processor {
                     $tracker->jobsize = count($courses);
                     foreach ($courses as $currentcourse) {
                         $tracker->empty = $this->is_empty_course($currentcourse->id);
-                        if ($this->emptyonly && $tracker->empty || !$this->emptyonly) {
-                            $this->total++;
-                            if (!empty($currentcourse->id)) {
-                                $tracker->error = false;
-                                $courselist[] = $currentcourse->id;
-                                $tracker->output($currentcourse);
+                        if (!$this->is_opted_out($currentcourse->id)) {
+                            if ($this->emptyonly && $tracker->empty || !$this->emptyonly) {
+                                $this->total++;
+                                if (!empty($currentcourse->id)) {
+                                    $tracker->error = false;
+                                    $courselist[] = $currentcourse->id;
+                                    $tracker->output($currentcourse);
+                                } else {
+                                    $tracker->error = true;
+                                    $this->errors[] = get_string('error_nocourseid', 'tool_coursearchiver');
+                                }
+                                $tracker->jobsdone++;
                             } else {
-                                $tracker->error = true;
-                                $this->errors[] = get_string('error_nocourseid', 'tool_coursearchiver');
+                                $tracker->jobsize--;
                             }
-                            $tracker->jobsdone++;
                         } else {
                             $tracker->jobsize--;
                         }
@@ -203,17 +207,23 @@ class tool_coursearchiver_processor {
                     $unique = array();
                     // Loop over the course array.
                     foreach ($courses as $currentcourse) {
-                        $tracker->output($currentcourse, true); // Output course header.
-                        if (!empty($currentcourse["owners"])) {
-                            foreach ($currentcourse["owners"] as $owner) {
-                                $owner->course = $currentcourse["course"]->id;
-                                $tracker->output($owner);  // Output users.
-                                $unique[$owner->id] = $owner->id;
-                                $return[] = $currentcourse["course"]->id . "_" . $owner->id;
-                                $this->total++;
+                        if (!$this->is_opted_out($currentcourse["course"]->id)) {
+                            $tracker->output($currentcourse, true); // Output course header.
+                            if (!empty($currentcourse["owners"])) {
+                                foreach ($currentcourse["owners"] as $owner) {
+                                    $owner->course = $currentcourse["course"]->id;
+                                    $tracker->output($owner);  // Output users.
+                                    $unique[$owner->id] = $owner->id;
+                                    $return[] = $currentcourse["course"]->id . "_" . $owner->id;
+                                    $this->total++;
+                                }
+                            } else {
+                                $tracker->jobsize--;
                             }
+                            $tracker->jobsdone++;
+                        } else {
+                            $tracker->jobsize--;
                         }
-                        $tracker->jobsdone++;
                     }
                     $this->total = count($unique);
                     $tracker->finish();
@@ -316,10 +326,10 @@ class tool_coursearchiver_processor {
                     // Loop over the user array.
                     $tracker->jobsize = count($this->data);
                     foreach ($this->data as $user) {
-                        $info = $this->sendemail($user);
+                        $amountsent = $this->sendemail($user);
                         if ($info !== false) {
                             $tracker->error = false;
-                            $this->total += $info;
+                            $this->total += $amountsent;
                         } else {
                             $tracker->error = true;
                             $this->errors[] = get_string('errorsendingemail', 'tool_coursearchiver', $user["user"]);
@@ -628,7 +638,7 @@ class tool_coursearchiver_processor {
                 return false;
         }
 
-        $courses = $this->get_email_courses($obj, $admin);
+        $courses = $this->get_email_courses($obj);
         if (!empty($courses)) {
             $c = "";
             foreach ($courses as $coursetext) {
@@ -673,7 +683,7 @@ class tool_coursearchiver_processor {
                 $this->errors[] = get_string('errorsendingemail', 'tool_coursearchiver', $obj["user"]);
                 return false;
             }
-            return count($courses);
+            return 1;
         } else {
             return 0;
         }
@@ -748,6 +758,37 @@ class tool_coursearchiver_processor {
             return false;
         } else {
             return true;
+        }
+    }
+
+    /**
+     * Return whether the course has been opted out.
+     *
+     * @param int $courseid the course id.
+     * @return bool
+     */
+    protected function is_opted_out($courseid) {
+        global $DB;
+
+        $config = get_config('tool_coursearchiver');
+        $years = $config->optoutyearssetting;
+        if (empty($years)) {
+            $years = 2; // Fall back to 2 years.
+        }
+
+        $date = new DateTime("now", core_date::get_user_timezone_object());
+        $optouttime = $date->getTimestamp() - ($years * 31556952);
+
+        $sql = "SELECT *
+                  FROM {tool_coursearchiver_optout} c
+                 WHERE c.courseid = :courseid
+                       AND optouttime > $optouttime";
+        $params['courseid'] = $courseid;
+
+        if ($DB->get_records_sql($sql, $params)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -835,45 +876,49 @@ class tool_coursearchiver_processor {
      * Get list of courses for email.
      *
      * @param object $obj an array of courses
-     * @param object $admin is the user object for the admin user
      * @return array $courses
      */
-    public function get_email_courses($obj, $admin) {
+    public function get_email_courses($obj) {
         global $CFG;
 
         if ($this->mode == self::MODE_HIDEEMAIL) {
-            $optoutsubject = 'optouthidesubject';
-            $optoutmessage = 'optouthidemessage';
+            $optoutbutton = get_string('optoutbutton', 'tool_coursearchiver', 'hide');
         } else if ($this->mode == self::MODE_ARCHIVEEMAIL) {
-            $optoutsubject = 'optoutarchivesubject';
-            $optoutmessage = 'optoutarchivemessage';
+            $optoutbutton = get_string('optoutbutton', 'tool_coursearchiver', 'archive');
         }
 
-        // If a support email is given, let's use it.
-        $supportemail = !empty($CFG->supportemail) ? $CFG->supportemail : $admin->email;
         $courses = array();
+        $courses[] = html_writer::start_tag('table', array('style' => 'border-collapse: collapse;',
+                                                           'cellpadding' => '5'));
+        $rowcolor = "#FFF";
         foreach ($obj["courses"] as $course) {
-            $displaycourse = str_replace("\n",
-                                         '%0D%0A',
-                                         get_string($optoutmessage,
-                                                    'tool_coursearchiver',
-                                                    get_string('courseid', 'tool_coursearchiver') . ": " . $course->id . "\n" .
-                                                    get_string('coursefullname', 'tool_coursearchiver') . ": " . $course->fullname
-                                         )
-            );
+            // Create security key for each link.
+            $key = sha1($CFG->dbpass . $course->id . $obj["user"]->id);
 
             // Only add courses that are visible if mode is HIDEEMAIL.
             if ($this->mode == self::MODE_ARCHIVEEMAIL || $course->visible) {
-                $courses[] = '<div>' .
-                '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $course->id . '">' . $course->fullname . '</a>' .
-                ' (<a href="mailto:' . $supportemail .
-                '?subject=' . get_string($optoutsubject, 'tool_coursearchiver') .
-                '&body=' . $displaycourse . '">' . get_string('optout', 'tool_coursearchiver') .'</a>)' .
-                '</div>';
+                $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
+                $courses[] = html_writer::tag('tr',
+                                              html_writer::tag('td',
+                                                   html_writer::link(new moodle_url('/course/view.php',
+                                                                                    array('id' => $course->id)),
+                                                                     $course->fullname)
+                                              ) .
+                                              html_writer::tag('td', '', array('width' => '5px')) .
+                                              html_writer::tag('td',
+                                                   html_writer::link(new moodle_url('/admin/tool/coursearchiver/optout.php',
+                                                                                    array('courseid' => $course->id,
+                                                                                          'userid' => $obj["user"]->id,
+                                                                                          'key' => $key)),
+                                                                     $optoutbutton)
+                                              ),
+                                              array('style' => 'background-color:' . $rowcolor)
+                                     );
             } else { // This course is not included in the email.
                 $this->notices[] = get_string('noticecoursehidden', 'tool_coursearchiver', $course);
             }
         }
+        $courses[] = html_writer::end_tag('table');
 
         return $courses;
     }

@@ -57,6 +57,7 @@ $string['coursearchiverresult'] = 'Upload courses results';
 $string['coursedeleted'] = 'Course deleted';
 $string['coursedeletionnotallowed'] = 'Course deletion is not allowed';
 $string['coursefullname'] = 'Course fullname';
+$string['course_skipped'] = '{$a->fullname} will be skipped for the next {$a->optoutyears} year(s).  Thank you.';
 $string['courseid'] = 'Course ID';
 $string['courseidnum'] = 'Course idnumber';
 $string['courseselector'] = 'Course search results';
@@ -76,6 +77,7 @@ $string['errordeletingcourse'] = 'Course: ({$a->id}) {$a->fullname} could not be
 $string['erroremptysearch'] = 'No search criteria given.';
 $string['errorhidingcourse'] = 'Course: ({$a->id}) {$a->fullname} could not be hidden.';
 $string['errorinsufficientdata'] = 'Not enough information to perform this action';
+$string['error_key'] = 'Security key is incorrect.';
 $string['errormissingcourses'] = 'The %courses variable was missing from the email template.  This is a list of the courses.';
 $string['errormissingto'] = 'The %to variable was missing from the email template.  This is the name of the recipient.';
 $string['errornoform'] = 'Form not given.';
@@ -96,7 +98,7 @@ $string['noticecoursehidden'] = 'Course: ({$a->id}) {$a->fullname} was already h
 $string['notices_count'] = 'Notices: {$a}';
 $string['nousersfound'] = 'There are no course owners to notify';
 $string['nousersselected'] = 'To perform this action you must have at least 1 user selected.';
-$string['optout'] = 'Ask to opt out';
+$string['optoutbutton'] = 'Do not {$a} this course';
 
 $string['outaccess'] = 'Last Access';
 $string['outemail'] = 'Email';
@@ -136,7 +138,7 @@ $string['hidewarningemailsetting_help'] = 'This is the contents of an email that
 $string['hidewarningemailsettingdefault'] = '%to
 
 We would like to inform you that the following Moodle course(s) that you have taught are soon to be hidden.
-This means that students who are still enrolled in the course will no longer have access to the courses.  If you would like to opt out of this process for one of the following courses, please click the link beside the course you wish to opt out of.
+This means that students who are still enrolled in the course will no longer have access to the courses.  If you would like to opt out of this process for one of the following courses, please click the link beside the course.
 
 %courses
 
@@ -148,7 +150,7 @@ $string['archivewarningemailsetting_help'] = 'This is the contents of an email t
 $string['archivewarningemailsettingdefault'] = '%to
 
 We would like to inform you that the following Moodle course(s) that you have taught are soon to be archived.
-This means that the course will be backed up in its current state and then removed from Moodle.  If you would like to opt out of this process for one of the following courses, please click the link beside the course you wish to opt out of.
+This means that the course will be backed up in its current state and then removed from Moodle.  If you would like to opt out of this process for one of the following courses, please click the link beside the course.
 
 %courses
 
@@ -159,21 +161,7 @@ $string['archivewarningsubject'] = 'Notice: Courses will be archived soon.';
 $string['coursearchiverpath'] = 'Folder path to store archived courses';
 $string['coursearchiverpath_help'] = 'This path is relative to the Moodle $CFG->dataroot';
 $string['hidewarningsubject'] = 'Notice: Courses will be hidden soon.';
-$string['optouthidesubject'] = 'Please do not hide my course';
-$string['optouthidemessage'] = 'I would like to keep the following course from being hidden.
 
-{$a}
-
-Thank you.
-';
-
-
-$string['optoutarchivesubject'] = 'Please do not archive my course';
-$string['optoutarchivemessage'] = 'I would like to keep the following course from being archived.
-
-{$a}
-
-Thank you.
-';
-
+$string['optoutyearssetting'] = 'Course opt out persistence';
+$string['optoutyearssetting_help'] = 'How many years will the opt out apply for each course.';
 $string['messageprovider:courseowner'] = 'Notifications from the course archival/hiding tool.';

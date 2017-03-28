@@ -95,10 +95,14 @@ class tool_coursearchiver_tracker {
     public $error = false;
 
     /**
-     * @var book flag for empty courses.
+     * @var bool flag for empty courses.
      */
     public $empty = false;
 
+    /**
+     * @var bool flag for opted out courses.
+     */
+    public $optedout = false;
 
     /**
      * @var string masks for cli output columns.
@@ -502,14 +506,10 @@ class tool_coursearchiver_tracker {
 
                         if (empty($data["owners"])) {
                             $this->mform->addElement('html',
-                                                     html_writer::start_tag('table', array('style' => 'width:100%')) .
-                                                     html_writer::start_tag('tr') .
-                                                     html_writer::tag('td',
+                                                     html_writer::tag('div',
                                                         get_string('nousersfound', 'tool_coursearchiver'),
                                                         array('style' => '', 'class' => 'coursearchiver_myformerror')
-                                                     ) .
-                                                     html_writer::end_tag('tr'),
-                                                     html_writer::end_tag('table')
+                                                     )
                             );
                         }
                     } else {

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="tool/coursearchiver/db" VERSION="20141103" COMMENT="XMLDB file for Moodle tool/coursearchiver"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="tool_coursearchiver_optout" COMMENT="Table to store course optouts">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of user who opted out."/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of course to which this rule belongs."/>
+        <FIELD NAME="optouttime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time stamp of when this opt out was initiated."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" COMMENT="Index on userid"/>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" COMMENT="Index on courseid"/>
+        <INDEX NAME="optouttime" UNIQUE="false" FIELDS="optouttime" COMMENT="Index on optouttime"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

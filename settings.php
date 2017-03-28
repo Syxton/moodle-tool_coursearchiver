@@ -52,6 +52,10 @@ if ($hassiteconfig) {
                                                     $name,
                                                     $description,
                                                     $default));
+    // Automatic opt out in years.
+    $settings->add(new admin_setting_configtext('tool_coursearchiver/optoutyearssetting',
+                   get_string('optoutyearssetting', 'tool_coursearchiver'),
+                   get_string('optoutyearssetting_help', 'tool_coursearchiver'), 2, PARAM_INT));
 
     // Link to Course Archiver tool.
     $ADMIN->add('courses', new admin_externalpage('toolcoursearchiver',
