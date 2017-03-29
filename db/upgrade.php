@@ -35,7 +35,7 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2017032700) {
+    if ($oldversion < 2017032900) {
         // Define table tool_coursearchiver_optout to be created.
         $table = new xmldb_table('tool_coursearchiver_optout');
 
@@ -80,7 +80,7 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
             $dbman->create_table($table);
         }
         // Monitor savepoint reached.
-        upgrade_plugin_savepoint(true, 2017032700, 'tool', 'coursearchiver');
+        upgrade_plugin_savepoint(true, 2017032900, 'tool', 'coursearchiver');
     }
 
     return true;
