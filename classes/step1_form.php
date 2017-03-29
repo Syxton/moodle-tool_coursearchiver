@@ -43,6 +43,11 @@ class tool_coursearchiver_step1_form extends moodleform {
         $mform = $this->_form;
         $mform->addElement('header', 'searchhdr', get_string('search'));
 
+        $mform->addElement('select',
+                           'savestates',
+                           get_string('resume', 'tool_coursearchiver'),
+                           tool_coursearchiver_processor::get_saves());
+
         $mform->addElement('text', 'searches[short]', get_string('courseshortname', 'tool_coursearchiver'));
         $mform->setType('searches[short]', PARAM_TEXT);
         $mform->setDefault('searches[short]', "");
@@ -90,30 +95,31 @@ class tool_coursearchiver_step1_form extends moodleform {
         $searchstring = "";
         $timecode = "";
 
-        foreach ($data["searches"] as $value) {
-            $searchstring .= $value;
-        }
+        if (empty($data["savestates"])) {
+            foreach ($data["searches"] as $value) {
+                $searchstring .= $value;
+            }
 
-        if (!empty($data["createdbeforeenabled"])) {
-            $timecode = mktime(null, null, null, $data["createdbefore"]["month"],
-                               $data["createdbefore"]["day"], $data["createdbefore"]["year"]);
-        }
-        $searchstring .= $timecode;
+            if (!empty($data["createdbeforeenabled"])) {
+                $timecode = mktime(null, null, null, $data["createdbefore"]["month"],
+                                   $data["createdbefore"]["day"], $data["createdbefore"]["year"]);
+            }
+            $searchstring .= $timecode;
 
-        if (!empty($data["lastaccessenabled"])) {
-            $timecode = mktime(null, null, null, $data["access"]["month"],
-                               $data["access"]["day"], $data["access"]["year"]);
-        }
-        $searchstring .= $timecode;
+            if (!empty($data["lastaccessenabled"])) {
+                $timecode = mktime(null, null, null, $data["access"]["month"],
+                                   $data["access"]["day"], $data["access"]["year"]);
+            }
+            $searchstring .= $timecode;
 
-        if (!empty($data["emptyonly"])) {
-            $searchstring .= "emptyonly";
-        }
+            if (!empty($data["emptyonly"])) {
+                $searchstring .= "emptyonly";
+            }
 
-        if (empty($searchstring)) {
-            $errors['step'] = get_string('erroremptysearch', 'tool_coursearchiver');
+            if (empty($searchstring)) {
+                $errors['step'] = get_string('erroremptysearch', 'tool_coursearchiver');
+            }
         }
-
         return $errors;
     }
 }

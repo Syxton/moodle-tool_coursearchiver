@@ -32,7 +32,12 @@ $courseid   = required_param('courseid', PARAM_INT);
 $userid     = required_param('userid', PARAM_INT);
 $key        = required_param('key', PARAM_ALPHANUMEXT);
 
-global $CFG, $DB;
+$context = context_system::instance();
+$PAGE->set_url(new \moodle_url('/admin/tool/coursearchiver/optout.php'));
+$PAGE->navbar->add(get_string('coursearchiver', 'tool_coursearchiver'));
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title(get_string('coursearchiver', 'tool_coursearchiver'));
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');

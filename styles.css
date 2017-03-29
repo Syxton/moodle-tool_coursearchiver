@@ -65,3 +65,8 @@
     font-size: 3em;
     padding: 20px 0;
 }
+
+.coursearchiver_checkbox div{
+    margin: 0 !important;
+    padding-top: 5px;
+}

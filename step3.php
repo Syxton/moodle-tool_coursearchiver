@@ -36,12 +36,30 @@ global $SESSION;
 $formdata   = isset($SESSION->formdata) ? $SESSION->formdata : optional_param('formdata', false, PARAM_RAW);
 $mode       = isset($SESSION->mode) ? $SESSION->mode : optional_param('mode', false, PARAM_INT);
 $error      = isset($SESSION->error) ? $SESSION->error : optional_param('error', false, PARAM_RAW);
+$resume     = isset($SESSION->resume) ? $SESSION->resume : optional_param('resume', false, PARAM_RAW);
+$title      = optional_param('save_title', false, PARAM_TEXT);
 $selected   = optional_param_array('user_selected', array(), PARAM_RAW);
 $submitted  = optional_param('submit_button', false, PARAM_RAW);
 
 unset($SESSION->formdata);
 unset($SESSION->error);
 unset($SESSION->mode);
+unset($SESSION->resume);
+
+$PAGE->requires->js_amd_inline('
+    require(["jquery"], function($) {
+        $(".coursearchiver_selectall:button").click(function() {
+            if("'.get_string('selectall', 'tool_coursearchiver').'" === $(this).val()) {
+                 $("input:checkbox").prop("checked", true);
+                 $(".coursearchiver_selectall:button").val("'.get_string('deselectall', 'tool_coursearchiver').'");
+            }
+            else if("'.get_string('deselectall', 'tool_coursearchiver').'" === $(this).val()) {
+                 $("input:checkbox").prop("checked", false);
+                 $(".coursearchiver_selectall:button").val("'.get_string('selectall', 'tool_coursearchiver').'");
+            }
+        });
+    });
+');
 
 if (!empty($submitted)) { // FORM 3 SUBMITTED.
 
@@ -54,10 +72,19 @@ if (!empty($submitted)) { // FORM 3 SUBMITTED.
         redirect($returnurl);
     }
 
-    // Clean selected course array.
+    if ($submitted == get_string('save', 'tool_coursearchiver')) { // Save has been pressed.
+        tool_coursearchiver_processor::save_state(3, $title, $selected);
+        $SESSION->resume = true;
+        $SESSION->formdata = serialize($selected);
+        $SESSION->error = get_string('saved', 'tool_coursearchiver');
+        $returnurl = new moodle_url('/admin/tool/coursearchiver/step3.php');
+        redirect($returnurl);
+    }
+
+    // Clean selected users array.
     $users = array();
     foreach ($selected as $c) {
-        if (!empty($c)) {
+        if ($c > 0) {
             $users[] = $c;
         }
     }
@@ -106,15 +133,6 @@ if (!empty($submitted)) { // FORM 3 SUBMITTED.
     }
 
 } else if (!empty($formdata)) {  // FORM 2 SUBMITTED, SHOW FORM 3.
-    $courses = unserialize($formdata);
-
-    // Check again to make sure courses are coming across correctly.
-    if (!is_array($courses) || empty($courses)) {
-        $SESSION->error = get_string('nocoursesselected', 'tool_coursearchiver');
-        $returnurl = new moodle_url('/admin/tool/coursearchiver/step1.php');
-        redirect($returnurl);
-    }
-
     echo $OUTPUT->header();
     echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');
 
@@ -122,7 +140,19 @@ if (!empty($submitted)) { // FORM 3 SUBMITTED.
         echo $OUTPUT->container($error, 'coursearchiver_myformerror');
     }
 
-    $param = array("mode" => tool_coursearchiver_processor::MODE_GETEMAILS, "courses" => $courses);
+    $data = unserialize($formdata);
+    if (!empty($resume)) { // Resume from save point.
+        $data["resume"] = true;
+    }
+
+    // Check again to make sure courses are coming across correctly.
+    if (!is_array($data) || empty($data)) {
+        $SESSION->error = get_string('nocoursesselected', 'tool_coursearchiver');
+        $returnurl = new moodle_url('/admin/tool/coursearchiver/step1.php');
+        redirect($returnurl);
+    }
+
+    $param = array("mode" => tool_coursearchiver_processor::MODE_GETEMAILS, "courses" => $data);
     $mform = new tool_coursearchiver_step3_form(null, array("processor_data" => $param));
 
     $mform->display();

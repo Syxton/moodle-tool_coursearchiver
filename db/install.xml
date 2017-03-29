@@ -20,5 +20,21 @@
         <INDEX NAME="optouttime" UNIQUE="false" FIELDS="optouttime" COMMENT="Index on optouttime"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="tool_coursearchiver_saves" COMMENT="Table to store step results">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Name given to save."/>
+        <FIELD NAME="content" TYPE="text" LENGTH="long" SEQUENCE="false" COMMENT="Content of saved data."/>
+        <FIELD NAME="step" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Step identification."/>
+        <FIELD NAME="savedate" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time stamp of when saved."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="step" UNIQUE="false" FIELDS="step" COMMENT="Index on step"/>
+        <INDEX NAME="savedate" UNIQUE="false" FIELDS="savedate" COMMENT="Index on savedate"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>

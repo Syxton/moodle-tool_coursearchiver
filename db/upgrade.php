@@ -58,6 +58,27 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
+        // Define table tool_coursearchiver_saves to be created.
+        $table = new xmldb_table('tool_coursearchiver_saves');
+
+        // Adding fields to table tool_coursearchiver_saves.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('title', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('content', XMLDB_TYPE_TEXT, 'long', null, null, null, null);
+        $table->add_field('step', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('savedate', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table tool_coursearchiver_saves.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table tool_coursearchiver_saves.
+        $table->add_index('step', XMLDB_INDEX_NOTUNIQUE, array('step'));
+        $table->add_index('savedate', XMLDB_INDEX_NOTUNIQUE, array('savedate'));
+
+        // Conditionally launch create table for tool_coursearchiver_saves.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
         // Monitor savepoint reached.
         upgrade_plugin_savepoint(true, 2017032700, 'tool', 'coursearchiver');
     }

@@ -127,8 +127,17 @@ $string['results_delete'] = 'Deleted courses: {$a}';
 $string['results_getemails'] = 'Email addresses gathered: {$a}';
 $string['results_hide'] = 'Hidden courses: {$a}';
 $string['results_hideemail'] = 'Hidden course warning emails sent: {$a}';
+$string['resume'] = 'Resume';
+$string['resumenone'] = 'No saves found';
+$string['resumeselect'] = 'Choose a save point';
+$string['save'] = 'Create Save Point';
+$string['saved'] = 'Save point has been made';
 $string['search'] = 'Search for courses';
+$string['selectall'] = 'Select All';
+$string['deselectall'] = 'Deselect All';
 $string['status'] = 'Status';
+$string['step2savetitle'] = '{$a} course list save';
+$string['step3savetitle'] = '{$a} email list save';
 $string['unknownerror'] = 'The process has resulted in an error that requires a restart of the process.';
 
 // SETTINGS.

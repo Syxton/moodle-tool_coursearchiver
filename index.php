@@ -45,6 +45,20 @@ if ($mform->is_submitted()) {
 
         // Data to set in the form.
         if (!empty($formdata)) {
+            // Get savestate data.
+            if (!empty($formdata->savestates)) {
+                $formdata->searches["savestates"] = $formdata->savestates;
+                if ($save = tool_coursearchiver_processor::get_save($formdata->savestates)) {
+                    $SESSION->formdata = $save->content;
+                    $SESSION->resume = true;
+                    $returnurl = new moodle_url('/admin/tool/coursearchiver/step'.$save->step.'.php');
+                    redirect($returnurl);
+                } else {
+                    $SESSION->error = get_string('unknownerror', 'tool_coursearchiver');
+                    $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
+                    redirect($returnurl);
+                }
+            }
 
             // Get search criteria from the first form to pass it onto the second.
             if (!empty($formdata->createdbeforeenabled)) {

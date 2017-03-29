@@ -59,6 +59,14 @@ class tool_coursearchiver_step3_form extends moodleform {
             $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('archiveemail', 'tool_coursearchiver'));
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
             $mform->closeHeaderBefore('buttonar');
+
+            $savearray = array();
+            $savearray[] = &$mform->createElement('text', 'save_title');
+            $savearray[] = &$mform->createElement('submit', 'submit_button', get_string('save', 'tool_coursearchiver'));
+            $mform->addGroup($savearray, 'savear', '', array(' '), false);
+            $mform->closeHeaderBefore('savear');
+            $mform->setType('save_title', PARAM_TEXT);
+            $mform->setDefault('save_title', get_string('step3savetitle', 'tool_coursearchiver', date('l jS \of F Y h:i:s A')));
         }
 
         $this->set_data($data);

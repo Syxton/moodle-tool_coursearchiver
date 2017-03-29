@@ -290,6 +290,10 @@ class tool_coursearchiver_tracker {
                                     display: inline-block;
                                 }
                             </style>';
+                    $this->mform->addElement('button',
+                                             'toggle',
+                                             get_string('selectall', 'tool_coursearchiver'),
+                                             array('class' => 'coursearchiver_selectall'));
                     $this->mform->addElement('html', $style .
                                                      html_writer::start_tag('table', array('style' => 'width:100%')) .
                                                          html_writer::start_tag('tr', array('style' => 'text-align:left;')) .
@@ -332,6 +336,10 @@ class tool_coursearchiver_tracker {
                                     padding: 10px;
                                 }
                             </style>';
+                    $this->mform->addElement('button',
+                                             'toggle',
+                                             get_string('selectall', 'tool_coursearchiver'),
+                                             array('class' => 'coursearchiver_selectall'));
                     $this->mform->addElement('html', $style .
                                                      html_writer::start_tag('table', array('style' => 'width:100%')) .
                                                      html_writer::start_tag('tr', array('style' => 'text-align:left;')) .
@@ -447,17 +455,25 @@ class tool_coursearchiver_tracker {
                                              html_writer::start_tag('table', array('style' => 'width:100%')) .
                                              html_writer::start_tag('tr') .
                                              html_writer::start_tag('td',
-                                                    array('style' => 'width:10%;text-align:center;')
+                                                    array('style' => 'width:10%;text-align:center;',
+                                                          'class' => 'coursearchiver_checkbox')
                                              )
                     );
+
                     $this->mform->addElement('advcheckbox',
-                                             'course_selected[]',
+                                             'course_selected['.$data->id.']',
                                              '',
                                              null,
-                                             array('group' => 1),
-                                             array(0, $data->id)
+                                             array(),
+                                             array(-1 * abs($data->id), $data->id)
                     );
-                    $this->mform->setDefault('course_selected[]', 0);
+
+                    if (!empty($data->selected)) {
+                        $this->mform->setDefault('course_selected['.$data->id.']', true);
+                    } else {
+                        $this->mform->setDefault('course_selected['.$data->id.']', 0);
+                    }
+
                     $hiddenclass = empty($data->visible) ? 'coursearchiver_alreadyhidden' : '';
                     $date = get_string('never', 'tool_coursearchiver');
                     if (!empty($data->timeaccess)) {
@@ -515,7 +531,8 @@ class tool_coursearchiver_tracker {
                     } else {
                         $this->mform->addElement('html',
                                                  html_writer::start_tag('table',
-                                                    array('style' => 'width:100%')
+                                                    array('style' => 'width:100%',
+                                                          'class' => 'coursearchiver_checkbox')
                                                  ) .
                                                  html_writer::start_tag('tr') .
                                                  html_writer::start_tag('td',
@@ -523,12 +540,18 @@ class tool_coursearchiver_tracker {
                                                  )
                         );
                         $this->mform->addElement('advcheckbox',
-                                                 'user_selected[]',
+                                                 'user_selected['.$data->course . "_" . $data->id.']',
                                                  '',
                                                  null,
-                                                 array('group' => 1),
-                                                 array(0, $data->course . "_" . $data->id)
+                                                 array(),
+                                                 array("x" . $data->course . "_" . $data->id, $data->course . "_" . $data->id)
                         );
+
+                        if (!empty($data->selected)) {
+                            $this->mform->setDefault('user_selected['.$data->course . "_" . $data->id.']', true);
+                        } else {
+                            $this->mform->setDefault('user_selected['.$data->course . "_" . $data->id.']', 0);
+                        }
                         $this->mform->setDefault('user_selected[]', 1);
                         $this->mform->addElement('html',
                                                  html_writer::end_tag('td') .
@@ -576,7 +599,10 @@ class tool_coursearchiver_tracker {
             switch ($this->mode) {
                 case tool_coursearchiver_processor::MODE_COURSELIST:
                     if ($this->jobsdone > 1) {
-                        $this->form->add_checkbox_controller(1);
+                        $this->mform->addElement('button',
+                                                 'toggle',
+                                                 get_string('selectall', 'tool_coursearchiver'),
+                                                 array('class' => 'coursearchiver_selectall'));
                     } else if (empty($this->jobsize)) {
                         $this->mform->addElement('html',
                                                  html_writer::start_tag('table', array('style' => 'width:100%')) .
@@ -592,7 +618,10 @@ class tool_coursearchiver_tracker {
                     break;
                 case tool_coursearchiver_processor::MODE_GETEMAILS:
                     if ($this->jobsdone > 1) {
-                        $this->form->add_checkbox_controller(1);
+                        $this->mform->addElement('button',
+                                                 'toggle',
+                                                 get_string('selectall', 'tool_coursearchiver'),
+                                                 array('class' => 'coursearchiver_selectall'));
                     } else if (empty($this->jobsize)) {
                         $this->mform->addElement('html',
                                                  html_writer::start_tag('table', array('style' => 'width:100%')) .

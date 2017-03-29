@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
  * Processor class.
  *
  * @package    tool_coursearchiver
- * @copyright  2013 Frédéric Massart
+ * @copyright  2015 Matthew Davidson
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_coursearchiver_processor {
@@ -166,7 +166,12 @@ class tool_coursearchiver_processor {
         switch ($this->mode) {
             case self::MODE_COURSELIST:
                 $tracker->start();
-                $courses = $this->get_courselist();
+                if (!empty($this->data["resume"])) {
+                    $courses = $this->recreate_courselist($this->data);
+                } else {
+                    $courses = $this->get_courselist();
+                }
+
                 $courselist = array();
                 if (!empty($courses)) {
                     // Loop over the course array.
@@ -199,7 +204,11 @@ class tool_coursearchiver_processor {
                 break;
             case self::MODE_GETEMAILS:
                 $tracker->start();
-                $courses = $this->get_courses_and_their_owners();
+                if (!empty($this->data["resume"])) {
+                    $courses = $this->recreate_courseowners($this->data);
+                } else {
+                    $courses = $this->get_courses_and_their_owners();
+                }
 
                 if (!empty($courses)) {
                     $tracker->jobsize = count($courses);
@@ -326,8 +335,7 @@ class tool_coursearchiver_processor {
                     // Loop over the user array.
                     $tracker->jobsize = count($this->data);
                     foreach ($this->data as $user) {
-                        $amountsent = $this->sendemail($user);
-                        if ($info !== false) {
+                        if ($amountsent = $this->sendemail($user)) {
                             $tracker->error = false;
                             $this->total += $amountsent;
                         } else {
@@ -382,6 +390,50 @@ class tool_coursearchiver_processor {
         }
 
         return $owners;
+    }
+
+    /**
+     * Return an each course and the teachers in them from save.
+     *
+     * @param object $data course object
+     * @return array of courses and array of owners attached to it
+     */
+    protected function recreate_courseowners($data) {
+        global $DB, $SITE;
+        $owners = array();
+
+        foreach ($data as $key => $value) {
+            if ($key !== 'resume') {
+                $d = explode("_", ltrim($value, 'x')); // Remove 'x' from unselected values.
+
+                if ($d[0] !== 0 AND $d[0] !== $SITE->id) {
+                    if (isset($owners[$d[0]])) { // Course exists in array.
+                        $owners[$d[0]][$d[1]]["userid"] = $d[1];
+                    } else {
+                        $owners[$d[0]] = array();
+                        $owners[$d[0]][$d[1]]["userid"] = $d[1];
+                    }
+
+                    if (substr($value, 0, 1) !== 'x') { // This course/user was not selected.
+                        $owners[$d[0]][$d[1]]["selected"] = true;
+                    } else {
+                        $owners[$d[0]][$d[1]]["selected"] = false;
+                    }
+                }
+            }
+        }
+
+        $return = array();
+        foreach ($owners as $key => $value) {
+            $return[$key] = array('course' => get_course($key),
+                                  'owners' => array());
+            foreach ($value as $users) {
+                $record = $DB->get_record('user', array('id' => $users["userid"]));
+                $record->selected = $users["selected"];
+                $return[$key]["owners"][$users["userid"]] = $record;
+            }
+        }
+        return $return;
     }
 
     /**
@@ -793,6 +845,70 @@ class tool_coursearchiver_processor {
     }
 
     /**
+     * Saves the archival process.
+     *
+     * @param int $stepid the step number.
+     * @param string $title save state title.
+     * @param array $data the form data to save.
+     */
+    public static function save_state($stepid, $title, $data) {
+        global $DB;
+
+        $date = new DateTime("now", core_date::get_user_timezone_object());
+
+        $record = new stdClass();
+        $record->title      = $title;
+        $record->content    = serialize($data);
+        $record->step       = $stepid;
+        $record->savedate   = $date->getTimestamp();
+        if ($DB->insert_record('tool_coursearchiver_saves', $record)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Resume progress from savestate.
+     *
+     * @param int $id the save id.
+     */
+    public static function get_save($id) {
+        global $DB;
+
+        if ($result = $DB->get_record('tool_coursearchiver_saves', array('id' => $id))) {
+            return $result;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Retreive last 10 savestates.
+     *
+     * @return array Returns the last 10 savestates.
+     */
+    public static function get_saves() {
+        global $DB;
+
+        if ($result = $DB->get_records_select_menu('tool_coursearchiver_saves',
+                                                   '', array(), 'savedate', 'id, title')) {
+            $counter = 0;
+            $saves = array("0" => get_string('resumeselect', 'tool_coursearchiver'));
+            foreach ($result as $key => $value) {
+                $saves[$key] = $value;
+                $counter++;
+                if ($counter >= 10) {
+                    break;
+                }
+            }
+            return $saves;
+        } else {
+            return array(get_string('resumenone', 'tool_coursearchiver'));
+        }
+    }
+
+    /**
      * Return whether the course exists or not.
      *
      * @param int $courseid the course id to use to check if the course exists.
@@ -871,6 +987,43 @@ class tool_coursearchiver_processor {
         return $return;
     }
 
+    /**
+     * Recreates list of courses from restorepoint data.
+     *
+     * @param array $data the saved formdata.
+     * @return object
+     */
+    public function recreate_courselist($data) {
+        global $DB, $SITE;
+
+        if (empty($data)) {
+            return false;
+        }
+
+        foreach ($data as $key => $value) {
+            if ($key !== 'resume') {
+                if ($value !== 0 AND $value !== $SITE->id) {
+                    $courses[abs($value)]["id"] = abs($value);
+                    if (empty($courses[abs($value)]["selected"])) {
+                        $courses[abs($value)]["selected"] = false;
+                    }
+                }
+
+                if ($value > 0) {
+                    $courses[abs($value)]["selected"] = true;
+                }
+            }
+        }
+
+        $return = array();
+        foreach ($courses as $c) {
+            $course = get_course($c["id"]);
+            $course->selected = $c["selected"];
+            $return[] = $course;
+        }
+
+        return $return;
+    }
 
     /**
      * Get list of courses for email.
