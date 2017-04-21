@@ -98,7 +98,8 @@ $string['noticecoursehidden'] = 'Course: ({$a->id}) {$a->fullname} was already h
 $string['notices_count'] = 'Notices: {$a}';
 $string['nousersfound'] = 'There are no course owners to notify';
 $string['nousersselected'] = 'To perform this action you must have at least 1 user selected.';
-$string['optoutbutton'] = 'Do not {$a} this course';
+$string['optoutarchive'] = 'Do not archive this course';
+$string['optouthide'] = 'Do not hide this course';
 
 $string['outaccess'] = 'Last Access';
 $string['outemail'] = 'Email';

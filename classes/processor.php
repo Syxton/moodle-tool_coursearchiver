@@ -1035,9 +1035,9 @@ class tool_coursearchiver_processor {
         global $CFG;
 
         if ($this->mode == self::MODE_HIDEEMAIL) {
-            $optoutbutton = get_string('optoutbutton', 'tool_coursearchiver', 'hide');
+            $optoutbutton = get_string('optouthide', 'tool_coursearchiver');
         } else if ($this->mode == self::MODE_ARCHIVEEMAIL) {
-            $optoutbutton = get_string('optoutbutton', 'tool_coursearchiver', 'archive');
+            $optoutbutton = get_string('optoutarchive', 'tool_coursearchiver');
         }
 
         $courses = array();
