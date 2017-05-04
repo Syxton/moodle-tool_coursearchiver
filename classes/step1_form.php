@@ -65,6 +65,11 @@ class tool_coursearchiver_step1_form extends moodleform {
         $mform->addRule('searches[id]', null, 'numeric', null, 'client');
         $mform->setDefault('searches[id]', "");
 
+        $displaylist = coursecat::make_categories_list('moodle/course:create');
+        array_unshift($displaylist, get_string('anycategory', 'tool_coursearchiver'));
+        $mform->addElement('select', 'searches[catid]', get_string('category', 'tool_coursearchiver'), $displaylist);
+        $mform->setDefault('searches[catid]', "");
+
         $createdbefore = array();
         $createdbefore[] =& $mform->createElement('date_selector', 'createdbefore');
         $createdbefore[] =& $mform->createElement('checkbox', 'createdbeforeenabled', '', get_string('enable'));

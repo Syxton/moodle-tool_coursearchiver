@@ -25,12 +25,14 @@
 $string['pluginname'] = 'Course Archiver';
 
 $string['access'] = 'Last accessed before';
+$string['anycategory'] = 'Any Category';
 $string['archive'] = 'Archive Courses';
 $string['archiveemail'] = 'Send "Course to be Archived" Emails';
 $string['archivelocation'] = 'Course archive subdirectory';
 $string['back'] = 'Start Over';
 
 $string['cannotdeletecoursenotexist'] = 'Cannot delete a course that does not exist';
+$string['category'] = 'Category';
 $string['cli_cannot_continue'] = "\nSTOPPED: Not enough data to continue.\n";
 $string['cli_question_archive'] = 'Archive and delete these {$a} courses?';
 $string['cli_question_archiveemail'] = 'Send these {$a} users a "Course to be archived" email?';

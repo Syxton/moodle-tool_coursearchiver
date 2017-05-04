@@ -35,6 +35,7 @@ list($options, $unrecognized) = cli_get_params(array(
     'full' => false,
     'id' => false,
     'idnum' => false,
+    'catid' => false,
     'help' => false,
     'createdbefore' => false,
     'access' => false,
@@ -49,7 +50,8 @@ array(
     'i' => 'id',
     'n' => 'idnum',
     'h' => 'help',
-    'c' => 'createdbefore',
+    'c' => 'catid',
+    'b' => 'createdbefore',
     'a' => 'access',
     'm' => 'mode',
     'l' => 'location',
@@ -69,7 +71,8 @@ Options:
 -f, --full              Search for courses matching the Moodle course fullname
 -i, --id                Search for courses matching the Moodle course id
 -n, --idnum             Search for courses matching the Moodle course idnumber
--c, --createdbefore     Last accessed before UNIX TIMESTAMP
+-c, --catid             Search for courses matching the Moodle category id
+-b, --createdbefore     Course created before UNIX TIMESTAMP
 -a, --access            Last accessed before UNIX TIMESTAMP
 -m, --mode              courselist,emaillist,hide,archive,delete,hideemail,archiveemail
 -l, --location          Folder name to store archived courses (optional)

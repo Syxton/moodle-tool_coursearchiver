@@ -98,6 +98,7 @@ class tool_coursearchiver_processor {
         "short" => "shortname",
         "full" => "fullname",
         "idnum" => "idnumber",
+        "catid" => "category",
         "createdbefore" => "timecreated",
         "access" => "timeaccess",
         "emptyonly" => "emptyonly");
@@ -938,7 +939,7 @@ class tool_coursearchiver_processor {
             if (!empty($value)) {
                 if (!empty($this->searchcriteria[$key])) {
                     $truekey = $this->searchcriteria[$key];
-                    if ($truekey == "id") {
+                    if ($truekey == "id" || $truekey == "catid") {
                         $params[$truekey] = $value;
                         $searchsql .= " AND c.$truekey = :$truekey";
                     } else if ($truekey == "timecreated") {
@@ -963,7 +964,7 @@ class tool_coursearchiver_processor {
             }
         }
 
-        $sql = "SELECT c.id, c.fullname, c.shortname, c.idnumber,
+        $sql = "SELECT c.id, c.fullname, c.category, c.shortname, c.idnumber,
                        c.visible, a.timeaccess
                   FROM {course} c
              LEFT JOIN (
