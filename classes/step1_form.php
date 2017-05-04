@@ -64,6 +64,11 @@ class tool_coursearchiver_step1_form extends moodleform {
         $mform->setType('searches[id]', PARAM_TEXT);
         $mform->addRule('searches[id]', null, 'numeric', null, 'client');
         $mform->setDefault('searches[id]', "");
+        
+        $mform->addElement('text', 'searches[category]', get_string('category', 'tool_coursearchiver'));
+        $mform->setType('searches[category]', PARAM_TEXT);
+        $mform->addRule('searches[category]', null, 'numeric', null, 'client');
+        $mform->setDefault('searches[category]', "");
 
         $displaylist = coursecat::make_categories_list('moodle/course:create');
         array_unshift($displaylist, get_string('anycategory', 'tool_coursearchiver'));
