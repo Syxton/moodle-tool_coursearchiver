@@ -30,6 +30,7 @@ $string['archiveemail'] = 'Send "Course to be Archived" Emails';
 $string['archivelocation'] = 'Course archive subdirectory';
 $string['back'] = 'Start Over';
 
+$string['category'] = 'Category ID';
 $string['cannotdeletecoursenotexist'] = 'Cannot delete a course that does not exist';
 $string['cli_cannot_continue'] = "\nSTOPPED: Not enough data to continue.\n";
 $string['cli_question_archive'] = 'Archive and delete these {$a} courses?';
