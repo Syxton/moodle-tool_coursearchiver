@@ -98,6 +98,7 @@ class tool_coursearchiver_processor {
         "short" => "shortname",
         "full" => "fullname",
         "idnum" => "idnumber",
+        "category" => "category",
         "createdbefore" => "timecreated",
         "access" => "timeaccess",
         "emptyonly" => "emptyonly");
@@ -963,7 +964,7 @@ class tool_coursearchiver_processor {
             }
         }
 
-        $sql = "SELECT c.id, c.fullname, c.shortname, c.idnumber,
+        $sql = "SELECT c.id, c.category, c.fullname, c.shortname, c.idnumber,
                        c.visible, a.timeaccess
                   FROM {course} c
              LEFT JOIN (
