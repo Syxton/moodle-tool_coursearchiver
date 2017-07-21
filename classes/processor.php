@@ -939,7 +939,7 @@ class tool_coursearchiver_processor {
             if (!empty($value)) {
                 if (!empty($this->searchcriteria[$key])) {
                     $truekey = $this->searchcriteria[$key];
-                    if ($truekey == "id" || $truekey == "catid") {
+                    if ($truekey == "id" || $truekey == "category") {
                         $params[$truekey] = $value;
                         $searchsql .= " AND c.$truekey = :$truekey";
                     } else if ($truekey == "timecreated") {
