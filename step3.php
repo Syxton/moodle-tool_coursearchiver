@@ -46,23 +46,7 @@ unset($SESSION->error);
 unset($SESSION->mode);
 unset($SESSION->resume);
 
-$PAGE->requires->js_amd_inline('
-    require(["jquery"], function($) {
-        $(".coursearchiver_selectall #id_toggle").click(function() {
-            var text = $(this).val().length > 0 ? $(this).val() : $(this).text().trim();
-            if("'.get_string('selectall', 'tool_coursearchiver').'" === text) {
-                 $("input:checkbox").prop("checked", true);
-                 $(".coursearchiver_selectall #id_toggle").val("'.get_string('deselectall', 'tool_coursearchiver').'");
-                 $(".coursearchiver_selectall #id_toggle").text("'.get_string('deselectall', 'tool_coursearchiver').'");
-            }
-            else if("'.get_string('deselectall', 'tool_coursearchiver').'" === text) {
-                 $("input:checkbox").prop("checked", false);
-                 $(".coursearchiver_selectall #id_toggle").val("'.get_string('selectall', 'tool_coursearchiver').'");
-                 $(".coursearchiver_selectall #id_toggle").text("'.get_string('selectall', 'tool_coursearchiver').'");
-            }
-        });
-    });
-');
+tool_coursearchiver_processor::select_deselect_javascript();
 
 if (!empty($submitted)) { // FORM 3 SUBMITTED.
 
