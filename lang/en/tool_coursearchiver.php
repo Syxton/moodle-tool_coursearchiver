@@ -64,6 +64,7 @@ $string['courseid'] = 'Course ID';
 $string['courseidnum'] = 'Course idnumber';
 $string['courseselector'] = 'Course search results';
 $string['courseshortname'] = 'Course shortname';
+$string['courseteacher'] = 'Teacher username/email';
 $string['createdbefore'] = 'Created before';
 $string['delete'] = 'Delete Courses';
 $string['email'] = 'Send Email';

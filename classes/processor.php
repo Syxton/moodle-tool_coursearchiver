@@ -98,6 +98,7 @@ class tool_coursearchiver_processor {
         "short" => "shortname",
         "full" => "fullname",
         "idnum" => "idnumber",
+        "teacher" => "teacher",
         "catid" => "category",
         "createdbefore" => "timecreated",
         "access" => "timeaccess",
@@ -939,7 +940,25 @@ class tool_coursearchiver_processor {
             if (!empty($value)) {
                 if (!empty($this->searchcriteria[$key])) {
                     $truekey = $this->searchcriteria[$key];
-                    if ($truekey == "id" || $truekey == "category") {
+                    if ($truekey == "teacher") {
+                        $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
+                        $params["roleid"] = $role->id;
+                        $params["username"] = '%' . $DB->sql_like_escape("$value") . '%';
+                        $params["email"] = '%' . $DB->sql_like_escape("$value") . '%';
+                        $searchsql .= 'AND c.id IN (SELECT t.instanceid
+                                                  FROM {context} t
+                                                 WHERE t.contextlevel = 50
+                                                   AND t.id IN (SELECT tc.contextid
+                                                                  FROM {role_assignments} tc
+                                                                 WHERE tc.roleid = :roleid
+                                                                   AND tc.userid IN (SELECT tu.id
+                                                                                       FROM {user} tu
+                                                                                      WHERE ' . $DB->sql_like("tu.username", ":username", false, false) . '
+                                                                                         OR ' . $DB->sql_like("tu.email", ":email", false, false) . '
+                                                                                    )
+                                                               )
+                                               )';
+                    } else if ($truekey == "id" || $truekey == "category") {
                         $params[$truekey] = $value;
                         $searchsql .= " AND c.$truekey = :$truekey";
                     } else if ($truekey == "timecreated") {

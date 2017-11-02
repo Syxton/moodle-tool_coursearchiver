@@ -35,6 +35,7 @@ list($options, $unrecognized) = cli_get_params(array(
     'full' => false,
     'id' => false,
     'idnum' => false,
+    'teacher' => false,
     'catid' => false,
     'help' => false,
     'createdbefore' => false,
@@ -50,6 +51,7 @@ array(
     'i' => 'id',
     'n' => 'idnum',
     'h' => 'help',
+    't' => 'teacher',
     'c' => 'catid',
     'b' => 'createdbefore',
     'a' => 'access',
@@ -72,6 +74,7 @@ Options:
 -i, --id                Search for courses matching the Moodle course id
 -n, --idnum             Search for courses matching the Moodle course idnumber
 -c, --catid             Search for courses matching the Moodle category id
+-t, --teacher           Search for courses that have teacher with matching username or email
 -b, --createdbefore     Course created before UNIX TIMESTAMP
 -a, --access            Last accessed before UNIX TIMESTAMP
 -m, --mode              courselist,emaillist,hide,archive,delete,hideemail,archiveemail
