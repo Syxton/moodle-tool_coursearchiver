@@ -825,13 +825,14 @@ class tool_coursearchiver_processor {
         global $DB;
 
         $config = get_config('tool_coursearchiver');
-        $years = $config->optoutyearssetting;
-        if (empty($years)) {
-            $years = 2; // Fall back to 2 years.
+        $months = $config->optoutmonthssetting;
+        if (empty($months)) {
+            $months = 24; // Fall back to 24 months.
         }
 
         $date = new DateTime("now", core_date::get_user_timezone_object());
-        $optouttime = $date->getTimestamp() - ($years * 31556952);
+        $date->modify("-$months months");
+        $optouttime = $date->getTimestamp();
 
         $sql = "SELECT *
                   FROM {tool_coursearchiver_optout} c

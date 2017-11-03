@@ -81,6 +81,18 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
         }
         // Monitor savepoint reached.
         upgrade_plugin_savepoint(true, 2017032900, 'tool', 'coursearchiver');
+    } else if ($oldversion < 2017110300) {
+        $sql = "UPDATE {config_plugins}
+                   SET name='?', value=(value * 12)
+                 WHERE plugin='?' AND name='?'";
+
+        $params = array("optoutmonthssetting",
+                        "tool_coursearchiver",
+                        "optoutyearssetting");
+        $DB->execute($sql, $params);
+
+        // Monitor savepoint reached.
+        upgrade_plugin_savepoint(true, 2017110300, 'tool', 'coursearchiver');
     }
 
     return true;

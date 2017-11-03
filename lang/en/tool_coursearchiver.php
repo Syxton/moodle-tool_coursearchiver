@@ -175,6 +175,6 @@ $string['coursearchiverpath'] = 'Folder path to store archived courses';
 $string['coursearchiverpath_help'] = 'This path is relative to the Moodle $CFG->dataroot';
 $string['hidewarningsubject'] = 'Notice: Courses will be hidden soon.';
 
-$string['optoutyearssetting'] = 'Course opt out persistence';
-$string['optoutyearssetting_help'] = 'How many years will the opt out apply for each course.';
+$string['optoutmonthssetting'] = 'Course opt out persistence';
+$string['optoutmonthssetting_help'] = 'How many months will the opt out apply for each course.';
 $string['messageprovider:courseowner'] = 'Notifications from the course archival/hiding tool.';
