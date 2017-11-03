@@ -41,6 +41,8 @@ class tool_coursearchiver_step1_form extends moodleform {
      */
     public function definition () {
         $mform = $this->_form;
+        $this->add_action_buttons(false, get_string('optoutlist', 'tool_coursearchiver'));
+
         $mform->addElement('header', 'searchhdr', get_string('search'));
 
         $mform->addElement('select',

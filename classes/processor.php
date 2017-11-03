@@ -1122,4 +1122,91 @@ class tool_coursearchiver_processor {
             });
         ');
     }
+
+    /**
+     * Print opt out list.
+     *
+     * @return string
+     */
+    public function get_optoutlist() {
+        global $CFG, $DB, $SITE;
+
+        $sql = "SELECT *
+                  FROM {tool_coursearchiver_optout}
+                 ORDER BY optouttime";
+        $optouts = $DB->get_records_sql($sql);
+
+        $date = new DateTime("now", core_date::get_user_timezone_object());
+        $now = $date->getTimestamp();
+
+        $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
+        $courses .= html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'),
+                                                     get_string('back', 'tool_coursearchiver'));
+        $courses .= html_writer::start_tag('table', array('style' => 'border-collapse: collapse;width: 100%;',
+                                                          'cellpadding' => '5'));
+        $courses .= html_writer::tag('tr',
+                                     html_writer::tag('th',
+                                                      get_string('course')) .
+                                     html_writer::tag('th',
+                                                      get_string('optouttime', 'tool_coursearchiver')) .
+                                     html_writer::tag('th',
+                                                      get_string('optoutby', 'tool_coursearchiver')) .
+                                     html_writer::tag('th',
+                                                      get_string('optin', 'tool_coursearchiver'),
+                                                      array('width' => '100px')),
+                                     array('style' => 'background-color:' . $rowcolor)
+                                 );
+        if ($optouts) {
+            foreach ($optouts as $optout) {
+                $user = $DB->get_record('user', array('id' => $optout->userid));
+                $course = get_course($optout->courseid);
+
+                // Create security key for each link.
+                $key = sha1($CFG->dbpass . $course->id . $optout->userid);
+
+                $config = get_config('tool_coursearchiver');
+                if (empty($course->optoutmonthssetting)) {
+                    $course->optoutmonthssetting = 24; // Fall back to 24 months.
+                }
+
+                $timesince = $now - $optout->optouttime;
+                $fulloptout = $config->optoutmonthssetting * 2628000;
+
+                $ago = floor(($fulloptout - $timesince) / 86400); // Days left of opt out.
+
+                $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
+                $courses .= html_writer::tag('tr',
+                                              html_writer::tag('td',
+                                                   html_writer::link(new moodle_url('/course/view.php',
+                                                                                    array('id' => $course->id)),
+                                                                     $course->fullname,
+                                                                     array('target' => '_blank'))
+                                              ) .
+                                              html_writer::tag('td', get_string('optoutleft', 'tool_coursearchiver', $ago)) .
+                                              html_writer::tag('td', $user->firstname . ' ' . $user->lastname) .
+                                              html_writer::tag('td',
+                                                   html_writer::link(new moodle_url('/admin/tool/coursearchiver/optin.php',
+                                                                                    array('courseid' => $course->id,
+                                                                                          'userid' => $optout->userid,
+                                                                                          'key' => $key)),
+                                                                     get_string('optinbutton', 'tool_coursearchiver'),
+                                                                     array('target' => '_blank'))
+                                              ),
+                                              array('style' => 'background-color:' . $rowcolor)
+                                     );
+            }
+        } else {
+                $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
+                $courses .= html_writer::tag('tr',
+                                              html_writer::tag('td',
+                                                   "None Found",
+                                                   array('colspan' => 4, 'align' => 'center',
+                                                         'style' => 'background-color:' . $rowcolor)
+                                              )
+                                     );
+        }
+        $courses .= html_writer::end_tag('table');
+
+        return $courses;
+    }
 }

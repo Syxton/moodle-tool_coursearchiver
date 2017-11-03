@@ -34,6 +34,15 @@ admin_externalpage_setup('toolcoursearchiver');
 
 global $SESSION;
 $error  = isset($SESSION->error) ? $SESSION->error : optional_param('error', false, PARAM_RAW);
+$submitted  = optional_param('submitbutton', false, PARAM_RAW);
+
+// View optouts list button.
+if (!empty($submitted)) {
+    if ($submitted == get_string('viewoptouts', 'tool_coursearchiver')) {
+        $returnurl = new moodle_url('/admin/tool/coursearchiver/optoutlist.php');
+        redirect($returnurl);
+    }
+}
 
 unset($SESSION->error);
 
