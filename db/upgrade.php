@@ -83,7 +83,7 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2017032900, 'tool', 'coursearchiver');
     } else if ($oldversion < 2017110300) {
         $sql = "UPDATE {config_plugins}
-                   SET name=?, value=(value * 12)
+                   SET name=?, value=(".$DB->sql_cast_char2int('value')." * 12)
                  WHERE plugin=? AND name=?";
 
         $params = array("optoutmonthssetting",
