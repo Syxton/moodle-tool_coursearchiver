@@ -38,7 +38,7 @@ $submitted  = optional_param('submitbutton', false, PARAM_RAW);
 
 // View optouts list button.
 if (!empty($submitted)) {
-    if ($submitted == get_string('viewoptouts', 'tool_coursearchiver')) {
+    if ($submitted == get_string('optoutlist', 'tool_coursearchiver')) {
         $returnurl = new moodle_url('/admin/tool/coursearchiver/optoutlist.php');
         redirect($returnurl);
     }

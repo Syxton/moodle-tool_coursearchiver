@@ -1141,7 +1141,7 @@ class tool_coursearchiver_processor {
 
         $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
         $courses .= html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'),
-                                                     get_string('back', 'tool_coursearchiver'));
+                                                     get_string('back'));
         $courses .= html_writer::start_tag('table', array('style' => 'border-collapse: collapse;width: 100%;',
                                                           'cellpadding' => '5'));
         $courses .= html_writer::tag('tr',
@@ -1152,7 +1152,7 @@ class tool_coursearchiver_processor {
                                      html_writer::tag('th',
                                                       get_string('optoutby', 'tool_coursearchiver')) .
                                      html_writer::tag('th',
-                                                      get_string('optin', 'tool_coursearchiver'),
+                                                      get_string('actions'),
                                                       array('width' => '100px')),
                                      array('style' => 'background-color:' . $rowcolor)
                                  );
@@ -1182,16 +1182,21 @@ class tool_coursearchiver_processor {
                                                                      $course->fullname,
                                                                      array('target' => '_blank'))
                                               ) .
-                                              html_writer::tag('td', get_string('optoutleft', 'tool_coursearchiver', $ago)) .
-                                              html_writer::tag('td', $user->firstname . ' ' . $user->lastname) .
+                                              html_writer::tag('td',
+                                                               get_string('optoutleft', 'tool_coursearchiver', $ago),
+                                                               array('align' => 'center')) .
+                                              html_writer::tag('td',
+                                                               $user->firstname . ' ' . $user->lastname,
+                                                               array('align' => 'center')) .
                                               html_writer::tag('td',
                                                    html_writer::link(new moodle_url('/admin/tool/coursearchiver/optin.php',
                                                                                     array('courseid' => $course->id,
                                                                                           'userid' => $optout->userid,
                                                                                           'key' => $key)),
-                                                                     get_string('optinbutton', 'tool_coursearchiver'),
-                                                                     array('target' => '_blank'))
-                                              ),
+                                                                     get_string('remove'),
+                                                                     array('target' => '_blank',
+                                                                           'onclick' => "this.parentElement.parentElement.style.display='none'")),
+                                                               array('align' => 'center')),
                                               array('style' => 'background-color:' . $rowcolor)
                                      );
             }
