@@ -946,19 +946,20 @@ class tool_coursearchiver_processor {
                         $params["roleid"] = $role->id;
                         $params["username"] = '%' . $DB->sql_like_escape("$value") . '%';
                         $params["email"] = '%' . $DB->sql_like_escape("$value") . '%';
-                        $searchsql .= 'AND c.id IN (SELECT t.instanceid
-                                                  FROM {context} t
-                                                 WHERE t.contextlevel = 50
-                                                   AND t.id IN (SELECT tc.contextid
-                                                                  FROM {role_assignments} tc
-                                                                 WHERE tc.roleid = :roleid
-                                                                   AND tc.userid IN (SELECT tu.id
-                                                                                       FROM {user} tu
-                                                                                      WHERE ' . $DB->sql_like("tu.username", ":username", false, false) . '
-                                                                                         OR ' . $DB->sql_like("tu.email", ":email", false, false) . '
-                                                                                    )
-                                                               )
-                                               )';
+                        $searchsql .= '
+                    AND c.id IN (SELECT t.instanceid
+                       FROM {context} t
+                      WHERE t.contextlevel = 50
+                        AND t.id IN (SELECT tc.contextid
+                                       FROM {role_assignments} tc
+                                       WHERE tc.roleid = :roleid
+                                         AND tc.userid IN (SELECT tu.id
+                                                             FROM {user} tu
+                                                            WHERE ' . $DB->sql_like("tu.username", ":username", false, false) . '
+                                                               OR ' . $DB->sql_like("tu.email", ":email", false, false) . '
+                                                           )
+                                    )
+                    )';
                     } else if ($truekey == "id" || $truekey == "category") {
                         $params[$truekey] = $value;
                         $searchsql .= " AND c.$truekey = :$truekey";
@@ -1194,8 +1195,8 @@ class tool_coursearchiver_processor {
                                                                                           'userid' => $optout->userid,
                                                                                           'key' => $key)),
                                                                      get_string('remove'),
-                                                                     array('target' => '_blank',
-                                                                           'onclick' => "this.parentElement.parentElement.style.display='none'")),
+                                                   array('target' => '_blank',
+                                                         'onclick' => "this.parentElement.parentElement.style.display='none'")),
                                                                array('align' => 'center')),
                                               array('style' => 'background-color:' . $rowcolor)
                                      );
