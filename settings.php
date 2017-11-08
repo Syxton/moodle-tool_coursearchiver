@@ -54,8 +54,8 @@ if ($hassiteconfig) {
                                                     $default));
     // Automatic opt out in months.
     $settings->add(new admin_setting_configtext('tool_coursearchiver/optoutmonthssetting',
-                   get_string('optoutmonthsssetting', 'tool_coursearchiver'),
-                   get_string('optoutmonthsssetting_help', 'tool_coursearchiver'), 24, PARAM_INT));
+                   get_string('optoutmonthssetting', 'tool_coursearchiver'),
+                   get_string('optoutmonthssetting_help', 'tool_coursearchiver'), 24, PARAM_INT));
 
     // Link to Course Archiver tool.
     $ADMIN->add('courses', new admin_externalpage('toolcoursearchiver',
