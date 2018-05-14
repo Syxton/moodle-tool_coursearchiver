@@ -1103,7 +1103,7 @@ class tool_coursearchiver_processor {
      *
      * @return null
      */
-    public function select_deselect_javascript() {
+    public static function select_deselect_javascript() {
         global $PAGE;
         $PAGE->requires->js_amd_inline('
             require(["jquery"], function($) {
@@ -1129,7 +1129,7 @@ class tool_coursearchiver_processor {
      *
      * @return string
      */
-    public function get_optoutlist() {
+    public static function get_optoutlist() {
         global $CFG, $DB, $SITE;
 
         $sql = "SELECT *
@@ -1140,6 +1140,7 @@ class tool_coursearchiver_processor {
         $date = new DateTime("now", core_date::get_user_timezone_object());
         $now = $date->getTimestamp();
 
+        $rowcolor = $courses = "";
         $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
         $courses .= html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'),
                                                      get_string('back'));

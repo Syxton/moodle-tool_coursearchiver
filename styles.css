@@ -70,3 +70,29 @@
     margin: 0;
     padding: 4px;
 }
+
+.path-admin-tool-coursearchiver .fdate_selector .form-group {
+    display: inline-block;
+}
+
+.path-admin-tool-coursearchiver div.felement {
+    display: flex !important;
+}
+
+.path-admin-tool-coursearchiver .femptylabel > div:first-child {
+    flex: 0;
+    padding-left: 0px;
+}
+
+.path-admin-tool-coursearchiver .femptylabel .form-group {
+    margin: .5rem;
+}
+
+.path-admin-tool-coursearchiver .btn-primary {
+    margin: auto;
+}
+
+.path-admin-tool-coursearchiver .form-check-input:not(#id_emptyonly) {
+    position: unset;
+    vertical-align: middle;
+}

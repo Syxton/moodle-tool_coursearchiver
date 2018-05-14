@@ -24,6 +24,10 @@
 
 $string['pluginname'] = 'Course Archiver';
 
+// Privacy strings.
+$string['privacy:metadata'] = 'The plugin does not contain user data.';
+
+// General strings.
 $string['access'] = 'Last accessed before';
 $string['anycategory'] = 'Any Category';
 $string['archive'] = 'Archive Courses';

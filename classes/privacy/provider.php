@@ -1,5 +1,5 @@
 <?php
-// This file is part of
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,20 +13,29 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * Plugin version info.
+ * Privacy Subsystem implementation for tool_coursearchiver.
  *
  * @package    tool_coursearchiver
  * @copyright  2015 Matthew Davidson
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace tool_coursearchiver\privacy;
 defined('MOODLE_INTERNAL') || die();
-
-$plugin = new stdClass();
-$plugin->version   = 2018051100;                // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2014111000;                // Requires this Moodle version.
-$plugin->component = 'tool_coursearchiver';     // Full name of the plugin (used for diagnostics).
-$plugin->release  = '3.5.1 (Build: 2016090200)';
-$plugin->maturity  = MATURITY_STABLE;
+/**
+ * Privacy Subsystem for tool_coursearchiver implementing null_provider.
+ *
+ * @copyright  2015 Matthew Davidson
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
