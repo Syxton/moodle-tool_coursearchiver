@@ -76,12 +76,12 @@
 }
 
 .path-admin-tool-coursearchiver div.felement {
-    display: flex !important;
+    display: flex;
 }
 
 .path-admin-tool-coursearchiver .femptylabel > div:first-child {
     flex: 0;
-    padding-left: 0px;
+    padding-left: 0;
 }
 
 .path-admin-tool-coursearchiver .femptylabel .form-group {
