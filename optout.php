@@ -30,7 +30,6 @@ require_once($CFG->libdir.'/adminlib.php');
 header('X-Accel-Buffering: no');
 
 require_login();
-admin_externalpage_setup('toolcoursearchiver');
 
 $courseid   = required_param('courseid', PARAM_INT);
 $userid     = required_param('userid', PARAM_INT);
