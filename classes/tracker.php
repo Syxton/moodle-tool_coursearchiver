@@ -360,26 +360,26 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_HIDE:
                     $buffer = new progress_trace_buffer(new text_progress_trace());
                     $buffer->output('<h3>' . get_string('processhiding', 'tool_coursearchiver') .
-                                    '</h3><div style="margin-bottom: 60px;"></div><br />');
+                                    '</h3><div class="coursearchiver_progress_bar_spacing"></div><br />');
                     $buffer->finished();
                     break;
                 case tool_coursearchiver_processor::MODE_ARCHIVE:
                     $buffer = new progress_trace_buffer(new text_progress_trace());
                     $buffer->output('<h3>' . get_string('processarchiving', 'tool_coursearchiver') .
-                                    '</h3><div style="margin-bottom: 60px;"></div><br />');
+                                    '</h3><div class="coursearchiver_progress_bar_spacing"></div><br />');
                     $buffer->finished();
                     break;
                 case tool_coursearchiver_processor::MODE_DELETE:
                     $buffer = new progress_trace_buffer(new text_progress_trace());
                     $buffer->output('<h3>' . get_string('processdeleting', 'tool_coursearchiver') .
-                                    '</h3><div style="margin-bottom: 60px;"></div><br />');
+                                    '</h3><div class="coursearchiver_progress_bar_spacing"></div><br />');
                     $buffer->finished();
                     break;
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
                     $buffer = new progress_trace_buffer(new text_progress_trace());
                     $buffer->output('<h3>' . get_string('processemailing', 'tool_coursearchiver') .
-                                    '</h3><div style="margin-bottom: 60px;"></div><br />');
+                                    '</h3><div class="coursearchiver_progress_bar_spacing"></div><br />');
                     $buffer->finished();
                     break;
             }

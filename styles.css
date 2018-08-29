@@ -51,10 +51,14 @@
     opacity: .5;
 }
 
+.coursearchiver_progress_bar_spacing {
+    margin-bottom: 120px;
+}
+
 .coursearchiver_progress_bar {
     border: 2px solid black;
     box-sizing: border-box;
-    margin-top: -64px;
+    margin-top: -104px;
     position: relative;
     text-align: center;
     width: 100%;
@@ -63,7 +67,8 @@
 .coursearchiver_bar {
     background-color: red;
     font-size: 3em;
-    padding: 20px 0;
+    line-height: 100px;
+    height: 100px;
 }
 
 .mform .coursearchiver_checkbox .fitem {
