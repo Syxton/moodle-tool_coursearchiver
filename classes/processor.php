@@ -990,17 +990,17 @@ class tool_coursearchiver_processor {
                   FROM {course} c
              LEFT JOIN (
                         SELECT a.courseid, a.timeaccess
-                          FROM {user_lastaccess} as a
+                          FROM {user_lastaccess} a
                           JOIN (
                                 SELECT courseid, MAX(timeaccess) as timeaccess
-                                  FROM {user_lastaccess} as b
+                                  FROM {user_lastaccess} b
                               GROUP BY courseid
-                                ) AS b ON (
+                                ) b ON (
                                            a.courseid = b.courseid
                                            AND
                                            a.timeaccess = b.timeaccess
                                            )
-                       ) AS a ON c.id = a.courseid
+                       ) a ON c.id = a.courseid
                 WHERE c.id > 1 $searchsql
                 ORDER BY a.timeaccess";
 
