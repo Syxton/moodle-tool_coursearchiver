@@ -126,6 +126,12 @@ class tool_coursearchiver_tracker {
      * @param int $mode current mode selected, defaluts to MODE_COURSELIST
      */
     public function __construct($outputmode = self::NO_OUTPUT, $mode = tool_coursearchiver_processor::MODE_COURSELIST) {
+        if(self::OUTPUT_CLI) {
+            $this->maskcourses = get_string_manager()->string_exists('maskcourses', 'tool_coursearchiver')?get_string('maskcourses', 'tool_coursearchiver'):$this->maskcourses;
+            $this->maskcourseheader = get_string_manager()->string_exists('maskcourseheader', 'tool_coursearchiver')?get_string('maskcourseheader', 'tool_coursearchiver'):$this->maskcourseheader;
+            $this->maskusers = get_string_manager()->string_exists('maskusers', 'tool_coursearchiver')?get_string('maskusers', 'tool_coursearchiver'):$this->maskusers;
+        }
+        
         $this->outputmode = $outputmode;
         $this->mode = $mode;
         $this->buffer = new progress_trace_buffer(new text_progress_trace());
@@ -405,8 +411,8 @@ class tool_coursearchiver_tracker {
         if ($this->outputmode == self::OUTPUT_CLI) {
             switch ($this->mode) {
                 case tool_coursearchiver_processor::MODE_COURSELIST:
-                    $cliicon = empty($data->visible) ? "hide " : "show ";
-                    $empty = $this->empty ? "MT " : "";
+                    $cliicon = empty($data->visible) ? get_string('hidden', 'tool_coursearchiver') : get_string('visible', 'tool_coursearchiver');
+                    $empty = $this->empty ? ";".get_string('empty', 'tool_coursearchiver')." " : " ";
                     $date = get_string('never', 'tool_coursearchiver');
                     if (!empty($data->timeaccess)) {
                         $date = date("m/d/y", $data->timeaccess);
