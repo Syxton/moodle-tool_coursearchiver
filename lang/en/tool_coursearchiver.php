@@ -187,3 +187,7 @@ $string['hidewarningsubject'] = 'Notice: Courses will be hidden soon.';
 $string['optoutmonthssetting'] = 'Course opt out persistence';
 $string['optoutmonthssetting_help'] = 'How many months will the opt out apply for each course.';
 $string['messageprovider:courseowner'] = 'Notifications from the course archival/hiding tool.';
+
+$string['empty'] = 'empty';
+$string['hidden'] = 'hidden';
+$string['visible'] = 'visible';
