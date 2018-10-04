@@ -47,28 +47,7 @@ echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchive
 
 // Check to see if the attempt is coming from a valid email.
 if (sha1($CFG->dbpass . $courseid . $userid) == $key) {
-    if ($course = get_course($courseid)) {
-        $config = get_config('tool_coursearchiver');
-        $course->optoutmonths = $config->optoutmonthssetting;
-        if (empty($course->optoutmonths)) {
-            $course->optoutmonths = 24; // Fall back to 24 months.
-        }
-
-        $date = new DateTime("now", core_date::get_user_timezone_object());
-        $optouttime = $date->getTimestamp();
-
-        $record = new stdClass();
-        $record->userid     = $userid;
-        $record->courseid   = $courseid;
-        $record->optouttime = $optouttime;
-
-        // Check to see if the opt out record can be updated.
-        if ($skipped = $DB->get_record('tool_coursearchiver_optout', array('courseid' => $courseid))) {
-            $record->id         = $skipped->id;
-            $DB->update_record('tool_coursearchiver_optout', $record);
-        } else { // New opt out record needed.
-            $DB->insert_record('tool_coursearchiver_optout', $record);
-        }
+    if ($course = tool_coursearchiver_processor::optout_course($courseid, $userid)) {
         echo $OUTPUT->container(html_writer::tag('div',
                                 get_string('course_skipped', 'tool_coursearchiver', $course),
                                 array('style' => 'margin: 15px;text-align:center;font-size:1.4em;font-weight:bold')));

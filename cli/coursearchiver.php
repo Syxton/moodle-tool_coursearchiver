@@ -100,6 +100,7 @@ $modes = array(
     'archiveemail' => tool_coursearchiver_processor::MODE_ARCHIVEEMAIL,
     'archive' => tool_coursearchiver_processor::MODE_ARCHIVE,
     'delete' => tool_coursearchiver_processor::MODE_DELETE,
+    'optout' => tool_coursearchiver_processor::MODE_OPTOUT,
 );
 
 if (!isset($options['mode']) || empty($modes[$options['mode']])) {
@@ -175,6 +176,7 @@ switch ($processoroptions['mode']) {
     case tool_coursearchiver_processor::MODE_HIDE:
     case tool_coursearchiver_processor::MODE_ARCHIVE:
     case tool_coursearchiver_processor::MODE_DELETE:
+    case tool_coursearchiver_processor::MODE_OPTOUT:
         // Show courselist and die...
         $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST,
                                                              "data" => $options));
@@ -207,6 +209,7 @@ if (!empty($question)) {
 switch ($processoroptions['mode']) {
     case tool_coursearchiver_processor::MODE_HIDE:
     case tool_coursearchiver_processor::MODE_DELETE:
+    case tool_coursearchiver_processor::MODE_OPTOUT:
         $processor = new tool_coursearchiver_processor(array("mode" => $processoroptions['mode'], "data" => $courses));
         $processor->execute(tool_coursearchiver_tracker::OUTPUT_CLI);
         break;

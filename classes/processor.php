@@ -54,11 +54,6 @@ class tool_coursearchiver_processor {
     const MODE_ARCHIVE = 4;
 
     /**
-     * Delete courses.
-     */
-    const MODE_DELETE = 7;
-
-    /**
      * Send emails about pending course hides.
      */
     const MODE_HIDEEMAIL = 5;
@@ -67,6 +62,16 @@ class tool_coursearchiver_processor {
      * Send emails about pending course archival.
      */
     const MODE_ARCHIVEEMAIL = 6;
+
+    /**
+     * Delete courses.
+     */
+    const MODE_DELETE = 7;
+
+    /**
+     * Optout courses.
+     */
+    const MODE_OPTOUT = 8;
 
     /** @var int processor mode. */
     protected $mode;
@@ -117,7 +122,8 @@ class tool_coursearchiver_processor {
                                                                           self::MODE_ARCHIVE,
                                                                           self::MODE_DELETE,
                                                                           self::MODE_HIDEEMAIL,
-                                                                          self::MODE_ARCHIVEEMAIL))) {
+                                                                          self::MODE_ARCHIVEEMAIL,
+                                                                          self::MODE_OPTOUT))) {
             throw new coding_exception('Unknown process mode');
         }
 
@@ -151,7 +157,8 @@ class tool_coursearchiver_processor {
                                              self::MODE_ARCHIVE,
                                              self::MODE_DELETE,
                                              self::MODE_HIDEEMAIL,
-                                             self::MODE_ARCHIVEEMAIL))) {
+                                             self::MODE_ARCHIVEEMAIL,
+                                             self::MODE_OPTOUT))) {
                 if (empty($mform)) {
                     throw new coding_exception(get_string('errornoform', 'tool_coursearchiver'));
                 } else {
@@ -354,6 +361,35 @@ class tool_coursearchiver_processor {
                     $this->errors[] = get_string('errorinsufficientdata', 'tool_coursearchiver');
                 }
                 $tracker->finish();
+                $tracker->results($this->mode, $this->total, $this->errors, $this->notices);
+                break;
+            case self::MODE_OPTOUT:
+                $tracker->start();
+                $courses = $this->get_courses_and_their_owners();
+
+                if (!empty($courses)) {
+                    // Loop over the course array.
+                    $tracker->jobsize = count($courses);
+                    foreach ($courses as $currentcourse) {
+                        // Remove Course.
+                        if ($this->optout_course($currentcourse["course"]->id)) {
+                            $tracker->error = false;
+                            $this->total++;
+                        } else {
+                            $tracker->error = true;
+                            $this->errors[] = get_string('errordeletingcourse', 'tool_coursearchiver', $currentcourse["course"]);
+                        }
+                        $tracker->jobsdone++;
+                        $tracker->output($currentcourse);
+                    }
+                    $tracker->finish();
+                } else {
+                    $tracker->jobsize = 1;
+                    $tracker->jobsdone++;
+                    $tracker->output(false);
+                    $this->errors[] = get_string('errorinsufficientdata', 'tool_coursearchiver');
+                }
+
                 $tracker->results($this->mode, $this->total, $this->errors, $this->notices);
                 break;
         }
@@ -1122,6 +1158,46 @@ class tool_coursearchiver_processor {
                 });
             });
         ');
+    }
+
+    /**
+     * Optout a course.
+     *
+     * @param object $obj an array of courses
+     * @return bool
+     */
+    public function optout_course($courseid, $userid = false) {
+        global $DB, $USER;
+
+        if (!$userid) {
+            $userid = $USER->id;
+        }
+
+        if ($course = get_course($courseid)) {
+            $config = get_config('tool_coursearchiver');
+            $course->optoutmonths = $config->optoutmonthssetting;
+            if (empty($course->optoutmonths)) {
+                $course->optoutmonths = 24; // Fall back to 24 months.
+            }
+
+            $date = new DateTime("now", core_date::get_user_timezone_object());
+            $optouttime = $date->getTimestamp();
+
+            $record = new stdClass();
+            $record->userid     = $userid;
+            $record->courseid   = $courseid;
+            $record->optouttime = $optouttime;
+
+            // Check to see if the opt out record can be updated.
+            if ($skipped = $DB->get_record('tool_coursearchiver_optout', array('courseid' => $courseid))) {
+                $record->id         = $skipped->id;
+                $DB->update_record('tool_coursearchiver_optout', $record);
+            } else { // New opt out record needed.
+                $DB->insert_record('tool_coursearchiver_optout', $record);
+            }
+            return $course;
+        }
+        return false;
     }
 
     /**

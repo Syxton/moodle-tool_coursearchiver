@@ -169,6 +169,9 @@ class tool_coursearchiver_tracker {
             case tool_coursearchiver_processor::MODE_DELETE:
                 $modetext = "delete";
                 break;
+            case tool_coursearchiver_processor::MODE_OPTOUT:
+                $modetext = "optout";
+                break;
             default:
                 throw new Exception('Mode not given for results.');
                 return;
@@ -272,6 +275,7 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_OPTOUT:
                     break;
             }
         } else if ($this->outputmode == self::OUTPUT_HTML) {
@@ -382,6 +386,12 @@ class tool_coursearchiver_tracker {
                                     '</h3><div class="coursearchiver_progress_bar_spacing"></div><br />');
                     $buffer->finished();
                     break;
+                case tool_coursearchiver_processor::MODE_OPTOUT:
+                    $buffer = new progress_trace_buffer(new text_progress_trace());
+                    $buffer->output('<h3>' . get_string('processoptout', 'tool_coursearchiver') .
+                                    '</h3><div class="coursearchiver_progress_bar_spacing"></div><br />');
+                    $buffer->finished();
+                    break;
             }
         }
     }
@@ -436,6 +446,7 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_OPTOUT:
                     $out = $this->get_progressbar();
                     do {
                         $this->buffer->output($out);
@@ -574,6 +585,7 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_OPTOUT:
                     $this->buffer->output($this->get_progressbar());
                     break;
             }
@@ -640,6 +652,7 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_OPTOUT:
                     $this->buffer->output('<div class="coursearchiver_completedmsg">' .
                                           get_string('processcomplete', 'tool_coursearchiver') .
                                           '</div>');
