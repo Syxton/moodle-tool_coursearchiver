@@ -1163,7 +1163,8 @@ class tool_coursearchiver_processor {
     /**
      * Optout a course.
      *
-     * @param object $obj an array of courses
+     * @param int $courseid the course id.
+     * @param int $userid the user id.
      * @return bool
      */
     public function optout_course($courseid, $userid = false) {
