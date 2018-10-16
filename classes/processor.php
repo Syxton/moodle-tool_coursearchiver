@@ -559,7 +559,7 @@ class tool_coursearchiver_processor {
 
         try {
             // Prepare path.
-            $matchers = array('/\s/', '/\//');
+            $matchers = array('/\s/', '/\//', '/\;/', '/\:/', '/\?/', '/\%/', '/\*/', '/\|/', '/\</', '/\>/');
             $safeshort = preg_replace($matchers, '-', $obj["course"]->shortname);
             if (empty($obj["course"]->idnumber)) {
                 $suffix = '-ID-'.$obj["course"]->id;
