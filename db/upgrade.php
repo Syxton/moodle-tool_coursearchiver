@@ -81,7 +81,9 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
         }
         // Monitor savepoint reached.
         upgrade_plugin_savepoint(true, 2017032900, 'tool', 'coursearchiver');
-    } else if ($oldversion < 2017110300) {
+    }
+
+    if ($oldversion < 2017110300) {
         $sql = "UPDATE {config_plugins}
                    SET name=?, value=(".$DB->sql_cast_char2int('value')." * 12)
                  WHERE plugin=? AND name=?";
@@ -93,6 +95,25 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
 
         // Monitor savepoint reached.
         upgrade_plugin_savepoint(true, 2017110300, 'tool', 'coursearchiver');
+    }
+
+    if ($oldversion < 2018101700) {
+        $table = new xmldb_table('tool_coursearchiver_optout');
+        $field = new xmldb_field('optoutlength', XMLDB_TYPE_INTEGER, '10', null, null, null);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $sql = "UPDATE {tool_coursearchiver_optout}
+                   SET optoutlength=?";
+
+        $config = get_config('tool_coursearchiver');
+        $params = array($config->optoutmonthssetting);
+        $DB->execute($sql, $params);
+
+        // Monitor savepoint reached.
+        upgrade_plugin_savepoint(true, 2018101700, 'tool', 'coursearchiver');
     }
 
     return true;

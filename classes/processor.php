@@ -860,24 +860,20 @@ class tool_coursearchiver_processor {
     protected function is_opted_out($courseid) {
         global $DB;
 
-        $config = get_config('tool_coursearchiver');
-        $months = $config->optoutmonthssetting;
-        if (empty($months)) {
-            $months = 24; // Fall back to 24 months.
-        }
-
-        $date = new DateTime("now", core_date::get_user_timezone_object());
-        $date->modify("-$months months");
-        $optouttime = $date->getTimestamp();
-
         $sql = "SELECT *
                   FROM {tool_coursearchiver_optout} c
-                 WHERE c.courseid = :courseid
-                       AND optouttime > $optouttime";
+                 WHERE c.courseid = :courseid";
         $params['courseid'] = $courseid;
 
-        if ($DB->get_records_sql($sql, $params)) {
-            return true;
+        if ($optout = $DB->get_record_sql($sql, $params)) {
+            $date = new DateTime("now", core_date::get_user_timezone_object());
+            $months = $optout->optoutlength;
+            $date->modify("-$months months");
+            $optouttime = $date->getTimestamp();
+            if ($months == 0 || $optout->optouttime - $optouttime >= 0) {
+                return true;
+            }
+            return false;
         } else {
             return false;
         }
@@ -1177,17 +1173,11 @@ class tool_coursearchiver_processor {
         if ($course = get_course($courseid)) {
             $config = get_config('tool_coursearchiver');
             $course->optoutmonths = $config->optoutmonthssetting;
-            if (empty($course->optoutmonths)) {
-                $course->optoutmonths = 24; // Fall back to 24 months.
-            }
-
-            $date = new DateTime("now", core_date::get_user_timezone_object());
-            $optouttime = $date->getTimestamp();
-
             $record = new stdClass();
             $record->userid     = $userid;
             $record->courseid   = $courseid;
             $record->optouttime = $optouttime;
+            $record->optoutlength = $course->optoutmonths;
 
             // Check to see if the opt out record can be updated.
             if ($skipped = $DB->get_record('tool_coursearchiver_optout', array('courseid' => $courseid))) {
@@ -1213,9 +1203,6 @@ class tool_coursearchiver_processor {
                   FROM {tool_coursearchiver_optout}
                  ORDER BY optouttime";
         $optouts = $DB->get_records_sql($sql);
-
-        $date = new DateTime("now", core_date::get_user_timezone_object());
-        $now = $date->getTimestamp();
 
         $rowcolor = $courses = "";
         $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
@@ -1243,15 +1230,19 @@ class tool_coursearchiver_processor {
                 // Create security key for each link.
                 $key = sha1($CFG->dbpass . $course->id . $optout->userid);
 
-                $config = get_config('tool_coursearchiver');
-                if (empty($course->optoutmonthssetting)) {
-                    $course->optoutmonthssetting = 24; // Fall back to 24 months.
+                if ($optout->optoutlength == 0) {
+                    $ago = "∞";
+                } else {
+                    $months = $optout->optoutlength;
+                    $date = new DateTime("now", core_date::get_user_timezone_object());
+                    $date->modify("-$months months");
+                    $optouttime = $date->getTimestamp();
+                    if ($optout->optouttime - $optouttime >= 0) {
+                        $ago = floor(($optout->optouttime - $optouttime) / 86400); // Days left of opt out.
+                    } else {
+                        continue;
+                    }
                 }
-
-                $timesince = $now - $optout->optouttime;
-                $fulloptout = $config->optoutmonthssetting * 2628000;
-
-                $ago = floor(($fulloptout - $timesince) / 86400); // Days left of opt out.
 
                 $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
                 $courses .= html_writer::tag('tr',

@@ -10,6 +10,7 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of user who opted out."/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of course to which this rule belongs."/>
         <FIELD NAME="optouttime" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time stamp of when this opt out was initiated."/>
+        <FIELD NAME="optoutlength" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Months till optout ends"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
