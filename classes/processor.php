@@ -1171,6 +1171,8 @@ class tool_coursearchiver_processor {
         }
 
         if ($course = get_course($courseid)) {
+            $date = new DateTime("now", core_date::get_user_timezone_object());
+            $optouttime = $date->getTimestamp();
             $config = get_config('tool_coursearchiver');
             $course->optoutmonths = $config->optoutmonthssetting;
             $record = new stdClass();
