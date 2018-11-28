@@ -1163,7 +1163,7 @@ class tool_coursearchiver_processor {
      * @param int $userid the user id.
      * @return bool
      */
-    public function optout_course($courseid, $userid = false) {
+    public static function optout_course($courseid, $userid = false) {
         global $DB, $USER;
 
         if (!$userid) {
