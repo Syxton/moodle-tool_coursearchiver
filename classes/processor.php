@@ -766,6 +766,7 @@ class tool_coursearchiver_processor {
             $event->contexturl = $CFG->wwwroot;
             $event->contexturlname = get_string('coursearchiver', 'tool_coursearchiver');
             $event->replyto = $admin->email;
+            $event->courseid = SITEID;
 
             try {
                 message_send($event);
