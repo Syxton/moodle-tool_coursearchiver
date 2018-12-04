@@ -92,6 +92,7 @@ $string['errormissingto'] = 'The %to variable was missing from the email templat
 $string['errornoform'] = 'Form not given.';
 $string['errornonnumericaccess'] = 'Access must be numeric (UNIX timestamp)';
 $string['errornonnumericid'] = 'Course ID must be numeric';
+$string['erroroptoutcourse'] = 'Course: ({$a->id}) {$a->fullname} could not be opted out.';
 $string['errors'] = 'Errors';
 $string['errors_count'] = 'Errors: {$a}';
 $string['errorsendingemail'] = 'Email to {$a->firstname} {$a->lastname} ({$a->email}) failed.';

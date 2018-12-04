@@ -1,10 +1,27 @@
-.coursearchiver_myformerror {
-    background-color: #fdf5e6;
-    border: 2px solid #800000;
-    font-size: 1.1em;
+.coursearchiver_alreadyhidden {
+    opacity: .5;
+}
+
+.coursearchiver_bar {
+    background-color: red;
+    font-size: 3em;
+    height: 100px;
+    line-height: 100px;
+}
+
+.coursearchiver_completedmsg {
+    background-color: #F5F5F5;
+    font-size: 1.5em;
     font-weight: bold;
-    margin: 20px;
     padding: 20px;
+    text-align: center;
+}
+
+.coursearchiver_error_text {
+    background-color: #F5F5F5;
+    color: #800000;
+    margin: 5px;
+    padding: 5px;
 }
 
 .coursearchiver_myformconfirm {
@@ -17,59 +34,42 @@
     text-align: center;
 }
 
-.coursearchiver_stats {
-    background-color: #c0c0c0;
-    border: 1px dotted #808080;
-    color: #fff;
-    font-size: .85em;
-    padding: 5px;
-}
-
-.coursearchiver_error_text {
-    background-color: whitesmoke;
-    color: #800000;
-    margin: 5px;
-    padding: 5px;
+.coursearchiver_myformerror {
+    background-color: #fdf5e6;
+    border: 2px solid #800000;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 20px;
+    padding: 20px;
 }
 
 .coursearchiver_notice_text {
     background-color: yellow;
-    color: black;
+    color: #000;
     margin: 5px;
     padding: 5px;
 }
 
-.coursearchiver_completedmsg {
-    background-color: whitesmoke;
-    font-size: 1.5em;
-    font-weight: bold;
-    padding: 20px;
+.coursearchiver_progress_bar {
+    border: 2px solid #000;
+    box-sizing: border-box;
+    margin-top: -104px;
+    position: relative;
     text-align: center;
-}
-
-.coursearchiver_alreadyhidden {
-    opacity: .5;
+    white-space: nowrap;
+    width: 100%;
 }
 
 .coursearchiver_progress_bar_spacing {
     margin-bottom: 120px;
 }
 
-.coursearchiver_progress_bar {
-    border: 2px solid black;
-    box-sizing: border-box;
-    margin-top: -104px;
-    position: relative;
-    text-align: center;
-    width: 100%;
-    white-space: nowrap;
-}
-
-.coursearchiver_bar {
-    background-color: red;
-    font-size: 3em;
-    line-height: 100px;
-    height: 100px;
+.coursearchiver_stats {
+    background-color: #c0c0c0;
+    border: 1px dotted gray;
+    color: #fff;
+    font-size: .85em;
+    padding: 5px;
 }
 
 .mform .coursearchiver_checkbox .fitem {
@@ -77,12 +77,16 @@
     padding: 4px;
 }
 
+.path-admin-tool-coursearchiver .btn-primary {
+    margin: auto;
+}
+
 .path-admin-tool-coursearchiver .fdate_selector .form-group {
     display: inline-block;
 }
 
-.path-admin-tool-coursearchiver div.felement {
-    display: flex;
+.path-admin-tool-coursearchiver .femptylabel .form-group {
+    margin: .5rem;
 }
 
 .path-admin-tool-coursearchiver .femptylabel > div:first-child {
@@ -90,15 +94,11 @@
     padding-left: 0;
 }
 
-.path-admin-tool-coursearchiver .femptylabel .form-group {
-    margin: .5rem;
-}
-
-.path-admin-tool-coursearchiver .btn-primary {
-    margin: auto;
-}
-
 .path-admin-tool-coursearchiver .form-check-input:not(#id_emptyonly) {
     position: unset;
     vertical-align: middle;
+}
+
+.path-admin-tool-coursearchiver div.felement {
+    display: flex;
 }

@@ -115,7 +115,6 @@ class tool_coursearchiver_processor {
      * @param array $options options of the process
      */
     public function __construct(array $options) {
-
         if (!isset($options['mode']) || !in_array($options['mode'], array(self::MODE_COURSELIST,
                                                                           self::MODE_GETEMAILS,
                                                                           self::MODE_HIDE,
@@ -371,13 +370,13 @@ class tool_coursearchiver_processor {
                     // Loop over the course array.
                     $tracker->jobsize = count($courses);
                     foreach ($courses as $currentcourse) {
-                        // Remove Course.
-                        if ($this->optout_course($currentcourse["course"]->id)) {
+                        // Opt out Course.
+                        if ($this->optout_course($currentcourse["course"]->id, false)) {
                             $tracker->error = false;
                             $this->total++;
                         } else {
                             $tracker->error = true;
-                            $this->errors[] = get_string('errordeletingcourse', 'tool_coursearchiver', $currentcourse["course"]);
+                            $this->errors[] = get_string('erroroptoutcourse', 'tool_coursearchiver', $currentcourse["course"]);
                         }
                         $tracker->jobsdone++;
                         $tracker->output($currentcourse);
@@ -444,7 +443,7 @@ class tool_coursearchiver_processor {
             if ($key !== 'resume') {
                 $d = explode("_", ltrim($value, 'x')); // Remove 'x' from unselected values.
 
-                if ($d[0] !== 0 AND $d[0] !== $SITE->id) {
+                if ($d[0] !== 0 && $d[0] !== $SITE->id) {
                     if (isset($owners[$d[0]])) { // Course exists in array.
                         $owners[$d[0]][$d[1]]["userid"] = $d[1];
                     } else {
@@ -671,6 +670,16 @@ class tool_coursearchiver_processor {
             }
         }
 
+        return $this->sort_latest_file($files);
+    }
+
+    /**
+     * Sort and return the path to the last course archive file.
+     *
+     * @param array $files Moodle archive file list.
+     * @return string $filename name of the file path to rename.
+     */
+    protected function find_latest_file($files) {
         // Sort by values descending (newer to older filemodified).
         arsort($files);
         foreach ($files as $filename => $backupdate) {
@@ -1018,6 +1027,18 @@ class tool_coursearchiver_processor {
             }
         }
 
+        return $this->courselist_sql($searchsql, $params);
+    }
+
+    /**
+     * Query database for courselist.
+     *
+     * @param string $searchsql SQL statement for search.
+     * @param array $params parameters for SQL search.
+     * @return object
+     */
+    public function courselist_sql($searchsql, $params) {
+        global $DB;
         $sql = "SELECT c.id, c.fullname, c.category, c.shortname, c.idnumber,
                        c.visible, a.timeaccess
                   FROM {course} c
@@ -1049,7 +1070,7 @@ class tool_coursearchiver_processor {
      * @return object
      */
     public function recreate_courselist($data) {
-        global $DB, $SITE;
+        global $SITE;
 
         if (empty($data)) {
             return false;
@@ -1057,7 +1078,7 @@ class tool_coursearchiver_processor {
 
         foreach ($data as $key => $value) {
             if ($key !== 'resume') {
-                if ($value !== 0 AND $value !== $SITE->id) {
+                if ($value !== 0 && $value !== $SITE->id) {
                     $courses[abs($value)]["id"] = abs($value);
                     if (empty($courses[abs($value)]["selected"])) {
                         $courses[abs($value)]["selected"] = false;
@@ -1164,10 +1185,10 @@ class tool_coursearchiver_processor {
      * @param int $userid the user id.
      * @return bool
      */
-    public static function optout_course($courseid, $userid = false) {
+    public static function optout_course($courseid, $userid) {
         global $DB, $USER;
 
-        if (!$userid) {
+        if (empty($userid)) {
             $userid = $USER->id;
         }
 
@@ -1200,7 +1221,7 @@ class tool_coursearchiver_processor {
      * @return string
      */
     public static function get_optoutlist() {
-        global $CFG, $DB, $SITE;
+        global $CFG, $DB;
 
         $sql = "SELECT *
                   FROM {tool_coursearchiver_optout}
