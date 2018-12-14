@@ -57,6 +57,16 @@ if ($hassiteconfig) {
                    get_string('optoutmonthssetting', 'tool_coursearchiver'),
                    get_string('optoutmonthssetting_help', 'tool_coursearchiver'), 24, PARAM_INT));
 
+    // Archive deletion delay in days.
+    $settings->add(new admin_setting_configtext('tool_coursearchiver/delaydeletesetting',
+                   get_string('archivedeletesetting', 'tool_coursearchiver'),
+                   get_string('archivedeletesetting_help', 'tool_coursearchiver'), 7, PARAM_INT));
+
+    // Limit archive files shown.
+    $settings->add(new admin_setting_configtext('tool_coursearchiver/archivelimit',
+                   get_string('archivelimit', 'tool_coursearchiver'),
+                   get_string('archivelimit_help', 'tool_coursearchiver'), 200, PARAM_INT));
+
     // Link to Course Archiver tool.
     $ADMIN->add('courses', new admin_externalpage('toolcoursearchiver',
         get_string('coursearchiver', 'tool_coursearchiver'), "$CFG->wwwroot/$CFG->admin/tool/coursearchiver/index.php"));

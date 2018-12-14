@@ -31,7 +31,9 @@ $string['privacy:metadata'] = 'The plugin does not contain user data.';
 $string['access'] = 'Last accessed before';
 $string['anycategory'] = 'Any Category';
 $string['archive'] = 'Archive Courses';
+$string['archiverecoverform'] = 'Pending Deletion';
 $string['archiveemail'] = 'Send "Course to be Archived" Emails';
+$string['archivelist'] = 'Course Archives';
 $string['archivelocation'] = 'Course archive subdirectory';
 $string['back'] = 'Start Over';
 
@@ -44,6 +46,7 @@ $string['cli_question_delete'] = 'Delete these {$a} courses?';
 $string['cli_question_hide'] = 'Hide these {$a} courses?';
 $string['cli_question_hideemail'] = 'Send these {$a} users a "Course to be hidden" email?';
 $string['confirm'] = 'Continue';
+$string['confirmdelete'] = 'Are you sure you want to delete?';
 $string['confirmmessage'] = 'Are you sure you want to {$a}';
 $string['confirmmessagearchive'] = 'archive and remove these {$a} courses?';
 $string['confirmmessagearchiveemail'] = 'send an email to these {$a} course owners?';
@@ -51,6 +54,7 @@ $string['confirmmessagedelete'] = 'completely remove these {$a} courses?';
 $string['confirmmessagehide'] = 'hide these {$a} courses?';
 $string['confirmmessagehideemail'] = 'send an email to these {$a} course owners?';
 $string['confirmmessageoptout'] = 'optout these {$a} courses?';
+$string['confirmrestore'] = 'Restore pending archive deletion?';
 $string['coursearchiver'] = 'Course Archiver';
 $string['coursearchiver_help'] = "Search for courses using the following criteria: match shortname, fullname, idnumber, courseid, date of last course access, or *empty courses.\n
 Courses are shown as grayed out if they are already hidden.  The fullname of the course will have a line through it if the course is an *empty course.\n\n
@@ -72,7 +76,9 @@ $string['courseselector'] = 'Course search results';
 $string['courseshortname'] = 'Course shortname';
 $string['courseteacher'] = 'Teacher username/email';
 $string['createdbefore'] = 'Created before';
+$string['crontask'] = 'Course archive deletion job';
 $string['delete'] = 'Delete Courses';
+$string['deletedarchiveemails'] = 'Teacher email addresses';
 $string['email'] = 'Send Email';
 $string['emailselector'] = 'Users selected to receive emails.';
 $string['emptycourse'] = 'Empty Course';
@@ -136,6 +142,7 @@ $string['processhiding'] = 'Hiding selected courses';
 $string['processoptout'] = 'Optout selected courses';
 $string['processstarted'] = 'Process has already been started';
 
+$string['recover'] = 'Recover Courses';
 $string['results'] = 'Results';
 $string['results_archive'] = 'Archived courses: {$a}';
 $string['results_archiveemail'] = 'Course archive warning emails sent: {$a}';
@@ -192,6 +199,13 @@ $string['hidewarningsubject'] = 'Notice: Courses will be hidden soon.';
 $string['optoutmonthssetting'] = 'Course opt out persistence';
 $string['optoutmonthssetting_help'] = 'How many months will the opt out apply for each course.';
 $string['messageprovider:courseowner'] = 'Notifications from the course archival/hiding tool.';
+
+$string['archivedeletesetting'] = 'Archive deletion delay';
+$string['archivedeletesetting_help'] = 'How many days will an archive deletion be delayed.';
+
+$string['archivelimit'] = 'Archive search limiter';
+$string['archivelimit_help'] = 'Maximum amount of results to show on screen';
+$string['archivelimitstring'] = 'Maximum Shown';
 
 $string['empty'] = 'empty';
 $string['hidden'] = 'hidden';

@@ -37,5 +37,21 @@
         <INDEX NAME="savedate" UNIQUE="false" FIELDS="savedate" COMMENT="Index on savedate"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="tool_coursearchiver_archived" COMMENT="Table to store archives">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Name given to archive file."/>
+        <FIELD NAME="owners" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Array of owner ids"/>
+        <FIELD NAME="timetodelete" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time stamp of when to delete."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="filename" UNIQUE="false" FIELDS="filename" COMMENT="Index on filename"/>
+        <INDEX NAME="owners" UNIQUE="false" FIELDS="owners" COMMENT="Index on owners"/>
+        <INDEX NAME="timetodelete" UNIQUE="false" FIELDS="timetodelete" COMMENT="Index on timetodelete"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>
