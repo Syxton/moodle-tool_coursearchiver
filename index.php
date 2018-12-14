@@ -42,6 +42,11 @@ if (!empty($submitted)) {
         $returnurl = new moodle_url('/admin/tool/coursearchiver/optoutlist.php');
         redirect($returnurl);
     }
+
+    if ($submitted == get_string('archivelist', 'tool_coursearchiver')) {
+        $returnurl = new moodle_url('/admin/tool/coursearchiver/archivelist.php');
+        redirect($returnurl);
+    }
 }
 
 unset($SESSION->error);

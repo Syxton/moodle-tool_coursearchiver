@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool always true
  */
 function xmldb_tool_coursearchiver_upgrade($oldversion) {
-    global $DB;
+    global $CFG, $DB;
 
     $dbman = $DB->get_manager();
 
@@ -116,5 +116,64 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018101700, 'tool', 'coursearchiver');
     }
 
+    if ($oldversion < 2018121300) {
+        // Define table tool_coursearchiver_archived to be created.
+        $table = new xmldb_table('tool_coursearchiver_archived');
+
+        // Adding fields to table tool_coursearchiver_archived.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('filename', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('owners', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timetodelete', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table tool_coursearchiver_archived.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table tool_coursearchiver_archived.
+        $table->add_index('filename', XMLDB_INDEX_NOTUNIQUE, array('filename'));
+        $table->add_index('owners', XMLDB_INDEX_NOTUNIQUE, array('owners'));
+        $table->add_index('timetodelete', XMLDB_INDEX_NOTUNIQUE, array('timetodelete'));
+
+        // Conditionally launch create table for tool_coursearchiver_archived.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Fill up the database with previously archived files.
+        $archivepath = trim(str_replace(str_split(':*?"<>|'),
+                                        '',
+                                        get_config('tool_coursearchiver', 'coursearchiverpath')),
+                            "/\\");
+        $fileinfos = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($CFG->dataroot . '/' . $archivepath)
+        );
+
+        if (!empty($fileinfos)) {
+            foreach ($fileinfos as $pathname => $fileinfo) {
+                $pathinfo = pathinfo($pathname);
+                $file = $pathinfo['basename'];
+                $path = strstr($pathinfo['dirname'], $archivepath);
+                $path = str_replace($archivepath, '', $path);
+                $path = trim($path, "/\\"); // Leaves the sub folder only.
+
+                if (!$fileinfo->isFile()) { // Make sure it is a file.
+                    continue;
+                }
+
+                if (!empty($search) && (empty(strstr($file, $search)) && empty(strstr($path, $search)))) {
+                    continue;
+                }
+
+                $record = new stdClass();
+                $record->filename     = $path . '/' . $file;
+                $record->owners       = '';
+                $record->timetodelete = '0';
+                $DB->insert_record('tool_coursearchiver_archived', $record, false);
+            }
+        }
+
+        // Monitor savepoint reached.
+        upgrade_plugin_savepoint(true, 2018121300, 'tool', 'coursearchiver');
+    }
     return true;
 }

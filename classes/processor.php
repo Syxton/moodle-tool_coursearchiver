@@ -395,7 +395,7 @@ class tool_coursearchiver_processor {
     }
 
     /**
-     * Return an each course and the teachers in them.
+     * Return an full list of courses and the teachers in them.
      *
      * @return array of courses and array of owners attached to it
      */
@@ -403,6 +403,23 @@ class tool_coursearchiver_processor {
         global $DB;
         $owners = array();
         $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        foreach ($this->data as $course) {
+            if ($this->exists($course)) {
+                $owners[$course] = $this->get_course_users_with_role($course, $role->id);
+            }
+        }
+
+        return $owners;
+    }
+
+    /**
+     * Return an array of users in a course with a given role.
+     *
+     * @return array of users in a course with a given role
+     */
+    protected function get_course_users_with_role($courseid, $roleid) {
+        global $DB;
+
         $sql = 'SELECT a.id, a.email, a.firstname, a.lastname
                   FROM {user} a
                  WHERE a.id IN (SELECT userid
@@ -418,15 +435,13 @@ class tool_coursearchiver_processor {
                                                      )
                                )';
 
-        foreach ($this->data as $course) {
-            if ($this->exists($course)) {
-                $owners[$course] = array('course' => get_course($course),
-                                         'owners' => $DB->get_records_sql($sql, array('roleid' => $role->id,
-                                                                                      'courseid' => $course)));
-            }
+        if ($course = $DB->get_record('course', array('id' => $courseid), '*', IGNORE_MISSING)) {
+            return array('course' => $course,
+                         'owners' => $DB->get_records_sql($sql, array('roleid' => $roleid,
+                                                                      'courseid' => $courseid)));
         }
 
-        return $owners;
+        return array();
     }
 
     /**
@@ -462,12 +477,15 @@ class tool_coursearchiver_processor {
 
         $return = array();
         foreach ($owners as $key => $value) {
-            $return[$key] = array('course' => get_course($key),
-                                  'owners' => array());
-            foreach ($value as $users) {
-                $record = $DB->get_record('user', array('id' => $users["userid"]));
-                $record->selected = $users["selected"];
-                $return[$key]["owners"][$users["userid"]] = $record;
+            if ($course = $DB->get_record('course', array('id' => $key), '*', IGNORE_MISSING)) {
+                $return[$key] = array('course' => $course,
+                                      'owners' => array());
+                foreach ($value as $users) {
+                    if ($record = $DB->get_record('user', array('id' => $users["userid"]))) {
+                        $record->selected = $users["selected"];
+                        $return[$key]["owners"][$users["userid"]] = $record;
+                    }
+                }
             }
         }
         return $return;
@@ -504,12 +522,19 @@ class tool_coursearchiver_processor {
                 if (array_key_exists($user->id, $owners)) {
                     if ($this->exists($course)) {
                         $temp = $owners[$user->id]['courses'];
-                        $owners[$user->id]['courses'] = array_merge($temp, array($course => get_course($course)));
+                        $owners[$user->id]['courses'] = array_merge($temp,
+                                                                    array($course => $DB->get_record('course',
+                                                                                                     array('id' => $course),
+                                                                                                           '*',
+                                                                                                           IGNORE_MISSING)));
                     }
                 } else {
                     if ($this->exists($course)) {
                         $owners[$user->id]['user'] = $user;
-                        $owners[$user->id]['courses'] = array($course => get_course($course));
+                        $owners[$user->id]['courses'] = array($course => $DB->get_record('course',
+                                                                                         array('id' => $course),
+                                                                                         '*',
+                                                                                         IGNORE_MISSING));
                     }
                 }
             }
@@ -543,7 +568,7 @@ class tool_coursearchiver_processor {
      * @return bool of courses that match the search
      */
     protected function archivecourse($obj) {
-        global $CFG;
+        global $CFG, $DB;
         require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
         require_once($CFG->dirroot . '/backup/controller/backup_controller.class.php');
 
@@ -567,9 +592,10 @@ class tool_coursearchiver_processor {
             }
 
             $archivefile = date("Y-m-d") . "{$suffix}-{$safeshort}.mbz";
-            $archivepath = str_replace(str_split('\\/:*?"<>|'),
-                                       '',
-                                       get_config('tool_coursearchiver', 'coursearchiverpath'));
+            $archivepath = trim(str_replace(str_split(':*?"<>|'),
+                                            '',
+                                            get_config('tool_coursearchiver', 'coursearchiverpath')),
+                                "/\\");
 
             // Check for custom folder.
             $folder = $this->get_archive_folder();
@@ -618,6 +644,20 @@ class tool_coursearchiver_processor {
             unset($bc);
 
             if (file_exists($path . '/' . $archivefile)) { // Make sure file got moved.
+                $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
+                $owners = $this->get_course_users_with_role($obj["course"]->id, $role->id);
+
+                $ownerslist = '|';
+                foreach ($owners["owners"] as $owner) {
+                    $ownerslist .= $owner->id . '|';
+                }
+                // Save course info to the database.
+                $record = new stdClass();
+                $record->filename = $folder . '/' . $archivefile;
+                $record->owners = $ownerslist;
+                $record->timetodelete = 0;
+                $DB->insert_record('tool_coursearchiver_archived', $record, false);
+
                 // Remove Course.
                 delete_course($obj["course"]->id, false);
             } else {
@@ -1070,7 +1110,7 @@ class tool_coursearchiver_processor {
      * @return object
      */
     public function recreate_courselist($data) {
-        global $SITE;
+        global $SITE, $DB;
 
         if (empty($data)) {
             return false;
@@ -1093,9 +1133,10 @@ class tool_coursearchiver_processor {
 
         $return = array();
         foreach ($courses as $c) {
-            $course = get_course($c["id"]);
-            $course->selected = $c["selected"];
-            $return[] = $course;
+            if ($course = $DB->get_record('course', array('id' => $c["id"]), '*', IGNORE_MISSING)) {
+                $course->selected = $c["selected"];
+                $return[] = $course;
+            }
         }
 
         return $return;
@@ -1192,7 +1233,7 @@ class tool_coursearchiver_processor {
             $userid = $USER->id;
         }
 
-        if ($course = get_course($courseid)) {
+        if ($course = $DB->get_record('course', array('id' => $courseid), '*', IGNORE_MISSING)) {
             $date = new DateTime("now", core_date::get_user_timezone_object());
             $optouttime = $date->getTimestamp();
             $config = get_config('tool_coursearchiver');
@@ -1221,19 +1262,20 @@ class tool_coursearchiver_processor {
      * @return string
      */
     public static function get_optoutlist() {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         $sql = "SELECT *
                   FROM {tool_coursearchiver_optout}
                  ORDER BY optouttime";
         $optouts = $DB->get_records_sql($sql);
 
-        $rowcolor = $courses = "";
-        $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
-        $courses .= html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'),
+        // Back button.
+        $courses = html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'),
                                                      get_string('back'));
+        // Archive table.
         $courses .= html_writer::start_tag('table', array('style' => 'border-collapse: collapse;width: 100%;',
                                                           'cellpadding' => '5'));
+        $rowcolor = "#FFF";
         $courses .= html_writer::tag('tr',
                                      html_writer::tag('th',
                                                       get_string('course')) .
@@ -1244,68 +1286,264 @@ class tool_coursearchiver_processor {
                                      html_writer::tag('th',
                                                       get_string('actions'),
                                                       array('width' => '100px')),
-                                     array('style' => 'background-color:' . $rowcolor)
-                                 );
+                                     array('style' => 'background-color:' . $rowcolor));
+
         if ($optouts) {
             foreach ($optouts as $optout) {
                 $user = $DB->get_record('user', array('id' => $optout->userid));
-                $course = get_course($optout->courseid);
+                if ($course = $DB->get_record('course', array('id' => $optout->courseid), '*', IGNORE_MISSING)) {
+                    // Create security key for each link.
+                    $key = sha1($CFG->dbpass . $course->id . $optout->userid);
 
-                // Create security key for each link.
-                $key = sha1($CFG->dbpass . $course->id . $optout->userid);
-
-                if ($optout->optoutlength == 0) {
-                    $ago = "∞";
-                } else {
-                    $months = $optout->optoutlength;
-                    $date = new DateTime("now", core_date::get_user_timezone_object());
-                    $date->modify("-$months months");
-                    $optouttime = $date->getTimestamp();
-                    if ($optout->optouttime - $optouttime >= 0) {
-                        $ago = floor(($optout->optouttime - $optouttime) / 86400); // Days left of opt out.
+                    if ($optout->optoutlength == 0) {
+                        $ago = "∞";
                     } else {
-                        continue;
+                        $months = $optout->optoutlength;
+                        $date = new DateTime("now", core_date::get_user_timezone_object());
+                        $date->modify("-$months months");
+                        $optouttime = $date->getTimestamp();
+                        if ($optout->optouttime - $optouttime >= 0) {
+                            $ago = floor(($optout->optouttime - $optouttime) / 86400); // Days left of opt out.
+                        } else {
+                            continue;
+                        }
                     }
-                }
 
-                $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
-                $courses .= html_writer::tag('tr',
-                                              html_writer::tag('td',
-                                                   html_writer::link(new moodle_url('/course/view.php',
-                                                                                    array('id' => $course->id)),
-                                                                     $course->fullname,
-                                                                     array('target' => '_blank'))
-                                              ) .
-                                              html_writer::tag('td',
-                                                               get_string('optoutleft', 'tool_coursearchiver', $ago),
-                                                               array('align' => 'center')) .
-                                              html_writer::tag('td',
-                                                               $user->firstname . ' ' . $user->lastname,
-                                                               array('align' => 'center')) .
-                                              html_writer::tag('td',
-                                                   html_writer::link(new moodle_url('/admin/tool/coursearchiver/optin.php',
-                                                                                    array('courseid' => $course->id,
-                                                                                          'userid' => $optout->userid,
-                                                                                          'key' => $key)),
-                                                                     get_string('remove'),
-                                                   array('target' => '_blank',
-                                                         'onclick' => "this.parentElement.parentElement.style.display='none'")),
-                                                               array('align' => 'center')),
-                                              array('style' => 'background-color:' . $rowcolor)
-                                     );
+                    $link = new moodle_url('/admin/tool/coursearchiver/optin.php',
+                                                                 array('courseid' => $course->id,
+                                                                       'userid' => $optout->userid,
+                                                                       'key' => $key));
+                    $action = new popup_action('click', $link, 'optbackin');
+                    $content = $OUTPUT->action_link($link,
+                                                    get_string('remove'),
+                                                    $action,
+                                                    array('title' => get_string('optoutlist', 'tool_coursearchiver'),
+                                                          'onclick' => "this.parentElement.parentElement.style.display='none'"));
+
+                    $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
+                    $courses .= html_writer::tag('tr',
+                                                  html_writer::tag('td',
+                                                       html_writer::link(new moodle_url('/course/view.php',
+                                                                                        array('id' => $course->id)),
+                                                                         $course->fullname,
+                                                                         array('target' => '_blank'))
+                                                  ) .
+                                                  html_writer::tag('td',
+                                                                   get_string('optoutleft', 'tool_coursearchiver', $ago),
+                                                                   array('align' => 'center')) .
+                                                  html_writer::tag('td',
+                                                                   $user->firstname . ' ' . $user->lastname,
+                                                                   array('align' => 'center')) .
+                                                  html_writer::tag('td',
+                                                                   $content,
+                                                                   array('align' => 'center')),
+                                                  array('style' => 'background-color:' . $rowcolor));
+                }
             }
         } else {
                 $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
                 $courses .= html_writer::tag('tr',
                                               html_writer::tag('td',
-                                                   "None Found",
-                                                   array('colspan' => 4, 'align' => 'center',
-                                                         'style' => 'background-color:' . $rowcolor)
-                                              )
-                                     );
+                                                               'None Found',
+                                                               array('colspan' => 4,
+                                                                     'align' => 'center',
+                                                                     'style' => "background-color: $rowcolor")));
         }
         $courses .= html_writer::end_tag('table');
 
         return $courses;
+    }
+
+    /**
+     * Print archived list.
+     * @param string $search search term for the archives.
+     * @param bool $recover searches pending deleted archives only.
+     * @return string
+     */
+    public static function get_archivelist($search, $recover = false) {
+        global $CFG, $DB, $OUTPUT, $USER;
+        $isadmin = is_siteadmin();
+        $config = get_config('tool_coursearchiver');
+
+        $archivepath = trim(str_replace(str_split(':*?"<>|'),
+                                        '',
+                                        $config->coursearchiverpath),
+                            "/\\");
+        // Form start.
+        $rowcolor = "#FFF";
+        $data = array("formstart"   => true,
+                      "isadmin"     => $isadmin,
+                      "recover"     => $recover,
+                      "searchterm"  => $search,
+                      "rowcolor"    => $rowcolor,
+                      "limiter"     => $config->archivelimit);
+        $courses = $OUTPUT->render_from_template('tool_coursearchiver/archive_view', $data);
+
+        // Get either archives that are not marked for deletion or those that have been.
+        $select = !$recover ? 'timetodelete = 0' : 'timetodelete > 0';
+
+        // Search criteria.
+        $select .= !empty($search) ? " AND filename LIKE '%$search%'" : '';
+
+        // Only show user files.
+        $select .= $isadmin ? '' : " AND owners LIKE '%|$USER->id|%'";
+
+        $archives = $DB->get_records_select('tool_coursearchiver_archived',
+                                            $select,
+                                            null,
+                                            'filename',
+                                            '*',
+                                            0,
+                                            $config->archivelimit);
+        if ($archives) {
+            foreach ($archives as $archive) {
+                $pathinfo = pathinfo($archive->filename);
+                $file = $pathinfo['basename'];
+                $path = $pathinfo['dirname'];
+
+                // Make sure it is a file.
+                if (!file_exists($CFG->dataroot . '/' . $archivepath . '/' . $path . '/' . $file)) {
+                    continue;
+                }
+
+                $params = array();
+                $params['filename'] = $file;
+                $params['filepath'] = $path;
+                $params['contextid'] = context_system::instance()->id;
+                $restoreurl = new moodle_url('/admin/tool/coursearchiver/restorefile.php', $params);
+
+                $params['download'] = true;
+                $downloadurl = new moodle_url('/admin/tool/coursearchiver/restorefile.php', $params);
+                $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
+
+                // Form content.
+                $data = array("formcontent" => true,
+                              "isadmin"     => $isadmin,
+                              "recover"     => $recover,
+                              "rowcolor"    => $rowcolor,
+                              "file"        => $file,
+                              "path"        => $path,
+                              "downloadurl" => $downloadurl,
+                              "restoreurl"  => $restoreurl);
+                $courses .= $OUTPUT->render_from_template('tool_coursearchiver/archive_view', $data);
+            }
+        } else {
+            $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
+            // Form content.
+            $data = array("nocontent" => true,
+                          "isadmin"   => $isadmin,
+                          "recover"   => $recover,
+                          "rowcolor"  => $rowcolor);
+            $courses .= $OUTPUT->render_from_template('tool_coursearchiver/archive_view', $data);
+        }
+
+        // Form end.
+        $data = array("formend" => true, "recover" => $recover, "isadmin"   => $isadmin);
+        $courses .= $OUTPUT->render_from_template('tool_coursearchiver/archive_view', $data);
+
+        return $courses;
+    }
+
+    /**
+     * Delete from archives.
+     */
+    public static function delete_archives($selected) {
+        global $CFG, $DB;
+        $config = get_config('tool_coursearchiver');
+        $archivepath = trim(str_replace(str_split(':*?"<>|'),
+                                        '',
+                                        $config->coursearchiverpath),
+                            "/\\");
+        $delaydelete = $config->delaydeletesetting;
+        foreach ($selected as $course) {
+            if (file_exists($CFG->dataroot . '/' . $archivepath . '/' . $course)) {
+                $time = new DateTime("now + $delaydelete days", core_date::get_user_timezone_object());
+                // Check for database entry of file.
+                $sql = 'SELECT *
+                          FROM {tool_coursearchiver_archived}
+                         WHERE filename = :filename';
+
+                if (!$record = $DB->get_record_sql($sql, array('filename' => $course))) {
+                    $record = new stdClass();
+                    $record->filename     = $course;
+                    $record->owners       = '';
+                    $record->timetodelete = $time->getTimestamp();
+                    $DB->insert_record('tool_coursearchiver_archived', $record, false);
+                } else { // Record already exists, add time for deletion.
+                    $record->timetodelete = $time->getTimestamp();
+                    $DB->update_record('tool_coursearchiver_archived', $record);
+                }
+            }
+        }
+    }
+
+    /**
+     * Recover from archives.
+     */
+    public static function recover_archives($selected) {
+        global $CFG, $DB;
+        $config = get_config('tool_coursearchiver');
+        $archivepath = trim(str_replace(str_split(':*?"<>|'),
+                                        '',
+                                        get_config('tool_coursearchiver', 'coursearchiverpath')),
+                            "/\\");
+
+        foreach ($selected as $course) {
+            $file = $CFG->dataroot . '/' . $archivepath . '/' . $course;
+            if (file_exists($file)) {
+                // Check for database entry of file.
+                $sql = 'SELECT *
+                          FROM {tool_coursearchiver_archived}
+                         WHERE filename = :filename';
+
+                if ($record = $DB->get_record_sql($sql, array('filename' => $course))) {
+                    $record->timetodelete = '0';
+                    $DB->update_record('tool_coursearchiver_archived', $record);
+                }
+            }
+        }
+    }
+
+    /**
+     * Get email addresses of users that have pending deleted courses.
+     */
+    public static function deleted_archive_emails() {
+        global $DB;
+        // Check for database entry of file.
+        $sql = 'SELECT *
+                  FROM {tool_coursearchiver_archived}
+                 WHERE timetodelete > :timetodelete';
+
+        if ($records = $DB->get_records_sql($sql, array('timetodelete' => '0'))) {
+            $output = array();
+            foreach ($records as $record) {
+                $owners = trim($record->owners, '|');
+                if (strpos($owners, '|')) {
+                    $owners = explode('|', $owners);
+                    foreach ($owners as $owner) {
+                        $sql = 'SELECT email
+                                  FROM {user}
+                                 WHERE id = :id';
+
+                        if ($user = $DB->get_record_sql($sql, array('id' => $owner))) {
+                            $output[] = $user->email;
+                        }
+                    }
+                }
+            }
+
+            $output = array_unique($output); // Remove duplicate emails.
+            $output = implode($output, "\n");
+
+            // Output file.
+            header('Content-Disposition: attachment; filename="emaillist.csv"');
+            header('Content-Type: text/csv');
+            header('Content-Length: ' . strlen($output));
+            header('Connection: close');
+            echo $output;
+        } else { // No pending archives.
+            $reset = new moodle_url('/admin/tool/coursearchiver/archivelist.php?recover=1');
+            redirect($reset);
+        }
     }
 }

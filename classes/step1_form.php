@@ -70,7 +70,14 @@ class tool_coursearchiver_step1_form extends moodleform {
         $mform->setDefault('searches[teacher]', "");
 
         $displaylist = array(get_string('anycategory', 'tool_coursearchiver'));
-        $displaylist += coursecat::make_categories_list('moodle/course:create');
+
+        // Moodle < 3.6 compatibility.
+        if (!class_exists('core_course_category')) {
+            $displaylist += coursecat::make_categories_list('moodle/course:create');
+        } else {
+            $displaylist += core_course_category::make_categories_list('moodle/course:create');
+        }
+
         $mform->addElement('select', 'searches[catid]', get_string('category', 'tool_coursearchiver'), $displaylist);
         $mform->setDefault('searches[catid]', "");
 
@@ -89,6 +96,7 @@ class tool_coursearchiver_step1_form extends moodleform {
         $mform->addElement('checkbox', 'emptyonly', get_string('emptyonly', 'tool_coursearchiver'));
         $this->add_action_buttons(false, get_string('search', 'tool_coursearchiver'));
         $this->add_action_buttons(false, get_string('optoutlist', 'tool_coursearchiver'));
+        $this->add_action_buttons(false, get_string('archivelist', 'tool_coursearchiver'));
     }
 
     /**

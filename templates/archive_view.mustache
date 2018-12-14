@@ -1,0 +1,160 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_coursearchiver/archive_search
+
+    Shown as a search form for the archived courses list.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * None
+
+    Context variables required for this template:
+    * isadmin - let us know if we should give admin abilities
+    * recover - Archives or Pending delete
+    * formstart - beginning of form including back button, search form, select all
+    * formcontent - table rows of archive files
+    * nocontent - what to show if there are no archive files
+    * formend - end of the table and form along with another select all button
+    * searchterm - if a search has been submitted, the terms are entered in the textbox.
+
+    Example context (json):
+    { "searchterm": "2018" }
+}}
+{{#formstart}}
+
+    {{#isadmin}}
+        <a href="./index.php">{{# str }} back, moodle {{/ str }}</a>
+    {{/isadmin}}
+
+    <h3>
+        {{#recover}}
+            {{# str }} archiverecoverform, tool_coursearchiver {{/ str }}
+        {{/recover}}
+        {{^recover}}
+            {{# str }} archivelist, tool_coursearchiver {{/ str }}
+        {{/recover}}
+    </h3>
+
+    {{#recover}}
+        <a href="./archivelist.php">&lt;&lt; {{# str }} archivelist, tool_coursearchiver {{/ str }}</a>
+        <a href="./archivelist.php?emaillist=1" style="float: right;">{{# str }} deletedarchiveemails, tool_coursearchiver {{/ str }}</a>
+    {{/recover}}
+    {{^recover}}
+        <div style="text-align: right;">
+            <a href="./archivelist.php?recover=1">{{# str }} archiverecoverform, tool_coursearchiver {{/ str }} &gt;&gt;</a>
+        </div>
+    {{/recover}}
+
+    <form class="text-center" method="POST">
+        <input type="text"
+               class="form-control"
+               name="searchterm"
+               style="width: 40%;display: inline-block;"
+               value="{{searchterm}}"/>
+        <input type="submit" class="btn btn-primary" value="{{# str }} search, moodle {{/ str }}" />
+    </form>
+
+    {{#limiter}}
+        <div style="text-align:center; font-size: .8em;">{{# str }} archivelimitstring, tool_coursearchiver {{/ str }}: {{limiter}}</div>
+    {{/limiter}}
+
+    {{#isadmin}}
+        <div class="coursearchiver_selectall" style="text-align: left;margin: 5px;">
+            <button id="id_toggle" name="toggle" class="btn btn-secondary ml-0">
+                {{# str }} selectall, tool_coursearchiver {{/ str }}
+            </button>
+        </div>
+        <form class="text-center" method="POST">
+    {{/isadmin}}
+            <table cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: left">
+                <tr width="100%" style="background-color: {{rowcolor}}">
+                    <th style="width: 20px;">
+                    </th>
+                    <th>
+                        {{# str }} course, moodle {{/ str }}
+                    </th>
+                    <th>
+                        {{# str }} folder, moodle {{/ str }}
+                    </th>
+                    <th style="width: 200px;">
+                        {{# str }} actions, moodle {{/ str }}
+                    </th>
+                </tr>
+{{/formstart}}
+
+{{#formcontent}}
+                <tr style="background-color: {{rowcolor}}">
+                    <td>
+                        {{#isadmin}}
+                        <input type="checkbox" name="selected[]" value="{{path}}/{{file}}" />
+                        {{/isadmin}}
+                    </td>
+                    <td>
+                        {{file}}
+                    </td>
+                    <td>
+                        {{path}}
+                    </td>
+                    <td>
+                        <a title="{{# str }} download, moodle {{/ str }}" href="{{& downloadurl}}">
+                            <i class="fa fa-download"></i> {{# str }} download, moodle {{/ str }}
+                        </a>
+                        {{#isadmin}}
+                            &nbsp;&nbsp;
+                            <a title="{{# str }} restore, moodle {{/ str }}" href="{{& restoreurl}}">
+                                <i class="fa fa-level-up"></i> {{# str }} restore, moodle {{/ str }}
+                            </a>
+                        {{/isadmin}}
+                    </td>
+                </tr>
+{{/formcontent}}
+
+{{#nocontent}}
+                <tr style="background-color: {{rowcolor}}">
+                    <td colspan="4" style="text-align: center">
+                        {{# str }} nocoursesfound, tool_coursearchiver {{/ str }}
+                    </td>
+                </tr>
+{{/nocontent}}
+
+{{#formend}}
+        </table>
+        {{#isadmin}}
+            {{#recover}}
+                <input type="submit"
+                       class="btn btn-primary"
+                       onclick="return confirm('{{# str }} confirmrestore, tool_coursearchiver {{/ str }}');"
+                       value="{{# str }} recover, tool_coursearchiver {{/ str }}" />
+            {{/recover}}
+            {{^recover}}
+                <input type="submit"
+                       class="btn btn-primary"
+                       onclick="return confirm('{{# str }} confirmdelete, tool_coursearchiver {{/ str }}');"
+                       value="{{# str }} delete, tool_coursearchiver {{/ str }}" />
+            {{/recover}}
+
+        </form>
+        <div class="coursearchiver_selectall" style="text-align: left;margin: 5px;">
+            <button id="id_toggle" name="toggle" class="btn btn-secondary ml-0">
+                {{# str }} selectall, tool_coursearchiver {{/ str }}
+            </button>
+        </div>
+        {{/isadmin}}
+{{/formend}}

@@ -1,5 +1,5 @@
 <?php
-// This file is part of
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,18 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version info.
+ * Definition of Course Archiver scheduled tasks.
  *
- * @package    tool_coursearchiver
+ * @package   tool_coursearchiver
+ * @category  task
  * @copyright  2015 Matthew Davidson
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin = new stdClass();
-$plugin->version   = 2018121302;                // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2014111000;                // Requires this Moodle version.
-$plugin->component = 'tool_coursearchiver';     // Full name of the plugin (used for diagnostics).
-$plugin->release  = '3.7.1 (Build: 2016090200)';
-$plugin->maturity  = MATURITY_STABLE;
+$tasks = array(
+    array(
+        'classname' => 'tool_coursearchiver\task\cron_task',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '1',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    )
+);
