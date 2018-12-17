@@ -46,7 +46,7 @@ class tool_coursearchiver_step1_form extends moodleform {
         $mform->addElement('html', '<div style="float: right;">');
         $mform->addElement('html', '<a href="../../settings.php?section=tool_coursearchiver"  target="_blank">' .
             '<i class="fa fa-gear"></i> ' . get_string('coursearchiver_settings', 'tool_coursearchiver') . '</a>');
-        $mform->addElement('html', '</div><divstyle="clear: both;"></div>');
+        $mform->addElement('html', '</div><div style="clear: both;"></div>');
 
         $mform->addElement('select',
                            'savestates',
