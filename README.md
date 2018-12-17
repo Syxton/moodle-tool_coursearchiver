@@ -14,3 +14,12 @@ This is the template email that will be sent to the owners of the selected cours
 
 #### Course Archive Email
 This is the template email that will be sent to the owners of the selected courses to notify them that their course(s) will be archived.  There are two required variables in the email %to (name of the recipient) and %courses (a list of courses with mailto hyperlinks to notify the site administrator that the user wishes to opt out)
+
+#### Course opt out persistence
+A course can be opted out of the archival process and future archiver searches.  This setting determines how many months the opt out with last.
+
+#### Archive deletion delay
+When an archived file is selected for deletion, the actual removal of the file will be delayed by x days.
+
+#### Archive search limiter
+Archives can get very large.  This limits the amount of records returned to screen at one time.
