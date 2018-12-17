@@ -26,6 +26,13 @@ namespace tool_coursearchiver\task;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Cron task class.
+ *
+ * @package    tool_coursearchiver
+ * @copyright  2015 Matthew Davidson
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class cron_task extends \core\task\scheduled_task {
 
     /**

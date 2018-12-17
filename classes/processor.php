@@ -415,6 +415,8 @@ class tool_coursearchiver_processor {
     /**
      * Return an array of users in a course with a given role.
      *
+     * @param int $courseid id of the moodle course.
+     * @param int $roleid id of role.
      * @return array of users in a course with a given role
      */
     protected function get_course_users_with_role($courseid, $roleid) {
@@ -1445,7 +1447,9 @@ class tool_coursearchiver_processor {
     }
 
     /**
-     * Delete from archives.
+     * Schedule a deletion.
+     * @param array $selected collection of filenames selected.
+     * @return void.
      */
     public static function delete_archives($selected) {
         global $CFG, $DB;
@@ -1478,7 +1482,9 @@ class tool_coursearchiver_processor {
     }
 
     /**
-     * Recover from archives.
+     * Clear deletion scheduled.
+     * @param array $selected collection of filenames selected.
+     * @return void.
      */
     public static function recover_archives($selected) {
         global $CFG, $DB;
