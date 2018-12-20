@@ -94,7 +94,7 @@
     padding-left: 0;
 }
 
-.path-admin-tool-coursearchiver .form-check-input:not(#id_emptyonly) {
+.path-admin-tool-coursearchiver .form-check-input:not(#id_emptyonly):not(#id_subcats) {
     position: unset;
     vertical-align: middle;
 }

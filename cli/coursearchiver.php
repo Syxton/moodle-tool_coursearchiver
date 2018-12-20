@@ -37,6 +37,7 @@ list($options, $unrecognized) = cli_get_params(array(
     'idnum' => false,
     'teacher' => false,
     'catid' => false,
+    'subs' => false,
     'help' => false,
     'createdbefore' => false,
     'access' => false,
@@ -53,6 +54,7 @@ array(
     'h' => 'help',
     't' => 'teacher',
     'c' => 'catid',
+    'r' => 'subcats',
     'b' => 'createdbefore',
     'a' => 'access',
     'm' => 'mode',
@@ -74,6 +76,7 @@ Options:
 -i, --id                Search for courses matching the Moodle course id
 -n, --idnum             Search for courses matching the Moodle course idnumber
 -c, --catid             Search for courses matching the Moodle category id
+-r, --subcats           Recursively search the course categories
 -t, --teacher           Search for courses that have teacher with matching username or email
 -b, --createdbefore     Course created before UNIX TIMESTAMP
 -a, --access            Last accessed before UNIX TIMESTAMP

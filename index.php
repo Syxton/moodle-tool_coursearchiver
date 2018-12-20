@@ -88,6 +88,10 @@ if ($mform->is_submitted()) {
                 $formdata->searches["emptyonly"] = true;
             }
 
+            if (!empty($formdata->subcats)) {
+                $formdata->searches["subcats"] = true;
+            }
+
             $SESSION->formdata = serialize($formdata->searches);
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php');
             redirect($returnurl);

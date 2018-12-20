@@ -86,6 +86,9 @@ class tool_coursearchiver_step1_form extends moodleform {
         $mform->addElement('select', 'searches[catid]', get_string('category', 'tool_coursearchiver'), $displaylist);
         $mform->setDefault('searches[catid]', "");
 
+        $mform->addElement('checkbox', 'subcats', get_string('includesubcat', 'tool_coursearchiver'));
+        $mform->disabledIf('subcats', 'searches[catid]', 'eq', 0);
+
         $createdbefore = array();
         $createdbefore[] =& $mform->createElement('date_selector', 'createdbefore');
         $createdbefore[] =& $mform->createElement('checkbox', 'createdbeforeenabled', '', get_string('enable'));

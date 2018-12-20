@@ -105,6 +105,7 @@ $string['errorsendingemail'] = 'Email to {$a->firstname} {$a->lastname} ({$a->em
 $string['errorvalidarchive'] = 'Not a valid backup file.';
 $string['hide'] = 'Hide Courses';
 $string['hideemail'] = 'Send "Course to be Hidden" Emails';
+$string['includesubcat'] = 'Include courses in subcategories';
 $string['invalidmode'] = 'A valid mode for the tool was not given.';
 $string['never'] = 'Never';
 $string['nocoursesfound'] = 'The search has resulted in 0 courses found.';

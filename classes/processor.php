@@ -79,11 +79,14 @@ class tool_coursearchiver_processor {
     /** @var int total processed. */
     public $total = 0;
 
-    /** @var int total processed. */
+    /** @var int sub folder of archive process. */
     public $folder = false;
 
-    /** @var int total processed. */
+    /** @var int only return empty courses. */
     public $emptyonly = false;
+
+    /** @var int recursive category search. */
+    public $subcats = false;
 
     /** @var int data passed into processor. */
     protected $data = array();
@@ -105,6 +108,7 @@ class tool_coursearchiver_processor {
         "idnum" => "idnumber",
         "teacher" => "teacher",
         "catid" => "category",
+        "subcats" => "subcats",
         "createdbefore" => "timecreated",
         "access" => "timeaccess",
         "emptyonly" => "emptyonly");
@@ -1044,9 +1048,21 @@ class tool_coursearchiver_processor {
                                                            )
                                     )
                     )';
-                    } else if ($truekey == "id" || $truekey == "category") {
+                    } else if ($truekey == "id") {
                         $params[$truekey] = $value;
                         $searchsql .= " AND c.$truekey = :$truekey";
+                    } else if ($truekey == "category") {
+                        if (!empty($this->data["subcats"])) {
+                            $params[$truekey] = $value;
+                            $params["subcats"] = "%/$value/%";
+                            $searchsql .= " AND (c.$truekey = :$truekey
+                                                OR " .
+                                                $DB->sql_like("b.path", ":subcats", false, false) .
+                                                ")";
+                        } else {
+                            $params[$truekey] = $value;
+                            $searchsql .= " AND c.$truekey = :$truekey";
+                        }
                     } else if ($truekey == "timecreated") {
                         $params['createdbefore'] = $value;
                         // Course had to be created prior to this date.
@@ -1061,6 +1077,8 @@ class tool_coursearchiver_processor {
                         $searchsql .= " AND (a.$truekey <= :$truekey OR a.timeaccess IS NULL)";
                     } else if ($truekey == "emptyonly") {
                         $this->emptyonly = true;
+                    } else if ($truekey == "subcats") {
+                        $this->subcats = true;
                     } else {
                         $params[$truekey] = '%' . $DB->sql_like_escape("$value") . '%';
                         $searchsql .= " AND " . $DB->sql_like($truekey, ":$truekey", false, false);
@@ -1082,8 +1100,9 @@ class tool_coursearchiver_processor {
     public function courselist_sql($searchsql, $params) {
         global $DB;
         $sql = "SELECT c.id, c.fullname, c.category, c.shortname, c.idnumber,
-                       c.visible, a.timeaccess
+                       c.visible, a.timeaccess, b.path
                   FROM {course} c
+             LEFT JOIN {course_categories} b ON c.category = b.id
              LEFT JOIN (
                         SELECT a.courseid, a.timeaccess
                           FROM {user_lastaccess} a
