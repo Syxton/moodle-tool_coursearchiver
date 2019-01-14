@@ -144,31 +144,34 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
                                         '',
                                         get_config('tool_coursearchiver', 'coursearchiverpath')),
                             "/\\");
-        $fileinfos = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($CFG->dataroot . '/' . $archivepath)
-        );
 
-        if (!empty($fileinfos)) {
-            foreach ($fileinfos as $pathname => $fileinfo) {
-                $pathinfo = pathinfo($pathname);
-                $file = $pathinfo['basename'];
-                $path = strstr($pathinfo['dirname'], $archivepath);
-                $path = str_replace($archivepath, '', $path);
-                $path = trim($path, "/\\"); // Leaves the sub folder only.
+        if (file_exists($CFG->dataroot . '/' . $archivepath)) {
+            $fileinfos = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($CFG->dataroot . '/' . $archivepath)
+            );
 
-                if (!$fileinfo->isFile()) { // Make sure it is a file.
-                    continue;
+            if (!empty($fileinfos)) {
+                foreach ($fileinfos as $pathname => $fileinfo) {
+                    $pathinfo = pathinfo($pathname);
+                    $file = $pathinfo['basename'];
+                    $path = strstr($pathinfo['dirname'], $archivepath);
+                    $path = str_replace($archivepath, '', $path);
+                    $path = trim($path, "/\\"); // Leaves the sub folder only.
+
+                    if (!$fileinfo->isFile()) { // Make sure it is a file.
+                        continue;
+                    }
+
+                    if (!empty($search) && (empty(strstr($file, $search)) && empty(strstr($path, $search)))) {
+                        continue;
+                    }
+
+                    $record = new stdClass();
+                    $record->filename     = $path . '/' . $file;
+                    $record->owners       = '';
+                    $record->timetodelete = '0';
+                    $DB->insert_record('tool_coursearchiver_archived', $record, false);
                 }
-
-                if (!empty($search) && (empty(strstr($file, $search)) && empty(strstr($path, $search)))) {
-                    continue;
-                }
-
-                $record = new stdClass();
-                $record->filename     = $path . '/' . $file;
-                $record->owners       = '';
-                $record->timetodelete = '0';
-                $DB->insert_record('tool_coursearchiver_archived', $record, false);
             }
         }
 
