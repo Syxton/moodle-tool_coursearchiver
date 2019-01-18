@@ -716,7 +716,7 @@ class tool_coursearchiver_processor {
             }
         }
 
-        return $this->sort_latest_file($files);
+        return $this->find_latest_file($files);
     }
 
     /**
