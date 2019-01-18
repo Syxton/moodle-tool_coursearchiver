@@ -25,15 +25,15 @@ matrix:
 
     - php: 7.0
       env:
-      - MOODLE_BRANCH=master
-      - DB=mysqli
-
-    - php: 7.0
-      env:
       - MOODLE_BRANCH=MOODLE_36_STABLE
       - DB=pgsql
 
-    - php: 7.0
+    - php: 7.1
+      env:
+      - MOODLE_BRANCH=master
+      - DB=mysqli
+
+    - php: 7.1
       env:
       - MOODLE_BRANCH=master
       - DB=pgsql
