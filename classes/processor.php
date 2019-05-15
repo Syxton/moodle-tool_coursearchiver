@@ -788,7 +788,7 @@ class tool_coursearchiver_processor {
         if (empty($courses)) {
             //This can only be an error
             throw new Exception('Incorrectly got an empty coures HTML table - this should be impossible');
-        } else if ($this->mode && self::MODE_HIDEEMAIL && empty(trim(strip_tags(implode ('', $courses))))) {
+        } else if ($this->mode === self::MODE_HIDEEMAIL && empty(trim(strip_tags(implode ('', $courses))))) {
             //The user had no visible courses, so don't send an email to this user
             return 0;
         } else {
