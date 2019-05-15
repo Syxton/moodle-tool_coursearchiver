@@ -753,10 +753,10 @@ class tool_coursearchiver_processor {
     }
 
     /**
-     * Sends an email to each owner
+     * Sends an email to each course owner
      *
-     * @param object $obj user array with courses attached
-     * @return array of courses that match the search
+     * @param object $obj user array with courses attached (an array of userObject->courseObjects)
+     * @return # of emails sent (0 or 1)
      */
     protected function sendemail($obj) {
         global $CFG;
@@ -783,8 +783,15 @@ class tool_coursearchiver_processor {
                 return false;
         }
 
+        //Note: get_email_courses() may return an empty HTML table
         $courses = $this->get_email_courses($obj);
-        if (!empty($courses)) {
+        if (empty($courses)) {
+            //This can only be an error
+            throw new Exception('Incorrectly got an empty coures HTML table - this should be impossible');
+        } else if ($this->mode && self::MODE_HIDEEMAIL && empty(trim(strip_tags(implode ('', $courses))))) {
+            //The user had no visible courses, so don't send an email to this user
+            return 0;
+        } else {
             $c = "";
             foreach ($courses as $coursetext) {
                 $c .= $coursetext;
@@ -824,14 +831,14 @@ class tool_coursearchiver_processor {
             $event->courseid = SITEID;
 
             try {
-                message_send($event);
+                if(message_send($event) === false) {
+                    throw new Exception('There was a problem with data submitted to message_send()');
+                }
             } catch (Exception $e) {
-                $this->errors[] = get_string('errorsendingemail', 'tool_coursearchiver', $obj["user"]);
+                $this->errors[] = get_string('errorsendingemail', 'tool_coursearchiver', $obj["user"]) . ' ' . $e->getMessage();
                 return false;
             }
             return 1;
-        } else {
-            return 0;
         }
     }
 
