@@ -1164,10 +1164,10 @@ class tool_coursearchiver_processor {
     }
 
     /**
-     * Get list of courses for email.
+     * Get an HTML table listing courses to put in the email.
      *
-     * @param object $obj an array of courses
-     * @return array $courses
+     * @param object $obj an array of userObject->courseObjects
+     * @return array Full HTML table listing the $courses
      */
     public function get_email_courses($obj) {
         global $CFG;
@@ -1178,8 +1178,8 @@ class tool_coursearchiver_processor {
             $optoutbutton = get_string('optoutarchive', 'tool_coursearchiver');
         }
 
-        $courses = array();
-        $courses[] = html_writer::start_tag('table', array('style' => 'border-collapse: collapse;',
+        $tableHtml = array();
+        $tableHtml[] = html_writer::start_tag('table', array('style' => 'border-collapse: collapse;',
                                                            'cellpadding' => '5'));
         $rowcolor = "#FFF";
         foreach ($obj["courses"] as $course) {
@@ -1189,7 +1189,7 @@ class tool_coursearchiver_processor {
             // Only add courses that are visible if mode is HIDEEMAIL.
             if ($this->mode == self::MODE_ARCHIVEEMAIL || $course->visible) {
                 $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
-                $courses[] = html_writer::tag('tr',
+                $tableHtml[] = html_writer::tag('tr',
                                               html_writer::tag('td',
                                                    html_writer::link(new moodle_url('/course/view.php',
                                                                                     array('id' => $course->id)),
@@ -1209,9 +1209,9 @@ class tool_coursearchiver_processor {
                 $this->notices[] = get_string('noticecoursehidden', 'tool_coursearchiver', $course);
             }
         }
-        $courses[] = html_writer::end_tag('table');
-
-        return $courses;
+        $tableHtml[] = html_writer::end_tag('table');
+        
+        return $tableHtml;
     }
 
     /**
