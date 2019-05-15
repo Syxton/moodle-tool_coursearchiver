@@ -1178,8 +1178,8 @@ class tool_coursearchiver_processor {
             $optoutbutton = get_string('optoutarchive', 'tool_coursearchiver');
         }
 
-        $tableHtml = array();
-        $tableHtml[] = html_writer::start_tag('table', array('style' => 'border-collapse: collapse;',
+        $tablehtml = array();
+        $tablehtml[] = html_writer::start_tag('table', array('style' => 'border-collapse: collapse;',
                                                            'cellpadding' => '5'));
         $rowcolor = "#FFF";
         foreach ($obj["courses"] as $course) {
@@ -1189,7 +1189,7 @@ class tool_coursearchiver_processor {
             // Only add courses that are visible if mode is HIDEEMAIL.
             if ($this->mode == self::MODE_ARCHIVEEMAIL || $course->visible) {
                 $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
-                $tableHtml[] = html_writer::tag('tr',
+                $tablehtml[] = html_writer::tag('tr',
                                               html_writer::tag('td',
                                                    html_writer::link(new moodle_url('/course/view.php',
                                                                                     array('id' => $course->id)),
@@ -1209,9 +1209,9 @@ class tool_coursearchiver_processor {
                 $this->notices[] = get_string('noticecoursehidden', 'tool_coursearchiver', $course);
             }
         }
-        $tableHtml[] = html_writer::end_tag('table');
-        
-        return $tableHtml;
+        $tablehtml[] = html_writer::end_tag('table');
+
+        return $tablehtml;
     }
 
     /**
