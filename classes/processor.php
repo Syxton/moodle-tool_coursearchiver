@@ -783,13 +783,13 @@ class tool_coursearchiver_processor {
                 return false;
         }
 
-        //Note: get_email_courses() may return an empty HTML table
+        // Note: get_email_courses() may return an empty HTML table.
         $courses = $this->get_email_courses($obj);
         if (empty($courses)) {
-            //This can only be an error
+            // This can only be an error.
             throw new Exception('Incorrectly got an empty coures HTML table - this should be impossible');
         } else if ($this->mode === self::MODE_HIDEEMAIL && empty(trim(strip_tags(implode ('', $courses))))) {
-            //The user had no visible courses, so don't send an email to this user
+            // The user had no visible courses, so don't send an email to this user.
             return 0;
         } else {
             $c = "";
@@ -831,7 +831,7 @@ class tool_coursearchiver_processor {
             $event->courseid = SITEID;
 
             try {
-                if(message_send($event) === false) {
+                if (message_send($event) === false) {
                     throw new Exception('There was a problem with data submitted to message_send()');
                 }
             } catch (Exception $e) {
