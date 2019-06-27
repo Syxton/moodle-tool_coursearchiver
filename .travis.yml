@@ -1,62 +1,33 @@
 language: php
 
-sudo: true
+sudo: required
+
+services:
+  - mysql
 
 addons:
-  chrome: stable
-  postgresql: '9.4'
+  firefox: "47.0.1"
+  postgresql: "9.6"
+  mysql: "8.0.2"
   apt:
     packages:
-      - oracle-java9-installer
-      - oracle-java9-set-default
-      - chromium-chromedriver
+      - openjdk-9-jre-headless
 
 cache:
   directories:
     - $HOME/.composer/cache
     - $HOME/.npm
 
-matrix:
-  include:
-    - php: 7.0
-      env:
-      - MOODLE_BRANCH=MOODLE_36_STABLE
-      - DB=mysqli
+php:
+ - 7.1
+ - 7.2
 
-    - php: 7.0
-      env:
-      - MOODLE_BRANCH=MOODLE_36_STABLE
-      - DB=pgsql
-
-    - php: 7.1
-      env:
-      - MOODLE_BRANCH=master
-      - DB=mysqli
-
-    - php: 7.1
-      env:
-      - MOODLE_BRANCH=master
-      - DB=pgsql
-
-    - php: 7.2
-      env:
-      - MOODLE_BRANCH=MOODLE_36_STABLE
-      - DB=mysqli
-
-    - php: 7.2
-      env:
-      - MOODLE_BRANCH=master
-      - DB=mysqli
-
-    - php: 7.2
-      env:
-      - MOODLE_BRANCH=MOODLE_36_STABLE
-      - DB=pgsql
-
-    - php: 7.2
-      env:
-      - MOODLE_BRANCH=master
-      - DB=pgsql
+env:
+  matrix:
+    - MOODLE_BRANCH=master DB=pgsql
+    - MOODLE_BRANCH=master DB=mysqli
+    - MOODLE_BRANCH=MOODLE_37_STABLE DB=pgsql
+    - MOODLE_BRANCH=MOODLE_37_STABLE DB=mysqli
 
 before_install:
   - phpenv config-rm xdebug.ini
@@ -69,12 +40,6 @@ before_install:
 install:
   - moodle-plugin-ci install
 
-before_script:
-  # include ChromeDriver in PATH
-  - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
-  # start Chrome and listen on localhost
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
-
 script:
   - moodle-plugin-ci phplint
   - moodle-plugin-ci phpcpd
@@ -82,7 +47,6 @@ script:
   - moodle-plugin-ci codechecker
   - moodle-plugin-ci validate
   - moodle-plugin-ci savepoints
-  - moodle-plugin-ci mustache
   - moodle-plugin-ci grunt
   - moodle-plugin-ci phpunit
-  - moodle-plugin-ci behat --profile chrome --dump
+  - moodle-plugin-ci behat
