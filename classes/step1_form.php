@@ -53,6 +53,13 @@ class tool_coursearchiver_step1_form extends moodleform {
                            get_string('resume', 'tool_coursearchiver'),
                            tool_coursearchiver_processor::get_saves());
 
+        $mform->addElement('checkbox', 'emptyonly', get_string('emptyonly', 'tool_coursearchiver'));
+
+        $mform->addElement('text', 'searches[id]', get_string('courseid', 'tool_coursearchiver'));
+        $mform->setType('searches[id]', PARAM_TEXT);
+        $mform->addRule('searches[id]', null, 'numeric', null, 'client');
+        $mform->setDefault('searches[id]', "");
+
         $mform->addElement('text', 'searches[short]', get_string('courseshortname', 'tool_coursearchiver'));
         $mform->setType('searches[short]', PARAM_TEXT);
         $mform->setDefault('searches[short]', "");
@@ -64,11 +71,6 @@ class tool_coursearchiver_step1_form extends moodleform {
         $mform->addElement('text', 'searches[idnum]', get_string('courseidnum', 'tool_coursearchiver'));
         $mform->setType('searches[idnum]', PARAM_TEXT);
         $mform->setDefault('searches[idnum]', "");
-
-        $mform->addElement('text', 'searches[id]', get_string('courseid', 'tool_coursearchiver'));
-        $mform->setType('searches[id]', PARAM_TEXT);
-        $mform->addRule('searches[id]', null, 'numeric', null, 'client');
-        $mform->setDefault('searches[id]', "");
 
         $mform->addElement('text', 'searches[teacher]', get_string('courseteacher', 'tool_coursearchiver'));
         $mform->setType('searches[teacher]', PARAM_TEXT);
@@ -89,19 +91,60 @@ class tool_coursearchiver_step1_form extends moodleform {
         $mform->addElement('checkbox', 'subcats', get_string('includesubcat', 'tool_coursearchiver'));
         $mform->disabledIf('subcats', 'searches[catid]', 'eq', 0);
 
+        $mform->addElement('header', 'timecreated', get_string('createdbeforeafter', 'tool_coursearchiver'));
+
         $createdbefore = array();
         $createdbefore[] =& $mform->createElement('date_selector', 'createdbefore');
         $createdbefore[] =& $mform->createElement('checkbox', 'createdbeforeenabled', '', get_string('enable'));
         $mform->addGroup($createdbefore, 'createdbefore', get_string('createdbefore', 'tool_coursearchiver'), ' ', false);
         $mform->disabledIf('createdbefore', 'createdbeforeenabled');
 
-        $lastaccessgroup = array();
-        $lastaccessgroup[] =& $mform->createElement('date_selector', 'access');
-        $lastaccessgroup[] =& $mform->createElement('checkbox', 'lastaccessenabled', '', get_string('enable'));
-        $mform->addGroup($lastaccessgroup, 'lastaccessgroup', get_string('access', 'tool_coursearchiver'), ' ', false);
-        $mform->disabledIf('lastaccessgroup', 'lastaccessenabled');
+        $createdafter = array();
+        $createdafter[] =& $mform->createElement('date_selector', 'createdafter');
+        $createdafter[] =& $mform->createElement('checkbox', 'createdaftereenabled', '', get_string('enable'));
+        $mform->addGroup($createdafter, 'createdafter', get_string('createdafter', 'tool_coursearchiver'), ' ', false);
+        $mform->disabledIf('createdafter', 'createdaftereenabled');
 
-        $mform->addElement('checkbox', 'emptyonly', get_string('emptyonly', 'tool_coursearchiver'));
+        $mform->addElement('header', 'timeaccessed', get_string('accessbeforeafter', 'tool_coursearchiver'));
+
+        $accessbeforegroup = array();
+        $accessbeforegroup[] =& $mform->createElement('date_selector', 'accessbefore');
+        $accessbeforegroup[] =& $mform->createElement('checkbox', 'accessbeforeenabled', '', get_string('enable'));
+        $mform->addGroup($accessbeforegroup, 'accessbeforegroup', get_string('accessbefore', 'tool_coursearchiver'), ' ', false);
+        $mform->disabledIf('accessbeforegroup', 'accessbeforeenabled');
+
+        $accessaftergroup = array();
+        $accessaftergroup[] =& $mform->createElement('date_selector', 'accessafter');
+        $accessaftergroup[] =& $mform->createElement('checkbox', 'accessafterenabled', '', get_string('enable'));
+        $mform->addGroup($accessaftergroup, 'accessaftergroup', get_string('accessafter', 'tool_coursearchiver'), ' ', false);
+        $mform->disabledIf('accessaftergroup', 'accessafterenabled');
+
+        $mform->addElement('header', 'timestarted', get_string('startend', 'tool_coursearchiver'));
+
+        $startbeforegroup = array();
+        $startbeforegroup[] =& $mform->createElement('date_selector', 'startbefore');
+        $startbeforegroup[] =& $mform->createElement('checkbox', 'startbeforeenabled', '', get_string('enable'));
+        $mform->addGroup($startbeforegroup, 'startbeforegroup', get_string('startbefore', 'tool_coursearchiver'), ' ', false);
+        $mform->disabledIf('startbeforegroup', 'startbeforeenabled');
+
+        $startaftergroup = array();
+        $startaftergroup[] =& $mform->createElement('date_selector', 'startafter');
+        $startaftergroup[] =& $mform->createElement('checkbox', 'startafterenabled', '', get_string('enable'));
+        $mform->addGroup($startaftergroup, 'startaftergroup', get_string('startafter', 'tool_coursearchiver'), ' ', false);
+        $mform->disabledIf('startaftergroup', 'startafterenabled');
+
+        $endbeforegroup = array();
+        $endbeforegroup[] =& $mform->createElement('date_selector', 'endbefore');
+        $endbeforegroup[] =& $mform->createElement('checkbox', 'endbeforeenabled', '', get_string('enable'));
+        $mform->addGroup($endbeforegroup, 'endbeforegroup', get_string('endbefore', 'tool_coursearchiver'), ' ', false);
+        $mform->disabledIf('endbeforegroup', 'endbeforeenabled');
+
+        $endaftergroup = array();
+        $endaftergroup[] =& $mform->createElement('date_selector', 'endafter');
+        $endaftergroup[] =& $mform->createElement('checkbox', 'endafterenabled', '', get_string('enable'));
+        $mform->addGroup($endaftergroup, 'endaftergroup', get_string('endafter', 'tool_coursearchiver'), ' ', false);
+        $mform->disabledIf('endaftergroup', 'endafterenabled');
+
         $this->add_action_buttons(false, get_string('search', 'tool_coursearchiver'));
         $this->add_action_buttons(false, get_string('optoutlist', 'tool_coursearchiver'));
         $this->add_action_buttons(false, get_string('archivelist', 'tool_coursearchiver'));
@@ -131,9 +174,45 @@ class tool_coursearchiver_step1_form extends moodleform {
             }
             $searchstring .= $timecode;
 
-            if (!empty($data["lastaccessenabled"])) {
-                $timecode = mktime(null, null, null, $data["access"]["month"],
-                                   $data["access"]["day"], $data["access"]["year"]);
+            if (!empty($data["createdafterenabled"])) {
+                $timecode = mktime(null, null, null, $data["createdafter"]["month"],
+                                   $data["createdbefore"]["day"], $data["createdafter"]["year"]);
+            }
+            $searchstring .= $timecode;
+
+            if (!empty($data["accessbeforeenabled"])) {
+                $timecode = mktime(null, null, null, $data["accessbefore"]["month"],
+                                   $data["accessbefore"]["day"], $data["accessbefore"]["year"]);
+            }
+            $searchstring .= $timecode;
+
+            if (!empty($data["accessafterenabled"])) {
+                $timecode = mktime(null, null, null, $data["accessafter"]["month"],
+                                   $data["accessafter"]["day"], $data["accessafter"]["year"]);
+            }
+            $searchstring .= $timecode;
+
+            if (!empty($data["startbeforeenabled"])) {
+                $timecode = mktime(null, null, null, $data["startbefore"]["month"],
+                                   $data["startbefore"]["day"], $data["startbefore"]["year"]);
+            }
+            $searchstring .= $timecode;
+
+            if (!empty($data["startafterenabled"])) {
+                $timecode = mktime(null, null, null, $data["startafter"]["month"],
+                                   $data["startafter"]["day"], $data["startafter"]["year"]);
+            }
+            $searchstring .= $timecode;
+
+            if (!empty($data["endbeforeenabled"])) {
+                $timecode = mktime(null, null, null, $data["endbefore"]["month"],
+                                   $data["endbefore"]["day"], $data["endbefore"]["year"]);
+            }
+            $searchstring .= $timecode;
+
+            if (!empty($data["endafterenabled"])) {
+                $timecode = mktime(null, null, null, $data["endafter"]["month"],
+                                   $data["endafter"]["day"], $data["endafter"]["year"]);
             }
             $searchstring .= $timecode;
 

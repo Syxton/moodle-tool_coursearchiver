@@ -40,7 +40,13 @@ list($options, $unrecognized) = cli_get_params(array(
     'subs' => false,
     'help' => false,
     'createdbefore' => false,
-    'access' => false,
+    'createdafter' => false,
+    'accessbefore' => false,
+    'accessafter' => false,
+    'startbefore' => false,
+    'startafter' => false,
+    'endbefore' => false,
+    'endafter' => false,
     'mode' => false,
     'location' => false,
     'empty' => false,
@@ -56,7 +62,13 @@ array(
     'c' => 'catid',
     'r' => 'subcats',
     'b' => 'createdbefore',
-    'a' => 'access',
+    'a' => 'createdafter',
+    'B' => 'accessbefore',
+    'A' => 'accessafter',
+    'o' => 'startbefore',
+    'O' => 'startafter',
+    'd' => 'endbefore',
+    'D' => 'endafter',
     'm' => 'mode',
     'l' => 'location',
     'e' => 'empty',
@@ -79,7 +91,13 @@ Options:
 -r, --subcats           Recursively search the course categories
 -t, --teacher           Search for courses that have teacher with matching username or email
 -b, --createdbefore     Course created before UNIX TIMESTAMP
--a, --access            Last accessed before UNIX TIMESTAMP
+-a, --createdafter      Course created after UNIX TIMESTAMP
+-B, --accessbefore      Last accessed before UNIX TIMESTAMP
+-A, --accessafter       Last accessed after UNIX TIMESTAMP
+-o, --startbefore       Course starts before UNIX TIMESTAMP
+-O, --startafter        Course starts after UNIX TIMESTAMP
+-d, --endbefore         Course ends before UNIX TIMESTAMP
+-D, --endafter          Course ends after UNIX TIMESTAMP
 -m, --mode              courselist,emaillist,hide,archive,delete,hideemail,archiveemail
 -l, --location          Folder name to store archived courses (optional)
 -e, --empty             Only return empty courses
@@ -118,8 +136,43 @@ if (!empty($options['id']) && !is_numeric($options['id'])) {
     die();
 }
 
-if (!empty($options['access']) && !is_numeric($options['access'])) {
-    echo get_string('errornonnumericaccess', 'tool_coursearchiver'). "\n";
+if (!empty($options['createdbefore']) && !is_numeric($options['createdbefore'])) {
+    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
+    die();
+}
+
+if (!empty($options['createdafter']) && !is_numeric($options['createdafter'])) {
+    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
+    die();
+}
+
+if (!empty($options['accessbefore']) && !is_numeric($options['accessbefore'])) {
+    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
+    die();
+}
+
+if (!empty($options['accessafter']) && !is_numeric($options['accessafter'])) {
+    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
+    die();
+}
+
+if (!empty($options['startbefore']) && !is_numeric($options['startbefore'])) {
+    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
+    die();
+}
+
+if (!empty($options['startafter']) && !is_numeric($options['startafter'])) {
+    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
+    die();
+}
+
+if (!empty($options['endbefore']) && !is_numeric($options['endbefore'])) {
+    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
+    die();
+}
+
+if (!empty($options['endafter']) && !is_numeric($options['endafter'])) {
+    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
     die();
 }
 

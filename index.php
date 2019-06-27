@@ -79,8 +79,32 @@ if ($mform->is_submitted()) {
                 $formdata->searches["createdbefore"] = $formdata->createdbefore;
             }
 
-            if (!empty($formdata->lastaccessenabled)) {
-                $formdata->searches["access"] = $formdata->access;
+            if (!empty($formdata->createdafterenabled)) {
+                $formdata->searches["createdafter"] = $formdata->createdafter;
+            }
+
+            if (!empty($formdata->accessbeforeenabled)) {
+                $formdata->searches["accessbefore"] = $formdata->accessbefore;
+            }
+
+            if (!empty($formdata->accessafterenabled)) {
+                $formdata->searches["accessafter"] = $formdata->accessafter;
+            }
+
+            if (!empty($formdata->startbeforeenabled)) {
+                $formdata->searches["startbefore"] = $formdata->startbefore;
+            }
+
+            if (!empty($formdata->startafterenabled)) {
+                $formdata->searches["startafter"] = $formdata->startafter;
+            }
+
+            if (!empty($formdata->endbeforeenabled)) {
+                $formdata->searches["endbefore"] = $formdata->endbefore;
+            }
+
+            if (!empty($formdata->endafterenabled)) {
+                $formdata->searches["endafter"] = $formdata->endafter;
             }
 
             // Get search criteria from the first form to pass it onto the second.

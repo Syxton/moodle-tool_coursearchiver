@@ -109,8 +109,14 @@ class tool_coursearchiver_processor {
         "teacher" => "teacher",
         "catid" => "category",
         "subcats" => "subcats",
-        "createdbefore" => "timecreated",
-        "access" => "timeaccess",
+        "createdbefore" => "createdbefore",
+        "createdafter" => "createdafter",
+        "accessbefore" => "accessbefore",
+        "accessafter" => "accessafter",
+        "startbefore" => "startbefore",
+        "startafter" => "startafter",
+        "endbefore" => "endbefore",
+        "endafter" => "endafter",
         "emptyonly" => "emptyonly");
 
     /**
@@ -1070,25 +1076,45 @@ class tool_coursearchiver_processor {
                             $params[$truekey] = $value;
                             $searchsql .= " AND c.$truekey = :$truekey";
                         }
-                    } else if ($truekey == "timecreated") {
-                        $params['createdbefore'] = $value;
-                        // Course had to be created prior to this date.
+                    } else if ($truekey == "createdbefore") {
+                        $params[$truekey] = $value;
                         $searchsql .= " AND c.timecreated < :createdbefore";
+                    } else if ($truekey == "createdafter") {
                         $params[$truekey] = $value;
-                    } else if ($truekey == "timeaccess") {
-                        $params['olderthan'] = $value;
+                        $searchsql .= " AND c.timecreated > :createdafter";
+                    } else if ($truekey == "accessbefore") {
                         // Course had to be old enough to have access.
-                        $searchsql .= " AND c.timecreated < :olderthan";
-                        $params[$truekey] = $value;
                         // Course has old or no access.
-                        $searchsql .= " AND (a.$truekey <= :$truekey OR a.timeaccess IS NULL)";
+                        $params['olderthan'] = $value;
+                        $params[$truekey] = $value;
+                        $searchsql .= " AND c.timecreated < :olderthan";
+                        $searchsql .= " AND (a.timeaccess <= :$truekey OR a.timeaccess IS NULL)";
+                    } else if ($truekey == "accessafter") {
+                        // Course had to be old enough to have access.
+                        // Course has old or no access.
+                        $params['olderthan'] = $value;
+                        $params[$truekey] = $value;
+                        $searchsql .= " AND c.timecreated < :olderthan";
+                        $searchsql .= " AND (a.timeaccess >= :$truekey)";
+                    } else if ($truekey == "startbefore") {
+                        $params[$truekey] = $value;
+                        $searchsql .= " AND c.startdate < :startbefore";
+                    } else if ($truekey == "startafter") {
+                        $params[$truekey] = $value;
+                        $searchsql .= " AND c.startdate > :startafter";
+                    } else if ($truekey == "endbefore") {
+                        $params[$truekey] = $value;
+                        $searchsql .= " AND c.enddate < :endbefore";
+                    } else if ($truekey == "endafter") {
+                        $params[$truekey] = $value;
+                        $searchsql .= " AND c.enddate > :endafter";
                     } else if ($truekey == "emptyonly") {
                         $this->emptyonly = true;
                     } else if ($truekey == "subcats") {
                         $this->subcats = true;
                     } else {
-                        $params[$truekey] = '%' . $DB->sql_like_escape("$value") . '%';
-                        $searchsql .= " AND " . $DB->sql_like($truekey, ":$truekey", false, false);
+                        $params[$truekey] = '%' .$value . '%';
+                        $searchsql .= " AND " . $DB->sql_like("c.$truekey", ":$truekey", false, false);
                     }
                 }
             }
