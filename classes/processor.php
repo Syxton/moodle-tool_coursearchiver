@@ -834,7 +834,10 @@ class tool_coursearchiver_processor {
             $event->contexturl = $CFG->wwwroot;
             $event->contexturlname = get_string('coursearchiver', 'tool_coursearchiver');
             $event->replyto = $admin->email;
-            $event->courseid = SITEID;
+
+            if ($CFG->version > 2016110200) { // Moodle 3.2 and after.
+                $event->courseid = SITEID;
+            }
 
             try {
                 if (message_send($event) === false) {
