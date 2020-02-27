@@ -790,7 +790,14 @@ class tool_coursearchiver_processor {
         }
 
         // Note: get_email_courses() may return an empty HTML table.
-        $courses = $this->get_email_courses($obj);
+        if (strstr($message, '%courses_nolink')) {
+            $courses = $this->get_email_courses($obj, false);
+            $placeholder = '%courses_nolink';
+        } else {
+            $courses = $this->get_email_courses($obj);
+            $placeholder = '%courses';
+        }
+
         if (empty($courses)) {
             // This can only be an error.
             throw new Exception('Incorrectly got an empty coures HTML table - this should be impossible');
@@ -809,14 +816,14 @@ class tool_coursearchiver_processor {
                 return 0;
             }
 
-            if (!strstr($message, '%courses')) {
+            if (!strstr($message, $placeholder)) {
                 $this->errors[] = get_string('errormissingcourses', 'tool_coursearchiver');
                 return 0;
             }
 
             $vars = array(
-                '%to'    => $obj["user"]->firstname . ' ' . $obj["user"]->lastname,
-                '%courses'    => $c
+                '%to'          => $obj["user"]->firstname . ' ' . $obj["user"]->lastname,
+                $placeholder   => $c
             );
             $message = strtr(nl2br($message), $vars);
 
@@ -1203,9 +1210,10 @@ class tool_coursearchiver_processor {
      * Get an HTML table listing courses to put in the email.
      *
      * @param object $obj an array of userObject->courseObjects
+     * @param bool $links a bool describing whether to show links or not in email
      * @return array Full HTML table listing the $courses
      */
-    public function get_email_courses($obj) {
+    public function get_email_courses($obj, $links = true) {
         global $CFG;
 
         if ($this->mode == self::MODE_HIDEEMAIL) {
@@ -1216,7 +1224,7 @@ class tool_coursearchiver_processor {
 
         $tablehtml = array();
         $tablehtml[] = html_writer::start_tag('table', array('style' => 'border-collapse: collapse;',
-                                                           'cellpadding' => '5'));
+                                                             'cellpadding' => '5'));
         $rowcolor = "#FFF";
         foreach ($obj["courses"] as $course) {
             // Create security key for each link.
@@ -1225,22 +1233,23 @@ class tool_coursearchiver_processor {
             // Only add courses that are visible if mode is HIDEEMAIL.
             if ($this->mode == self::MODE_ARCHIVEEMAIL || $course->visible) {
                 $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
+                $linkstring = "";
+                if ($links) {
+                    $linkstring = html_writer::tag('td', '', array('width' => '5px')) .
+                                  html_writer::tag('td',
+                                    html_writer::link(new moodle_url('/admin/tool/coursearchiver/optout.php',
+                                                                     array('courseid' => $course->id,
+                                                                           'userid' => $obj["user"]->id,
+                                                                           'key' => $key)),
+                                                      $optoutbutton));
+                }
+
                 $tablehtml[] = html_writer::tag('tr',
-                                              html_writer::tag('td',
-                                                   html_writer::link(new moodle_url('/course/view.php',
-                                                                                    array('id' => $course->id)),
-                                                                     $course->fullname)
-                                              ) .
-                                              html_writer::tag('td', '', array('width' => '5px')) .
-                                              html_writer::tag('td',
-                                                   html_writer::link(new moodle_url('/admin/tool/coursearchiver/optout.php',
-                                                                                    array('courseid' => $course->id,
-                                                                                          'userid' => $obj["user"]->id,
-                                                                                          'key' => $key)),
-                                                                     $optoutbutton)
-                                              ),
-                                              array('style' => 'background-color:' . $rowcolor)
-                                     );
+                                 html_writer::tag('td',
+                                   html_writer::link(new moodle_url('/course/view.php',
+                                                                    array('id' => $course->id)),
+                                                     $course->fullname)) . $linkstring,
+                                 array('style' => 'background-color:' . $rowcolor));
             } else { // This course is not included in the email.
                 $this->notices[] = get_string('noticecoursehidden', 'tool_coursearchiver', $course);
             }
