@@ -178,5 +178,30 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
         // Monitor savepoint reached.
         upgrade_plugin_savepoint(true, 2018121300, 'tool', 'coursearchiver');
     }
+
+    if ($oldversion < 2020022700) {
+        $table = new xmldb_table('tool_coursearchiver_optout');
+        $field = new xmldb_field('optoutlength', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'optouttime');
+
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->change_field_notnull($table, $field);
+        }
+
+        $table = new xmldb_table('tool_coursearchiver_archived');
+        $field = new xmldb_field('timetodelete', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'owners');
+
+        if ($dbman->field_exists($table, $field)) {
+            $index = new xmldb_index('timetodelete', XMLDB_INDEX_NOTUNIQUE, ['timetodelete']);
+            if ($dbman->index_exists($table, $index)) {
+                $dbman->drop_index($table, $index);
+            }
+            $dbman->change_field_notnull($table, $field);
+            $dbman->add_index($table, $index);
+        }
+
+        // Monitor savepoint reached.
+        upgrade_plugin_savepoint(true, 2020022700, 'tool', 'coursearchiver');
+    }
+
     return true;
 }
