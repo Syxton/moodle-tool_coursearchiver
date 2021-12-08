@@ -94,7 +94,7 @@
     padding-left: 0;
 }
 
-.path-admin-tool-coursearchiver .form-check-input:not(#id_emptyonly):not(#id_subcats) {
+.path-admin-tool-coursearchiver .form-check-input:not(#id_emptyonly):not(#id_subcats):not(#id_ignadmins):not(#id_ignsiteroles) {
     position: unset;
     vertical-align: middle;
 }
