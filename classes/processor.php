@@ -84,6 +84,12 @@ class tool_coursearchiver_processor {
     /** @var int only return empty courses. */
     public $emptyonly = false;
 
+    /** @var int only return empty courses. */
+    public $ignadmins = false;
+
+    /** @var int only return empty courses. */
+    public $ignsiteroles = false;
+
     /** @var int recursive category search. */
     public $subcats = false;
 
@@ -112,6 +118,8 @@ class tool_coursearchiver_processor {
         "createdafter" => "createdafter",
         "accessbefore" => "accessbefore",
         "accessafter" => "accessafter",
+        "ignadmins" => "ignadmins",
+        "ignsiteroles" => "ignsiteroles",
         "startbefore" => "startbefore",
         "startafter" => "startafter",
         "endbefore" => "endbefore",
@@ -1121,6 +1129,10 @@ class tool_coursearchiver_processor {
                         $this->emptyonly = true;
                     } else if ($truekey == "subcats") {
                         $this->subcats = true;
+                    } else if ($truekey == "ignadmins") {
+                        $this->ignadmins = true;
+                    } else if ($truekey == "ignsiteroles") {
+                        $this->ignsiteroles = true;
                     } else {
                         $params[$truekey] = '%' .$value . '%';
                         $searchsql .= " AND " . $DB->sql_like("c.$truekey", ":$truekey", false, false);
@@ -1141,6 +1153,9 @@ class tool_coursearchiver_processor {
      */
     public function courselist_sql($searchsql, $params) {
         global $DB;
+        // List of users to ignore as last access.
+        $adminsandmanagers = $this->get_list_of_admins_and_managers();
+
         $sql = "SELECT c.id, c.fullname, c.category, c.shortname, c.idnumber,
                        c.visible, a.timeaccess, b.path
                   FROM {course} c
@@ -1151,12 +1166,13 @@ class tool_coursearchiver_processor {
                           JOIN (
                                 SELECT courseid, MAX(timeaccess) as timeaccess
                                   FROM {user_lastaccess} b
+                                 WHERE b.userid NOT IN ($adminsandmanagers)
                               GROUP BY courseid
                                 ) b ON (
-                                           a.courseid = b.courseid
-                                           AND
-                                           a.timeaccess = b.timeaccess
-                                           )
+                                        a.courseid = b.courseid
+                                        AND
+                                        a.timeaccess = b.timeaccess
+                                        )
                        ) a ON c.id = a.courseid
                 WHERE c.id > 1 $searchsql
                 ORDER BY a.timeaccess";
@@ -1203,6 +1219,25 @@ class tool_coursearchiver_processor {
         }
 
         return $return;
+    }
+
+    /**
+     * Get list of the userid's of admin and other users with course view capability
+     *
+     * @return string
+     */
+    public function get_list_of_admins_and_managers() {
+        global $CFG;
+        $adminsandmanagers = $this->ignadmins ? $CFG->siteadmins : "0";
+
+        if ($this->ignsiteroles) {
+            $siteroleusers = get_users_by_capability(context_system::instance(),'moodle/course:view');
+            foreach ($siteroleusers as $user) {
+                $adminsandmanagers .= empty(strlen($adminsandmanagers)) ? $user->id : ',' . $user->id;
+            }
+        }
+        
+        return $adminsandmanagers;
     }
 
     /**
