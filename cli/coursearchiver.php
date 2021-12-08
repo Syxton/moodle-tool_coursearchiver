@@ -50,6 +50,8 @@ list($options, $unrecognized) = cli_get_params(array(
     'mode' => false,
     'location' => false,
     'empty' => false,
+    'ignadmins' => false,
+    'ignsiteroles' => false,
     'verbose' => false,
 ),
 array(
@@ -69,6 +71,8 @@ array(
     'O' => 'startafter',
     'd' => 'endbefore',
     'D' => 'endafter',
+    'i' => 'ignadmins',
+    'I' => 'ignsiteroles',
     'm' => 'mode',
     'l' => 'location',
     'e' => 'empty',
@@ -98,13 +102,15 @@ Options:
 -O, --startafter        Course starts after UNIX TIMESTAMP
 -d, --endbefore         Course ends before UNIX TIMESTAMP
 -D, --endafter          Course ends after UNIX TIMESTAMP
+-i, --ignadmins         Ignore admin account accesses
+-I, --ignsiteroles      Ignore site role accesses
 -m, --mode              courselist,emaillist,hide,archive,delete,hideemail,archiveemail
 -l, --location          Folder name to store archived courses (optional)
 -e, --empty             Only return empty courses
 -v, --verbose           Maximum output from tool (optional)
 
 Example:
-php admin/tool/coursearchiver/cli/coursearchiver.php --short=ma101 --idnum=2012 --mode=archive --verbose
+php admin/tool/coursearchiver/cli/coursearchiver.php --short=ma101 --idnum=2012 --mode=archive --verbose --ignadmins
 ";
 
 if (!empty($options['help'])) {
