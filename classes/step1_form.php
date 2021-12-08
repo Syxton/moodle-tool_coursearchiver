@@ -119,6 +119,9 @@ class tool_coursearchiver_step1_form extends moodleform {
         $mform->addGroup($accessaftergroup, 'accessaftergroup', get_string('accessafter', 'tool_coursearchiver'), ' ', false);
         $mform->disabledIf('accessaftergroup', 'accessafterenabled');
 
+        $mform->addElement('checkbox', 'ignadmins', get_string('ignoreadmins', 'tool_coursearchiver'));
+        $mform->addElement('checkbox', 'ignsiteroles', get_string('ignoresiteroles', 'tool_coursearchiver'));
+
         $mform->addElement('header', 'timestarted', get_string('startend', 'tool_coursearchiver'));
 
         $startbeforegroup = array();

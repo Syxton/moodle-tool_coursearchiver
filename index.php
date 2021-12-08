@@ -112,6 +112,14 @@ if ($mform->is_submitted()) {
                 $formdata->searches["emptyonly"] = true;
             }
 
+            if (!empty($formdata->ignadmins)) {
+                $formdata->searches["ignadmins"] = true;
+            }
+
+            if (!empty($formdata->ignsiteroles)) {
+                $formdata->searches["ignsiteroles"] = true;
+            }
+
             if (!empty($formdata->subcats)) {
                 $formdata->searches["subcats"] = true;
             }
