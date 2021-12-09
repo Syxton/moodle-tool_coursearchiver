@@ -1232,12 +1232,12 @@ class tool_coursearchiver_processor {
         $adminsandmanagers = $this->ignadmins ? $CFG->siteadmins : "0";
 
         if ($this->ignsiteroles) {
-            $siteroleusers = get_users_by_capability(context_system::instance(),'moodle/course:view');
+            $siteroleusers = get_users_by_capability(context_system::instance(), 'moodle/course:view');
             foreach ($siteroleusers as $user) {
                 $adminsandmanagers .= empty(strlen($adminsandmanagers)) ? $user->id : ',' . $user->id;
             }
         }
-        
+
         return $adminsandmanagers;
     }
 
@@ -1638,7 +1638,7 @@ class tool_coursearchiver_processor {
             }
 
             $output = array_unique($output); // Remove duplicate emails.
-            $output = implode($output, "\n");
+            $output = implode("\n", $output); // Convert to string.
 
             // Output file.
             header('Content-Disposition: attachment; filename="emaillist.csv"');
