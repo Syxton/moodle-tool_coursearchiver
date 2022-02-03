@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Processor class.
@@ -631,7 +630,7 @@ class tool_coursearchiver_processor {
             $bc->execute_plan();  // Execute backup.
             $results = $bc->get_results(); // Get the file information needed.
 
-            $config = get_config('backup');
+            $config = get_configs('backup');
             $dir = $config->backup_auto_destination;
             $file = $results['backup_destination'];
 
@@ -1346,12 +1345,14 @@ class tool_coursearchiver_processor {
                                      html_writer::tag('th',
                                                       get_string('course')) .
                                      html_writer::tag('th',
-                                                      get_string('optouttime', 'tool_coursearchiver')) .
+                                                      get_string('optouttime', 'tool_coursearchiver'), 
+                                                      array('style' => 'text-align: center')) .
                                      html_writer::tag('th',
-                                                      get_string('optoutby', 'tool_coursearchiver')) .
+                                                      get_string('optoutby', 'tool_coursearchiver'), 
+                                                      array('style' => 'text-align: center')) .
                                      html_writer::tag('th',
                                                       get_string('actions'),
-                                                      array('width' => '100px')),
+                                                      array('width' => '100px', 'style' => 'text-align: center')),
                                      array('style' => 'background-color:' . $rowcolor));
 
         if ($optouts) {
@@ -1603,7 +1604,7 @@ class tool_coursearchiver_processor {
             }
 
             $output = array_unique($output); // Remove duplicate emails.
-            $output = implode($output, "\n");
+            $output = implode("\n", $output);
 
             // Output file.
             header('Content-Disposition: attachment; filename="emaillist.csv"');

@@ -24,7 +24,6 @@
 
 namespace tool_coursearchiver\task;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Cron task class.

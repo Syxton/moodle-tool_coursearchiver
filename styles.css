@@ -75,6 +75,7 @@
 .mform .coursearchiver_checkbox .fitem {
     margin: 0;
     padding: 4px;
+    display: inline-block;
 }
 
 .path-admin-tool-coursearchiver .btn-primary {
@@ -97,8 +98,4 @@
 .path-admin-tool-coursearchiver .form-check-input:not(#id_emptyonly):not(#id_subcats) {
     position: unset;
     vertical-align: middle;
-}
-
-.path-admin-tool-coursearchiver div.felement {
-    display: flex;
 }
