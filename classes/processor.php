@@ -1231,12 +1231,12 @@ class tool_coursearchiver_processor {
         $adminsandmanagers = $this->ignadmins ? $CFG->siteadmins : "0";
 
         if ($this->ignsiteroles) {
-            $siteroleusers = get_users_by_capability(context_system::instance(),'moodle/course:view');
+            $siteroleusers = get_users_by_capability(context_system::instance(), 'moodle/course:view');
             foreach ($siteroleusers as $user) {
                 $adminsandmanagers .= empty(strlen($adminsandmanagers)) ? $user->id : ',' . $user->id;
             }
         }
-        
+
         return $adminsandmanagers;
     }
 
@@ -1380,10 +1380,10 @@ class tool_coursearchiver_processor {
                                      html_writer::tag('th',
                                                       get_string('course')) .
                                      html_writer::tag('th',
-                                                      get_string('optouttime', 'tool_coursearchiver'), 
+                                                      get_string('optouttime', 'tool_coursearchiver'),
                                                       array('style' => 'text-align: center')) .
                                      html_writer::tag('th',
-                                                      get_string('optoutby', 'tool_coursearchiver'), 
+                                                      get_string('optoutby', 'tool_coursearchiver'),
                                                       array('style' => 'text-align: center')) .
                                      html_writer::tag('th',
                                                       get_string('actions'),
