@@ -638,7 +638,12 @@ class tool_coursearchiver_processor {
             $bc->execute_plan();  // Execute backup.
             $results = $bc->get_results(); // Get the file information needed.
 
-            $config = get_configs('backup');
+            if (function_exists('get_configs')) {
+                $config = get_configs('backup');
+            } else {
+                $config = get_config('backup'); // Backward compatibility.
+            }
+
             $dir = $config->backup_auto_destination;
             $file = $results['backup_destination'];
 
