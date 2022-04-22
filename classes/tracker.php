@@ -662,6 +662,8 @@ class tool_coursearchiver_tracker {
                     $this->buffer->output('<div class="coursearchiver_completedmsg">' .
                                           get_string('processcomplete', 'tool_coursearchiver') .
                                           '</div>');
+                    $this->buffer->output(html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'),
+                                          get_string('back', 'tool_coursearchiver'))); // Back to beginning.
                     break;
             }
         }
