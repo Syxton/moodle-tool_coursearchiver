@@ -234,7 +234,7 @@ class tool_coursearchiver_tracker {
             }
             $buffer->output('</div><br />');
             $buffer->output(html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'),
-                                              get_string('back'))); // Back to beginning.
+                                              get_string('back', 'tool_coursearchiver'))); // Back to beginning.
         }
     }
 
