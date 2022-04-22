@@ -26,7 +26,7 @@ Feature: An admin can archive courses
     And I should see "Archived courses: 1"
     And I should see "Notices: 0"
     And I should see "Errors: 0"
-    And I click on "Course Archiver" "link"
+    And I click on "Start Over" "button"
     When I click on "Course Archives" "button"
     And I should see "testarchives"
     Then I should see "-C1.mbz"

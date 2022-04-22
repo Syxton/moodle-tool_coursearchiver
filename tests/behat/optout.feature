@@ -25,13 +25,13 @@ Feature: An admin can optout courses
     And I should see "Optout courses: 1"
     And I should see "Notices: 0"
     And I should see "Errors: 0"
-    And I click on "Course Archiver" "link"
+    And I click on "Start Over" "button"
     When I click on "Manage Optout List" "button"
     Then I should see "First course"
     When I click on "Remove" "link"
     And I switch to "optbackin" window
     Then I should see "First course has been removed"
     When I switch to the main window
-    And I click on "Course Archiver" "link"
+    And I click on "Start Over" "button"
     And I click on "Manage Optout List" "button"
     Then I should not see "First course"

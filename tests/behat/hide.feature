@@ -36,7 +36,7 @@ Feature: An admin can hide courses
     Then I should see "Are you sure you want to hide these 1 courses?"
     When I click on "Continue" "button"
     Then I should see "100%"
-    And I click on "Course Archiver" "link"
+    And I click on "Start Over" "button"
     When I set the field "searches[short]" to "C"
     And I click on "Search for courses" "button"
     Then I should see "Courses listed: 2"
