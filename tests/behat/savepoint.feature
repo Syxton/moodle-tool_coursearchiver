@@ -23,7 +23,7 @@ Feature: An admin can create a savepoint
     And I set the field "save_title" to "savepoint"
     And I click on "Create Save Point" "button"
     Then I should see "Save point has been made"
-    When I click on "Start Over" "button"
+    When I click on "Start Over" "link"
     And I set the field "savestates" to "savepoint"
     And I click on "Search for courses" "button"
     And I should see "C1"
