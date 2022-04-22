@@ -32,6 +32,6 @@ Feature: An admin can optout courses
     And I switch to "optbackin" window
     Then I should see "First course has been removed"
     When I switch to the main window
-    And I click on "Start Over" "link"
+    And I click on "Back" "link"
     And I click on "Manage Optout List" "button"
     Then I should not see "First course"
