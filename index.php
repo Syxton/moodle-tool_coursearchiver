@@ -1,5 +1,5 @@
 <?php
-// This file is part of
+// This file is part of Zoe's day with Dad
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
