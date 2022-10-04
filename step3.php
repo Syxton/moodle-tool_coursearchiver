@@ -50,15 +50,6 @@ tool_coursearchiver_processor::select_deselect_javascript();
 
 if (!empty($submitted)) { // FORM 3 SUBMITTED.
 
-    if ($submitted == get_string('back', 'tool_coursearchiver')) { // Button to start over has been pressed.
-        unset($SESSION->formdata);
-        unset($SESSION->mode);
-        unset($SESSION->error);
-        unset($SESSION->selected);
-        $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
-        redirect($returnurl);
-    }
-
     if ($submitted == get_string('save', 'tool_coursearchiver')) { // Save has been pressed.
         tool_coursearchiver_processor::save_state(3, $title, $selected);
         $SESSION->resume = true;

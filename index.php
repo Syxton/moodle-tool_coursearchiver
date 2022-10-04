@@ -36,6 +36,16 @@ global $SESSION;
 $error  = isset($SESSION->error) ? $SESSION->error : optional_param('error', false, PARAM_RAW);
 $submitted  = optional_param('submitbutton', false, PARAM_RAW);
 
+// Button to start over has been pressed.
+if ($submitted == get_string('back', 'tool_coursearchiver')) {
+    unset($SESSION->formdata);
+    unset($SESSION->mode);
+    unset($SESSION->error);
+    unset($SESSION->selected);
+    $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
+    redirect($returnurl);
+}
+
 // View optouts list button.
 if (!empty($submitted)) {
     if ($submitted == get_string('optoutlist', 'tool_coursearchiver')) {

@@ -38,7 +38,6 @@ class tool_coursearchiver_step3_form extends moodleform {
      */
     public function definition () {
         $mform = $this->_form;
-        $mform->addElement('submit', 'submit_button', get_string('back', 'tool_coursearchiver'));
         $data  = $this->_customdata['processor_data'];
 
         $mform->addElement('hidden', 'formdata');
