@@ -101,9 +101,9 @@ class tool_coursearchiver_step1_form extends moodleform {
 
         $createdafter = array();
         $createdafter[] =& $mform->createElement('date_selector', 'createdafter');
-        $createdafter[] =& $mform->createElement('checkbox', 'createdaftereenabled', '', get_string('enable'));
+        $createdafter[] =& $mform->createElement('checkbox', 'createdafterenabled', '', get_string('enable'));
         $mform->addGroup($createdafter, 'createdafter', get_string('createdafter', 'tool_coursearchiver'), ' ', false);
-        $mform->disabledIf('createdafter', 'createdaftereenabled');
+        $mform->disabledIf('createdafter', 'createdafterenabled');
 
         $mform->addElement('header', 'timeaccessed', get_string('accessbeforeafter', 'tool_coursearchiver'));
 
@@ -172,52 +172,36 @@ class tool_coursearchiver_step1_form extends moodleform {
             }
 
             if (!empty($data["createdbeforeenabled"])) {
-                $timecode = mktime(null, null, null, $data["createdbefore"]["month"],
-                                   $data["createdbefore"]["day"], $data["createdbefore"]["year"]);
+                $searchstring .= "createdbefore";
             }
-            $searchstring .= $timecode;
 
             if (!empty($data["createdafterenabled"])) {
-                $timecode = mktime(null, null, null, $data["createdafter"]["month"],
-                                   $data["createdbefore"]["day"], $data["createdafter"]["year"]);
+                $searchstring .= "createdafter";
             }
-            $searchstring .= $timecode;
 
             if (!empty($data["accessbeforeenabled"])) {
-                $timecode = mktime(null, null, null, $data["accessbefore"]["month"],
-                                   $data["accessbefore"]["day"], $data["accessbefore"]["year"]);
+                $searchstring .= "accessbefore";
             }
-            $searchstring .= $timecode;
 
             if (!empty($data["accessafterenabled"])) {
-                $timecode = mktime(null, null, null, $data["accessafter"]["month"],
-                                   $data["accessafter"]["day"], $data["accessafter"]["year"]);
+                $searchstring .= "accessafter";
             }
-            $searchstring .= $timecode;
 
             if (!empty($data["startbeforeenabled"])) {
-                $timecode = mktime(null, null, null, $data["startbefore"]["month"],
-                                   $data["startbefore"]["day"], $data["startbefore"]["year"]);
+                $searchstring .= "startbefore";
             }
-            $searchstring .= $timecode;
 
             if (!empty($data["startafterenabled"])) {
-                $timecode = mktime(null, null, null, $data["startafter"]["month"],
-                                   $data["startafter"]["day"], $data["startafter"]["year"]);
+                $searchstring .= "startafter";
             }
-            $searchstring .= $timecode;
 
             if (!empty($data["endbeforeenabled"])) {
-                $timecode = mktime(null, null, null, $data["endbefore"]["month"],
-                                   $data["endbefore"]["day"], $data["endbefore"]["year"]);
+                $searchstring .= "endbefore";
             }
-            $searchstring .= $timecode;
 
             if (!empty($data["endafterenabled"])) {
-                $timecode = mktime(null, null, null, $data["endafter"]["month"],
-                                   $data["endafter"]["day"], $data["endafter"]["year"]);
+                $searchstring .= "endafter";
             }
-            $searchstring .= $timecode;
 
             if (!empty($data["emptyonly"])) {
                 $searchstring .= "emptyonly";

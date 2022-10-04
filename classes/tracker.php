@@ -233,8 +233,12 @@ class tool_coursearchiver_tracker {
                 $buffer->output('</div><br />');
             }
             $buffer->output('</div><br />');
-            $buffer->output(html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'),
-                                              get_string('back', 'tool_coursearchiver'))); // Back to beginning.
+
+            // Back to beginning.
+            $buffer->output('<p style="text-align: center">' .
+                           html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php' .
+                                             '?submitbutton=' . get_string('back', 'tool_coursearchiver')),
+                                             get_string('back', 'tool_coursearchiver')) . '</p>');
         }
     }
 
@@ -662,8 +666,6 @@ class tool_coursearchiver_tracker {
                     $this->buffer->output('<div class="coursearchiver_completedmsg">' .
                                           get_string('processcomplete', 'tool_coursearchiver') .
                                           '</div>');
-                    $this->buffer->output(html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'),
-                                          get_string('back', 'tool_coursearchiver'))); // Back to beginning.
                     break;
             }
         }
