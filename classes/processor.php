@@ -1579,7 +1579,6 @@ class tool_coursearchiver_processor {
      */
     public static function recover_archives($selected) {
         global $CFG, $DB;
-        $config = get_config('tool_coursearchiver');
         $archivepath = trim(str_replace(str_split(':*?"<>|'),
                                         '',
                                         get_config('tool_coursearchiver', 'coursearchiverpath')),

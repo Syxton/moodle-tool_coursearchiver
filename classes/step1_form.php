@@ -162,9 +162,7 @@ class tool_coursearchiver_step1_form extends moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-
         $searchstring = "";
-        $timecode = "";
 
         if (empty($data["savestates"])) {
             foreach ($data["searches"] as $value) {
