@@ -15,7 +15,7 @@ Feature: An admin can create a savepoint
     And I navigate to "Courses > Course Archiver" in site administration
 
   @javascript
-  Scenario: Search and create a new save point
+  Scenario: Search and add and remove a new save point
     When I set the field "searches[short]" to "C1"
     And I click on "Search for courses" "button"
     Then I should see "Courses listed: 2"
@@ -28,3 +28,13 @@ Feature: An admin can create a savepoint
     And I click on "Search for courses" "button"
     And I should see "C1"
     And I should not see "C2"
+    And I click on "Start Over" "link"
+    When I click on "Manage Save Point List" "button"
+    Then I should see "savepoint"
+    When I click on "Remove" "link"
+    And I switch to "removesave" window
+    Then I should see "Save point has been removed"
+    When I switch to the main window
+    And I click on "Back" "link"
+    And I click on "Manage Save Point List" "button"
+    Then I should not see "savepoint"
