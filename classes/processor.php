@@ -1031,6 +1031,78 @@ class tool_coursearchiver_processor {
     }
 
     /**
+     * Print Save Point list.
+     *
+     * @return string
+     */
+    public static function get_savestatelist() {
+        global $CFG, $DB, $OUTPUT;
+
+        // Back button.
+        $savelist = html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'),
+                                                     get_string('back'));
+        // Table.
+        $savelist .= html_writer::start_tag('table', array('style' => 'border-collapse: collapse;width: 100%;',
+                                                          'cellpadding' => '5'));
+        $rowcolor = "#FFF";
+        $savelist .= html_writer::tag('tr',
+                                      html_writer::tag('th',
+                                                       get_string('name')) .
+                                      html_writer::tag('th',
+                                                       get_string('saveddate', 'tool_coursearchiver'),
+                                                       array('style' => 'text-align: center')) .
+                                      html_writer::tag('th',
+                                                       get_string('actions'),
+                                                       array('width' => '100px', 'style' => 'text-align: center')),
+                                      array('style' => 'background-color:' . $rowcolor));
+
+        $sql = "SELECT *
+                  FROM {tool_coursearchiver_saves}
+              ORDER BY title";
+        $saves = $DB->get_records_sql($sql);
+
+        if ($saves) {
+            foreach ($saves as $savepoint) {
+                // Create security key for each link.
+                $key = sha1($CFG->dbpass . $savepoint->id);
+
+                $link = new moodle_url('/admin/tool/coursearchiver/removesavepoint.php',
+                                       array('savepointid' => $savepoint->id, 'key' => $key));
+                $action = new popup_action('click', $link, 'removesave');
+                $content = $OUTPUT->action_link($link,
+                                                get_string('remove'),
+                                                $action,
+                                                array('title' => get_string('optoutlist', 'tool_coursearchiver'),
+                                                      'onclick' => "this.parentElement.parentElement.style.display='none'"));
+
+                $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
+                $savelist .= html_writer::tag('tr',
+                                                html_writer::tag('td',
+                                                    $savepoint->title
+                                                ) .
+                                                html_writer::tag('td',
+                                                                date("m/d/y", $savepoint->savedate),
+                                                                array('align' => 'center')) .
+                                                html_writer::tag('td',
+                                                                $content,
+                                                                array('align' => 'center')),
+                                                array('style' => 'background-color:' . $rowcolor));
+            }
+        } else {
+            $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
+            $savelist .= html_writer::tag('tr',
+                                          html_writer::tag('td',
+                                                           'None Found',
+                                                           array('colspan' => 3,
+                                                                 'align' => 'center',
+                                                                 'style' => "background-color: $rowcolor")));
+        }
+        $savelist .= html_writer::end_tag('table');
+
+        return $savelist;
+    }
+
+    /**
      * Return whether the course exists or not.
      *
      * @param int $courseid the course id to use to check if the course exists.

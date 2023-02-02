@@ -150,6 +150,7 @@ class tool_coursearchiver_step1_form extends moodleform {
 
         $this->add_action_buttons(false, get_string('search', 'tool_coursearchiver'));
         $this->add_action_buttons(false, get_string('optoutlist', 'tool_coursearchiver'));
+        $this->add_action_buttons(false, get_string('savestatelist', 'tool_coursearchiver'));
         $this->add_action_buttons(false, get_string('archivelist', 'tool_coursearchiver'));
     }
 
