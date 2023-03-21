@@ -1132,7 +1132,9 @@ class tool_coursearchiver_processor {
             if (!empty($value)) {
                 if (!empty($this->searchcriteria[$key])) {
                     $truekey = $this->searchcriteria[$key];
-                    $params[$truekey] = $value;
+                    if (!isset($params[$truekey])) {
+                        $params[$truekey] = $value;
+                    }
                     if ($truekey == "teacher") {
                         $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
                         $params["roleid"] = $role->id;
