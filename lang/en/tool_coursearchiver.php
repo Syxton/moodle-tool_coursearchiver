@@ -219,6 +219,9 @@ $string['messageprovider:courseowner'] = 'Notifications from the course archival
 $string['archivedeletesetting'] = 'Archive deletion delay';
 $string['archivedeletesetting_help'] = 'How many days will an archive deletion be delayed.';
 
+$string['savelimitsetting'] = 'Limit savepoints shown in select list.';
+$string['savelimitsetting_help'] = 'How many savepoints will show inside the dropdown list.';
+
 $string['archivelimit'] = 'Archive search limiter';
 $string['archivelimit_help'] = 'Maximum amount of results to show on screen';
 $string['archivelimitstring'] = 'Maximum Shown';

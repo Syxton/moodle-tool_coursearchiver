@@ -1012,17 +1012,14 @@ class tool_coursearchiver_processor {
      */
     public static function get_saves() {
         global $DB;
-
+        $config = get_config('tool_coursearchiver');
         if ($result = $DB->get_records_select_menu('tool_coursearchiver_saves',
-                                                   '', array(), 'savedate', 'id, title')) {
+                                                   '', array(), 'savedate DESC', 'id, title',
+                                                   0, $config->savelimitsetting)) {
             $counter = 0;
             $saves = array("0" => get_string('resumeselect', 'tool_coursearchiver'));
             foreach ($result as $key => $value) {
                 $saves[$key] = $value;
-                $counter++;
-                if ($counter >= 10) {
-                    break;
-                }
             }
             return $saves;
         } else {

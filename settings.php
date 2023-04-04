@@ -67,6 +67,11 @@ if ($hassiteconfig) {
                    get_string('archivelimit', 'tool_coursearchiver'),
                    get_string('archivelimit_help', 'tool_coursearchiver'), 200, PARAM_INT));
 
+    // Limit savepoints listed in select.
+    $settings->add(new admin_setting_configtext('tool_coursearchiver/savelimitsetting',
+    get_string('savelimitsetting', 'tool_coursearchiver'),
+    get_string('savelimitsetting_help', 'tool_coursearchiver'), 10, PARAM_INT));
+
     // Link to Course Archiver tool.
     $ADMIN->add('courses', new admin_externalpage('toolcoursearchiver',
         get_string('coursearchiver', 'tool_coursearchiver'), "$CFG->wwwroot/$CFG->admin/tool/coursearchiver/index.php"));
