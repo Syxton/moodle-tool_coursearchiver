@@ -163,6 +163,9 @@ class tool_coursearchiver_tracker {
             case tool_coursearchiver_processor::MODE_HIDE:
                 $modetext = "hide";
                 break;
+            case tool_coursearchiver_processor::MODE_BACKUP:
+                $modetext = "backup";
+                break;
             case tool_coursearchiver_processor::MODE_ARCHIVE:
                 $modetext = "archive";
                 break;
@@ -277,6 +280,7 @@ class tool_coursearchiver_tracker {
                     );
                     break;
                 case tool_coursearchiver_processor::MODE_HIDE:
+                case tool_coursearchiver_processor::MODE_BACKUP:
                 case tool_coursearchiver_processor::MODE_ARCHIVE:
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
@@ -373,6 +377,12 @@ class tool_coursearchiver_tracker {
                                     '</h3><div class="coursearchiver_progress_bar_spacing"></div><br />');
                     $buffer->finished();
                     break;
+                case tool_coursearchiver_processor::MODE_BACKUP:
+                    $buffer = new progress_trace_buffer(new text_progress_trace());
+                    $buffer->output('<h3>' . get_string('processbackup', 'tool_coursearchiver') .
+                                    '</h3><div class="coursearchiver_progress_bar_spacing"></div><br />');
+                    $buffer->finished();
+                    break;
                 case tool_coursearchiver_processor::MODE_ARCHIVE:
                     $buffer = new progress_trace_buffer(new text_progress_trace());
                     $buffer->output('<h3>' . get_string('processarchiving', 'tool_coursearchiver') .
@@ -452,6 +462,7 @@ class tool_coursearchiver_tracker {
                     }
                     break;
                 case tool_coursearchiver_processor::MODE_HIDE:
+                case tool_coursearchiver_processor::MODE_BACKUP:
                 case tool_coursearchiver_processor::MODE_ARCHIVE:
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
@@ -591,6 +602,7 @@ class tool_coursearchiver_tracker {
                     }
                     break;
                 case tool_coursearchiver_processor::MODE_HIDE:
+                case tool_coursearchiver_processor::MODE_BACKUP:
                 case tool_coursearchiver_processor::MODE_ARCHIVE:
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
@@ -658,6 +670,7 @@ class tool_coursearchiver_tracker {
                     }
                     break;
                 case tool_coursearchiver_processor::MODE_HIDE:
+                case tool_coursearchiver_processor::MODE_BACKUP:
                 case tool_coursearchiver_processor::MODE_ARCHIVE:
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:

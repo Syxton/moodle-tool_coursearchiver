@@ -65,6 +65,9 @@ class tool_coursearchiver_step4_form extends moodleform {
             case tool_coursearchiver_processor::MODE_HIDE:
                 $message = get_string('confirmmessagehide', 'tool_coursearchiver', $count);
                 break;
+            case tool_coursearchiver_processor::MODE_BACKUP:
+                $message = get_string('confirmmessagebackup', 'tool_coursearchiver', $count);
+                break;
             case tool_coursearchiver_processor::MODE_ARCHIVE:
                 $message = get_string('confirmmessagearchive', 'tool_coursearchiver', $count);
                 break;
@@ -85,7 +88,8 @@ class tool_coursearchiver_step4_form extends moodleform {
                                 get_string('confirmmessage', 'tool_coursearchiver', $message) .
                            '</div>');
 
-        if ($data["mode"] == tool_coursearchiver_processor::MODE_ARCHIVE) {
+        if ($data["mode"] == tool_coursearchiver_processor::MODE_ARCHIVE ||
+            $data["mode"] == tool_coursearchiver_processor::MODE_BACKUP) {
             $mform->addElement('text', 'folder', get_string('archivelocation', 'tool_coursearchiver'));
             $mform->setType('folder', PARAM_TEXT);
             $mform->setDefault('folder', date('Y'));

@@ -84,6 +84,12 @@ if (!empty($submitted)) { // FORM 2 SUBMITTED.
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step4.php');
             redirect($returnurl);
             break;
+        case get_string('backup', 'tool_coursearchiver'):
+            $SESSION->mode = tool_coursearchiver_processor::MODE_BACKUP;
+            $SESSION->formdata = serialize($courses);
+            $returnurl = new moodle_url('/admin/tool/coursearchiver/step4.php');
+            redirect($returnurl);
+            break;
         case get_string('archive', 'tool_coursearchiver'):
             $SESSION->mode = tool_coursearchiver_processor::MODE_ARCHIVE;
             $SESSION->formdata = serialize($courses);

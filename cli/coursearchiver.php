@@ -104,7 +104,7 @@ Options:
 -D, --endafter          Course ends after UNIX TIMESTAMP
 -i, --ignadmins         Ignore admin account accesses
 -I, --ignsiteroles      Ignore site role accesses
--m, --mode              courselist,emaillist,hide,archive,delete,hideemail,archiveemail
+-m, --mode              courselist,emaillist,hide,backup,archive,delete,hideemail,archiveemail
 -l, --location          Folder name to store archived courses (optional)
 -e, --empty             Only return empty courses
 -v, --verbose           Maximum output from tool (optional)
@@ -125,6 +125,7 @@ $modes = array(
     'hideemail' => tool_coursearchiver_processor::MODE_HIDEEMAIL,
     'hide' => tool_coursearchiver_processor::MODE_HIDE,
     'archiveemail' => tool_coursearchiver_processor::MODE_ARCHIVEEMAIL,
+    'backup' => tool_coursearchiver_processor::MODE_BACKUP,
     'archive' => tool_coursearchiver_processor::MODE_ARCHIVE,
     'delete' => tool_coursearchiver_processor::MODE_DELETE,
     'optout' => tool_coursearchiver_processor::MODE_OPTOUT,
@@ -236,6 +237,7 @@ switch ($processoroptions['mode']) {
         $question = get_string('cli_question_'.$options['mode'], 'tool_coursearchiver', count($selected));
     break;
     case tool_coursearchiver_processor::MODE_HIDE:
+    case tool_coursearchiver_processor::MODE_BACKUP:
     case tool_coursearchiver_processor::MODE_ARCHIVE:
     case tool_coursearchiver_processor::MODE_DELETE:
     case tool_coursearchiver_processor::MODE_OPTOUT:
@@ -275,6 +277,7 @@ switch ($processoroptions['mode']) {
         $processor = new tool_coursearchiver_processor(array("mode" => $processoroptions['mode'], "data" => $courses));
         $processor->execute(tool_coursearchiver_tracker::OUTPUT_CLI);
         break;
+    case tool_coursearchiver_processor::MODE_BACKUP:
     case tool_coursearchiver_processor::MODE_ARCHIVE:
         $processor = new tool_coursearchiver_processor(array("mode" => $processoroptions['mode'], "data" => $courses));
         if (!empty($options['location'])) {

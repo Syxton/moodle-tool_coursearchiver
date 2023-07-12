@@ -59,6 +59,7 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
 
     if ($submitted == get_string('confirm', 'tool_coursearchiver')) {
         if (!isset($mode) || !in_array($mode, array(tool_coursearchiver_processor::MODE_HIDE,
+                                                    tool_coursearchiver_processor::MODE_BACKUP,
                                                     tool_coursearchiver_processor::MODE_ARCHIVE,
                                                     tool_coursearchiver_processor::MODE_DELETE,
                                                     tool_coursearchiver_processor::MODE_HIDEEMAIL,
@@ -67,7 +68,7 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
             throw new coding_exception('Unknown process mode');
         }
 
-        switch($mode){
+        switch($mode) {
             case tool_coursearchiver_processor::MODE_HIDEEMAIL:
             case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
                 echo $OUTPUT->header();
@@ -101,6 +102,7 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
                 echo $OUTPUT->footer();
                 break;
             case tool_coursearchiver_processor::MODE_HIDE:
+            case tool_coursearchiver_processor::MODE_BACKUP:
             case tool_coursearchiver_processor::MODE_ARCHIVE:
             case tool_coursearchiver_processor::MODE_DELETE:
             case tool_coursearchiver_processor::MODE_OPTOUT:

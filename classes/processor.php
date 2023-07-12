@@ -58,19 +58,24 @@ class tool_coursearchiver_processor {
     const MODE_HIDEEMAIL = 5;
 
     /**
+     * Back up courses without removal.
+     */
+    const MODE_BACKUP = 6;
+
+    /**
      * Send emails about pending course archival.
      */
-    const MODE_ARCHIVEEMAIL = 6;
+    const MODE_ARCHIVEEMAIL = 7;
 
     /**
      * Delete courses.
      */
-    const MODE_DELETE = 7;
+    const MODE_DELETE = 8;
 
     /**
      * Optout courses.
      */
-    const MODE_OPTOUT = 8;
+    const MODE_OPTOUT = 9;
 
     /** @var int processor mode. */
     protected $mode;
@@ -135,6 +140,7 @@ class tool_coursearchiver_processor {
         if (!isset($options['mode']) || !in_array($options['mode'], array(self::MODE_COURSELIST,
                                                                           self::MODE_GETEMAILS,
                                                                           self::MODE_HIDE,
+                                                                          self::MODE_BACKUP,
                                                                           self::MODE_ARCHIVE,
                                                                           self::MODE_DELETE,
                                                                           self::MODE_HIDEEMAIL,
@@ -170,6 +176,7 @@ class tool_coursearchiver_processor {
 
         if ($outputtype == tool_coursearchiver_tracker::OUTPUT_HTML) {
             if (!in_array($this->mode, array(self::MODE_HIDE,
+                                             self::MODE_BACKUP,
                                              self::MODE_ARCHIVE,
                                              self::MODE_DELETE,
                                              self::MODE_HIDEEMAIL,
@@ -296,15 +303,16 @@ class tool_coursearchiver_processor {
                 }
                 $tracker->results($this->mode, $this->total, $this->errors, $this->notices);
                 break;
+            case self::MODE_BACKUP:
             case self::MODE_ARCHIVE:
                 $tracker->start();
                 $courses = $this->get_courses_and_their_owners();
-
+                $delete = $this->mode == self::MODE_ARCHIVE ? true : false;
                 if (!empty($courses)) {
                     // Loop over the course array.
                     $tracker->jobsize = count($courses);
                     foreach ($courses as $currentcourse) {
-                        if ($this->archivecourse($currentcourse)) {
+                        if ($this->archivecourse($currentcourse, $delete)) {
                             $tracker->error = false;
                             $this->total++;
                         } else {
@@ -584,9 +592,10 @@ class tool_coursearchiver_processor {
      * Return an array of owners and a list of each course they are teachers of.
      *
      * @param object $obj course obj
+     * @param bool $delete delete course after backup
      * @return bool of courses that match the search
      */
-    protected function archivecourse($obj) {
+    protected function archivecourse($obj, $delete = true) {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
         require_once($CFG->dirroot . '/backup/controller/backup_controller.class.php');
@@ -679,7 +688,9 @@ class tool_coursearchiver_processor {
                 $DB->insert_record('tool_coursearchiver_archived', $record, false);
 
                 // Remove Course.
-                delete_course($obj["course"]->id, false);
+                if ($delete) {
+                    delete_course($obj["course"]->id, false);
+                }
             } else {
                 throw new Exception(get_string('errorarchivefile', 'tool_coursearchiver'));
             }
