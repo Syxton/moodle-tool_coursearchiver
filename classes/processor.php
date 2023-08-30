@@ -621,7 +621,7 @@ class tool_coursearchiver_processor {
 
             $archivefile = date("Y-m-d") . "{$suffix}-{$safeshort}.mbz";
 
-            $rootpath = trim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
+            $rootpath = rtrim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
             $archivepath = trim(str_replace(str_split(':*?"<>|'),
                                             '',
                                             get_config('tool_coursearchiver', 'coursearchiverpath')),
@@ -1542,7 +1542,7 @@ class tool_coursearchiver_processor {
         $isadmin = is_siteadmin();
         $config = get_config('tool_coursearchiver');
 
-        $rootpath = trim($config->coursearchiverrootpath, "/\\");
+        $rootpath = rtrim($config->coursearchiverrootpath, "/\\");
         $archivepath = trim(str_replace(str_split(':*?"<>|'),
                                         '',
                                         $config->coursearchiverpath),
@@ -1631,7 +1631,7 @@ class tool_coursearchiver_processor {
         global $CFG, $DB;
 
         $config = get_config('tool_coursearchiver');
-        $rootpath = trim($config->coursearchiverrootpath, "/\\");
+        $rootpath = rtrim($config->coursearchiverrootpath, "/\\");
         $archivepath = trim(str_replace(str_split(':*?"<>|'),
                                         '',
                                         $config->coursearchiverpath),
@@ -1667,7 +1667,7 @@ class tool_coursearchiver_processor {
     public static function recover_archives($selected) {
         global $CFG, $DB;
 
-        $rootpath = trim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
+        $rootpath = rtrim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
         $archivepath = trim(str_replace(str_split(':*?"<>|'),
                                         '',
                                         get_config('tool_coursearchiver', 'coursearchiverpath')),

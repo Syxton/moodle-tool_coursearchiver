@@ -139,7 +139,7 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
         }
 
         // Fill up the database with previously archived files.
-        $rootpath = trim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
+        $rootpath = rtrim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
         $archivepath = trim(str_replace(str_split(':*?"<>|'),
                                         '',
                                         get_config('tool_coursearchiver', 'coursearchiverpath')),
