@@ -210,10 +210,13 @@ This means that the course will be backed up in its current state and then remov
 Thank you.
 ';
 $string['archivewarningsubject'] = 'Notice: Courses will be archived soon.';
+$string['hidewarningsubject'] = 'Notice: Courses will be hidden soon.';
 
 $string['coursearchiverpath'] = 'Folder path to store archived courses';
-$string['coursearchiverpath_help'] = 'This path is relative to the Moodle $CFG->dataroot';
-$string['hidewarningsubject'] = 'Notice: Courses will be hidden soon.';
+$string['coursearchiverpath_help'] = 'This path is relative to the root path';
+
+$string['coursearchiverrootpath'] = 'System path that archiver folders are placed in';
+$string['coursearchiverrootpath_help'] = 'Defaults to CFG->dataroot';
 
 $string['optoutmonthssetting'] = 'Course opt out persistence';
 $string['optoutmonthssetting_help'] = 'How many months will the opt out apply for each course.';

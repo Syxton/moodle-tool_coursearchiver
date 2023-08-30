@@ -27,6 +27,14 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $settings = new admin_settingpage('tool_coursearchiver', get_string('coursearchiver_settings', 'tool_coursearchiver'));
 
+    $name = new lang_string('coursearchiverrootpath', 'tool_coursearchiver');
+    $description = new lang_string('coursearchiverrootpath_help', 'tool_coursearchiver');
+    $default = $CFG->dataroot;
+    $settings->add(new admin_setting_configtext('tool_coursearchiver/coursearchiverrootpath',
+                                                $name,
+                                                $description,
+                                                $default));
+
     $name = new lang_string('coursearchiverpath', 'tool_coursearchiver');
     $description = new lang_string('coursearchiverpath_help', 'tool_coursearchiver');
     $default = 'CourseArchives';

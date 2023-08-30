@@ -49,6 +49,7 @@ class cron_task extends \core\task\scheduled_task {
     public function execute() {
         global $CFG, $DB;
 
+        $rootpath = trim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
         $archivepath = trim(str_replace(str_split(':*?"<>|'),
                                         '',
                                         get_config('tool_coursearchiver', 'coursearchiverpath')),
@@ -60,7 +61,7 @@ class cron_task extends \core\task\scheduled_task {
 
         if ($markedfordeletion = $DB->get_records_sql($sql, array('timetodelete' => time()))) {
             foreach ($markedfordeletion as $fileinfo) {
-                $file = $CFG->dataroot . '/' . $archivepath . '/' . $fileinfo->filename;
+                $file = $rootpath . '/' . $archivepath . '/' . $fileinfo->filename;
                 if (file_exists($file)) {
                     if (unlink($file)) { // Delete file.
                         $DB->delete_records('tool_coursearchiver_archived', array('id' => $fileinfo->id));

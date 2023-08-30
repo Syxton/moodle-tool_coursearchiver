@@ -139,14 +139,15 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
         }
 
         // Fill up the database with previously archived files.
+        $rootpath = trim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
         $archivepath = trim(str_replace(str_split(':*?"<>|'),
                                         '',
                                         get_config('tool_coursearchiver', 'coursearchiverpath')),
                             "/\\");
 
-        if (file_exists($CFG->dataroot . '/' . $archivepath)) {
+        if (file_exists($rootpath . '/' . $archivepath)) {
             $fileinfos = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($CFG->dataroot . '/' . $archivepath)
+                new RecursiveDirectoryIterator($rootpath . '/' . $archivepath)
             );
 
             if (!empty($fileinfos)) {

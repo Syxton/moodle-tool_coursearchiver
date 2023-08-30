@@ -39,12 +39,13 @@ $download    = optional_param('download', false, PARAM_BOOL);
 
 global $CFG, $DB;
 
+$rootpath = trim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
 $archivepath = trim(str_replace(str_split(':*?"<>|'),
                                 '',
                                 get_config('tool_coursearchiver', 'coursearchiverpath')),
                     "/\\");
 
-$archive = $CFG->dataroot . '/' . $archivepath . '/' . $filepath . '/' . $filename;
+$archive = $rootpath . '/' . $archivepath . '/' . $filepath . '/' . $filename;
 if (file_exists($archive)) {
     $context = context_course::instance(SITEID);
     $fs = get_file_storage();

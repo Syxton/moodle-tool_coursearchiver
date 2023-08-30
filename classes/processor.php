@@ -620,6 +620,8 @@ class tool_coursearchiver_processor {
             }
 
             $archivefile = date("Y-m-d") . "{$suffix}-{$safeshort}.mbz";
+
+            $rootpath = trim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
             $archivepath = trim(str_replace(str_split(':*?"<>|'),
                                             '',
                                             get_config('tool_coursearchiver', 'coursearchiverpath')),
@@ -629,7 +631,7 @@ class tool_coursearchiver_processor {
             $folder = $this->get_archive_folder();
 
             // Final full path of file.
-            $path = $CFG->dataroot . '/' . $archivepath . '/' . $folder;
+            $path = $rootpath . '/' . $archivepath . '/' . $folder;
 
             // If the path doesn't exist, make it so!
             if (!is_dir($path)) {
@@ -1540,6 +1542,7 @@ class tool_coursearchiver_processor {
         $isadmin = is_siteadmin();
         $config = get_config('tool_coursearchiver');
 
+        $rootpath = trim($config->coursearchiverrootpath, "/\\");
         $archivepath = trim(str_replace(str_split(':*?"<>|'),
                                         '',
                                         $config->coursearchiverpath),
@@ -1577,7 +1580,7 @@ class tool_coursearchiver_processor {
                 $path = $pathinfo['dirname'];
 
                 // Make sure it is a file.
-                if (!file_exists($CFG->dataroot . '/' . $archivepath . '/' . $path . '/' . $file)) {
+                if (!file_exists($rootpath . '/' . $archivepath . '/' . $path . '/' . $file)) {
                     continue;
                 }
 
@@ -1626,14 +1629,16 @@ class tool_coursearchiver_processor {
      */
     public static function delete_archives($selected) {
         global $CFG, $DB;
+
         $config = get_config('tool_coursearchiver');
+        $rootpath = trim($config->coursearchiverrootpath, "/\\");
         $archivepath = trim(str_replace(str_split(':*?"<>|'),
                                         '',
                                         $config->coursearchiverpath),
                             "/\\");
         $delaydelete = $config->delaydeletesetting;
         foreach ($selected as $course) {
-            if (file_exists($CFG->dataroot . '/' . $archivepath . '/' . $course)) {
+            if (file_exists($rootpath . '/' . $archivepath . '/' . $course)) {
                 $time = new DateTime("now + $delaydelete days", core_date::get_user_timezone_object());
                 // Check for database entry of file.
                 $sql = 'SELECT *
@@ -1661,13 +1666,15 @@ class tool_coursearchiver_processor {
      */
     public static function recover_archives($selected) {
         global $CFG, $DB;
+
+        $rootpath = trim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
         $archivepath = trim(str_replace(str_split(':*?"<>|'),
                                         '',
                                         get_config('tool_coursearchiver', 'coursearchiverpath')),
                             "/\\");
 
         foreach ($selected as $course) {
-            $file = $CFG->dataroot . '/' . $archivepath . '/' . $course;
+            $file = $rootpath . '/' . $archivepath . '/' . $course;
             if (file_exists($file)) {
                 // Check for database entry of file.
                 $sql = 'SELECT *

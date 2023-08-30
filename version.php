@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin = new stdClass();
-$plugin->version   = 2023071200;                // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2023083000;                // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2014111000;                // Requires this Moodle version.
 $plugin->component = 'tool_coursearchiver';     // Full name of the plugin (used for diagnostics).
-$plugin->release  = '4.1.4 (Build: 2016090200)';
+$plugin->release  = '4.1.5 (Build: 2016090200)';
 $plugin->maturity  = MATURITY_STABLE;
