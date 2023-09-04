@@ -607,7 +607,7 @@ class tool_coursearchiver_processor {
         $admin = get_admin();
 
         $coursetobackup = $obj["course"]->id; // Set this to one existing choice cmid in your dev site.
-        $userdoingthebackup   = $admin->id; // Set this to the id of your admin account.
+        $userdoingthebackup = $admin->id; // Set this to the id of your admin account.
 
         try {
             // Prepare path.
@@ -618,10 +618,9 @@ class tool_coursearchiver_processor {
                                 "/\\");
 
             // Prepare backup filename.
-            if (empty($obj["course"]->idnumber)) {
-                $suffix = '-ID-'.$obj["course"]->id;
-            } else {
-                $suffix = '-ID-'.$obj["course"]->id.'-IDNUM-'.$obj["course"]->idnumber;
+            $suffix = '-ID-'.$obj["course"]->id;
+            if (!empty($obj["course"]->idnumber)) {
+                $suffix .= '-IDNUM-' . $obj["course"]->idnumber;
             }
 
             // Clean backup filename.
@@ -650,10 +649,6 @@ class tool_coursearchiver_processor {
 
             $bc->execute_plan();  // Execute backup.
             $results = $bc->get_results(); // Get the file information needed.
-
-            $config = get_config('backup');
-
-            $dir = $config->backup_auto_destination;
             $file = $results['backup_destination'];
 
             if (!empty($file)) {
