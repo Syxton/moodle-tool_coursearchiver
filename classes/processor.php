@@ -611,21 +611,23 @@ class tool_coursearchiver_processor {
 
         try {
             // Prepare path.
-            $matchers = array('/\s/', '/\//', '/\;/', '/\:/', '/\?/', '/\%/', '/\*/', '/\|/', '/\</', '/\>/');
-            $safeshort = preg_replace($matchers, '-', $obj["course"]->shortname);
+            $rootpath = rtrim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
+            $archivepath = trim(str_replace(str_split(':*?"<>|'),
+                                            '',
+                                            get_config('tool_coursearchiver', 'coursearchiverpath')),
+                                "/\\");
+
+            // Prepare backup filename.
             if (empty($obj["course"]->idnumber)) {
                 $suffix = '-ID-'.$obj["course"]->id;
             } else {
                 $suffix = '-ID-'.$obj["course"]->id.'-IDNUM-'.$obj["course"]->idnumber;
             }
 
-            $archivefile = date("Y-m-d") . "{$suffix}-{$safeshort}.mbz";
-
-            $rootpath = rtrim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
-            $archivepath = trim(str_replace(str_split(':*?"<>|'),
-                                            '',
-                                            get_config('tool_coursearchiver', 'coursearchiverpath')),
-                                "/\\");
+            // Clean backup filename.
+            $matchers = array('/\s/', '/\//', '/\;/', '/\:/', '/\?/', '/\%/', '/\*/', '/\|/', '/\</', '/\>/');
+            $dirtyname = date("Y-m-d") . $suffix . "-" . $obj["course"]->shortname . ".mbz";
+            $archivefile = preg_replace($matchers, '-', $dirtyname);
 
             // Check for custom folder.
             $folder = $this->get_archive_folder();
