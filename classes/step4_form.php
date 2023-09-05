@@ -57,9 +57,19 @@ class tool_coursearchiver_step4_form extends moodleform {
 
         switch($data["mode"]) {
             case tool_coursearchiver_processor::MODE_HIDEEMAIL:
+                foreach (unserialize($data["formdata"]) as $r) { // Loop through every possible user.
+                    if (substr($r, 0, 1) == 'x') { // Determine if they were NOT selected.
+                        $count--; // Remove 1 from count.
+                    }
+                }
                 $message = get_string('confirmmessagehideemail', 'tool_coursearchiver', $count);
                 break;
             case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                foreach (unserialize($data["formdata"]) as $r) { // Loop through every possible user.
+                    if (substr($r, 0, 1) == 'x') { // Determine if they were NOT selected.
+                        $count--; // Remove 1 from count.
+                    }
+                }
                 $message = get_string('confirmmessagearchiveemail', 'tool_coursearchiver', $count);
                 break;
             case tool_coursearchiver_processor::MODE_HIDE:

@@ -81,12 +81,14 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
                 foreach ($selected as $s) {
                     $t = explode("_", $s);
                     if (count($t) == 2) { // Both a course and an owner are needed.
-                        if (array_key_exists($t[1], $owners)) {
-                            $temp = $owners[$t[1]]['courses'];
-                            $owners[$t[1]]['courses'] = array_merge($temp, array($t[0] => get_course($t[0])));
-                        } else {
-                            $owners[$t[1]]['courses'] = array($t[0] => get_course($t[0]));
-                            $owners[$t[1]]['user'] = $DB->get_record("user", array("id" => $t[1]));
+                        if (substr($t[0], 0, 1) !== 'x') { // User is selected.
+                            if (array_key_exists($t[1], $owners)) {
+                                $temp = $owners[$t[1]]['courses'];
+                                $owners[$t[1]]['courses'] = array_merge($temp, array($t[0] => get_course($t[0])));
+                            } else {
+                                $owners[$t[1]]['courses'] = array($t[0] => get_course($t[0]));
+                                $owners[$t[1]]['user'] = $DB->get_record("user", array("id" => $t[1]));
+                            }
                         }
                     }
                 }
