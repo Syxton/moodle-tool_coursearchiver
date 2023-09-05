@@ -30,7 +30,7 @@
  * @return bool always true
  */
 function xmldb_tool_coursearchiver_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $DB;
 
     $dbman = $DB->get_manager();
 

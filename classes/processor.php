@@ -440,16 +440,15 @@ class tool_coursearchiver_processor {
      * Return an array of users in a course with a given role.
      *
      * @param int $courseid id of the moodle course.
-     * @param int $roleid id of role.
+     * @param int $roleids id's of selected owner roles.
      * @return array of users in a course with a given role
      */
-    protected function get_course_users_with_role($courseid, $roleid) {
+    protected function get_course_users_with_role($courseid, $roleids) {
         global $DB;
 
         if ($course = $DB->get_record('course', array('id' => $courseid), '*', IGNORE_MISSING)) {
             $params = array('courseid' => $courseid);
 
-            $roleids = get_config('tool_coursearchiver', 'ownerroleid');
             if (!empty($roleids)) {
                 $roleids = explode(',', $roleids);
                 list($insql, $inparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED);
@@ -1045,7 +1044,6 @@ class tool_coursearchiver_processor {
         if ($result = $DB->get_records_select_menu('tool_coursearchiver_saves',
                                                    '', array(), 'savedate DESC', 'id, title',
                                                    0, $config->savelimitsetting)) {
-            $counter = 0;
             $saves = array("0" => get_string('resumeselect', 'tool_coursearchiver'));
             foreach ($result as $key => $value) {
                 $saves[$key] = $value;
@@ -1564,7 +1562,7 @@ class tool_coursearchiver_processor {
      * @return string
      */
     public static function get_archivelist($search, $recover = false) {
-        global $CFG, $DB, $OUTPUT, $USER;
+        global $DB, $OUTPUT, $USER;
         $isadmin = is_siteadmin();
         $config = get_config('tool_coursearchiver');
 
@@ -1654,7 +1652,7 @@ class tool_coursearchiver_processor {
      * @return void.
      */
     public static function delete_archives($selected) {
-        global $CFG, $DB;
+        global $DB;
 
         $config = get_config('tool_coursearchiver');
         $rootpath = rtrim($config->coursearchiverrootpath, "/\\");
@@ -1691,7 +1689,7 @@ class tool_coursearchiver_processor {
      * @return void.
      */
     public static function recover_archives($selected) {
-        global $CFG, $DB;
+        global $DB;
 
         $rootpath = rtrim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
         $archivepath = trim(str_replace(str_split(':*?"<>|'),

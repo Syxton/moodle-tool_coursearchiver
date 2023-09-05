@@ -47,7 +47,7 @@ class cron_task extends \core\task\scheduled_task {
      * Run forum cron.
      */
     public function execute() {
-        global $CFG, $DB;
+        global $DB;
 
         $rootpath = rtrim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
         $archivepath = trim(str_replace(str_split(':*?"<>|'),
