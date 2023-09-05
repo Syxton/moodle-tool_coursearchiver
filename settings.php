@@ -43,6 +43,22 @@ if ($hassiteconfig) {
                                                 $description,
                                                 $default));
 
+    // Default role of course owners.
+    $ownernewroles = array();
+    $roles = role_fix_names(get_all_roles(), null, ROLENAME_ORIGINALANDSHORT);
+    foreach ($roles as $role) {
+        $ownernewroles[$role->id] = $role->localname;
+    }
+    $name = new lang_string('ownerroleid', 'tool_coursearchiver');
+    $description = new lang_string('ownerroleid_help', 'tool_coursearchiver');
+    $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
+    $default = array($role->id);
+    $settings->add(new admin_setting_configmultiselect('tool_coursearchiver/ownerroleid',
+                                                       $name,
+                                                       $description,
+                                                       $default,
+                                                       $ownernewroles));
+
     // Default email for upcoming hiding of courses.
     $name = new lang_string('hidewarningemailsetting', 'tool_coursearchiver');
     $description = new lang_string('hidewarningemailsetting_help', 'tool_coursearchiver');
