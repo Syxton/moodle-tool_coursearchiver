@@ -425,12 +425,11 @@ class tool_coursearchiver_processor {
      * @return array of courses and array of owners attached to it
      */
     protected function get_courses_and_their_owners() {
-        global $DB;
         $owners = array();
-        $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
         foreach ($this->data as $course) {
             if ($this->exists($course)) {
-                $owners[$course] = $this->get_course_users_with_role($course, $role->id);
+                $owners[$course] = $this->get_course_users_with_role($course,
+                                                                     get_config('tool_coursearchiver', 'ownerroleid'));
             }
         }
 
@@ -526,7 +525,7 @@ class tool_coursearchiver_processor {
     protected function get_owners_and_their_courses() {
         global $DB;
         $owners = array();
-        $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        
         $sql = 'SELECT a.id, a.email, a.firstname, a.lastname
                   FROM {user} a
                  WHERE a.id IN (
@@ -543,7 +542,7 @@ class tool_coursearchiver_processor {
                                                         )
                                )';
         foreach ($this->data as $course) {
-            $params = array('roleid' => $role->id, 'courseid' => $course);
+            $params = array('roleid' => get_config('tool_coursearchiver', 'ownerroleid'), 'courseid' => $course);
             $users = $DB->get_records_sql($sql, $params);
             foreach ($users as $user) {
                 if (array_key_exists($user->id, $owners)) {
@@ -672,8 +671,8 @@ class tool_coursearchiver_processor {
             unset($bc);
 
             if (file_exists($path . '/' . $archivefile)) { // Make sure file got moved.
-                $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
-                $owners = $this->get_course_users_with_role($obj["course"]->id, $role->id);
+                $owners = $this->get_course_users_with_role($obj["course"]->id,
+                                                            get_config('tool_coursearchiver', 'ownerroleid'));
 
                 $ownerslist = '|';
                 foreach ($owners["owners"] as $owner) {
@@ -1143,8 +1142,7 @@ class tool_coursearchiver_processor {
                         $params[$truekey] = $value;
                     }
                     if ($truekey == "teacher") {
-                        $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
-                        $params["roleid"] = $role->id;
+                        $params["roleid"] = get_config('tool_coursearchiver', 'ownerroleid');
                         $params["username"] = '%' . $DB->sql_like_escape("$value") . '%';
                         $params["email"] = '%' . $DB->sql_like_escape("$value") . '%';
                         $searchsql .= '

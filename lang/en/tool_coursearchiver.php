@@ -77,13 +77,13 @@ $string['courseid'] = 'Course ID';
 $string['courseidnum'] = 'Course idnumber';
 $string['courseselector'] = 'Course search results';
 $string['courseshortname'] = 'Course shortname';
-$string['courseteacher'] = 'Teacher username/email';
+$string['courseteacher'] = 'Course Owner';
 $string['createdafter'] = 'Created after';
 $string['createdbefore'] = 'Created before';
 $string['createdbeforeafter'] = 'Created Before / After';
 $string['crontask'] = 'Course archive deletion job';
 $string['delete'] = 'Delete Courses';
-$string['deletedarchiveemails'] = 'Teacher email addresses';
+$string['deletedarchiveemails'] = 'Owner email addresses';
 $string['email'] = 'Send Email';
 $string['emailselector'] = 'Users selected to receive emails.';
 $string['emptycourse'] = 'Empty Course';
@@ -187,7 +187,7 @@ $string['unknownerror'] = 'The process has resulted in an error that requires a 
 // SETTINGS.
 $string['coursearchiver_settings'] = 'Course Archiver Settings';
 $string['hidewarningemailsetting'] = 'Default Email Warning for Course Hiding';
-$string['hidewarningemailsetting_help'] = 'This is the contents of an email that will be sent to all teachers of a course that is selected to be hidden.';
+$string['hidewarningemailsetting_help'] = 'This is the contents of an email that will be sent to all owners of a course that is selected to be hidden.';
 $string['hidewarningemailsettingdefault'] = '%to
 
 We would like to inform you that the following Moodle course(s) that you have taught are soon to be hidden.
@@ -199,7 +199,7 @@ Thank you.
 ';
 
 $string['archivewarningemailsetting'] = 'Default Email Warning for Course Archival';
-$string['archivewarningemailsetting_help'] = 'This is the contents of an email that will be sent to all teachers of a course that is selected to be archived.';
+$string['archivewarningemailsetting_help'] = 'This is the contents of an email that will be sent to all owners of a course that is selected to be archived.';
 $string['archivewarningemailsettingdefault'] = '%to
 
 We would like to inform you that the following Moodle course(s) that you have taught are soon to be archived.
@@ -221,6 +221,9 @@ $string['coursearchiverrootpath_help'] = 'Defaults to CFG->dataroot';
 $string['optoutmonthssetting'] = 'Course opt out persistence';
 $string['optoutmonthssetting_help'] = 'How many months will the opt out apply for each course.';
 $string['messageprovider:courseowner'] = 'Notifications from the course archival/hiding tool.';
+
+$string['ownerroleid'] = 'Role considered as course owner';
+$string['ownerroleid_help'] = 'Optout emails and owner searches will look for this role in each course.';
 
 $string['archivedeletesetting'] = 'Archive deletion delay';
 $string['archivedeletesetting_help'] = 'How many days will an archive deletion be delayed.';
