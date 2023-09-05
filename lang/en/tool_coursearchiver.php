@@ -223,7 +223,7 @@ $string['optoutmonthssetting_help'] = 'How many months will the opt out apply fo
 $string['messageprovider:courseowner'] = 'Notifications from the course archival/hiding tool.';
 
 $string['ownerroleid'] = 'Role considered as course owner';
-$string['ownerroleid_help'] = 'Optout emails and owner searches will look for this role in each course.';
+$string['ownerroleid_help'] = 'Optout emails and owner searches will look for this role in each course. If none is selected, will default to editingteacher role.';
 
 $string['archivedeletesetting'] = 'Archive deletion delay';
 $string['archivedeletesetting_help'] = 'How many days will an archive deletion be delayed.';

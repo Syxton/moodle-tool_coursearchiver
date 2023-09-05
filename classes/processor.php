@@ -446,25 +446,34 @@ class tool_coursearchiver_processor {
     protected function get_course_users_with_role($courseid, $roleid) {
         global $DB;
 
-        $sql = 'SELECT a.id, a.email, a.firstname, a.lastname
-                  FROM {user} a
-                 WHERE a.id IN (SELECT userid
-                                 FROM {role_assignments} b
-                                WHERE b.roleid = :roleid
-                                      AND
-                                      b.contextid IN (
-                                                      SELECT c.id
-                                                        FROM {context} c
-                                                       WHERE c.contextlevel = 50
-                                                             AND
-                                                             c.instanceid = :courseid
-                                                     )
-                               )';
-
         if ($course = $DB->get_record('course', array('id' => $courseid), '*', IGNORE_MISSING)) {
+            $params = array('courseid' => $courseid);
+
+            $roleids = get_config('tool_coursearchiver', 'ownerroleid');
+            if (!empty($roleids)) {
+                $roleids = explode(',', $roleids);
+                list($insql, $inparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED);
+            } else {
+                // Default back to editing teacher.
+                list($insql, $inparams) = [' = :roleid', ['roleid' => 3]];
+            }
+
+            $params = array_merge($params, $inparams);
+
+            $sql = 'SELECT a.id, a.email, a.firstname, a.lastname
+                      FROM {user} a
+                     WHERE a.id IN (SELECT userid
+                                      FROM {role_assignments} b
+                                     WHERE b.roleid ' . $insql . '
+                                       AND b.contextid IN (
+                                                           SELECT c.id
+                                                           FROM {context} c
+                                                           WHERE c.contextlevel = 50
+                                                             AND c.instanceid = :courseid
+                                                        )
+                                    )';
             return array('course' => $course,
-                         'owners' => $DB->get_records_sql($sql, array('roleid' => $roleid,
-                                                                      'courseid' => $courseid)));
+                         'owners' => $DB->get_records_sql($sql, $params));
         }
 
         return array();
@@ -525,24 +534,35 @@ class tool_coursearchiver_processor {
     protected function get_owners_and_their_courses() {
         global $DB;
         $owners = array();
-        
-        $sql = 'SELECT a.id, a.email, a.firstname, a.lastname
-                  FROM {user} a
-                 WHERE a.id IN (
-                                SELECT userid
-                                  FROM {role_assignments} b
-                                 WHERE b.roleid = :roleid
-                                       AND
-                                       b.contextid IN (
-                                                       SELECT c.id
-                                                         FROM {context} c
-                                                        WHERE c.contextlevel = 50
-                                                              AND
-                                                              c.instanceid = :courseid
-                                                        )
-                               )';
+
         foreach ($this->data as $course) {
-            $params = array('roleid' => get_config('tool_coursearchiver', 'ownerroleid'), 'courseid' => $course);
+            $params = array('courseid' => $course);
+
+            $roleids = get_config('tool_coursearchiver', 'ownerroleid');
+            if (!empty($roleids)) {
+                $roleids = explode(',', $roleids);
+                list($insql, $inparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED);
+            } else {
+                // Default back to editing teacher.
+                list($insql, $inparams) = [' = :roleid', ['roleid' => 3]];
+            }
+
+            $params = array_merge($params, $inparams);
+
+            $sql = 'SELECT a.id, a.email, a.firstname, a.lastname
+                      FROM {user} a
+                     WHERE a.id IN (
+                                    SELECT userid
+                                      FROM {role_assignments} b
+                                     WHERE b.roleid ' . $insql . '
+                                       AND b.contextid IN (
+                                                           SELECT c.id
+                                                             FROM {context} c
+                                                            WHERE c.contextlevel = 50
+                                                              AND c.instanceid = :courseid
+                                                        )
+                                    )';
+
             $users = $DB->get_records_sql($sql, $params);
             foreach ($users as $user) {
                 if (array_key_exists($user->id, $owners)) {
@@ -818,7 +838,7 @@ class tool_coursearchiver_processor {
         if (empty($courses)) {
             // This can only be an error.
             throw new Exception('Incorrectly got an empty coures HTML table - this should be impossible');
-        } else if ($this->mode === self::MODE_HIDEEMAIL && empty(trim(strip_tags(implode ('', $courses))))) {
+        } else if ($this->mode === self::MODE_HIDEEMAIL && empty(trim(strip_tags(implode('', $courses))))) {
             // The user had no visible courses, so don't send an email to this user.
             return 0;
         } else {
@@ -1142,16 +1162,27 @@ class tool_coursearchiver_processor {
                         $params[$truekey] = $value;
                     }
                     if ($truekey == "teacher") {
-                        $params["roleid"] = get_config('tool_coursearchiver', 'ownerroleid');
                         $params["username"] = '%' . $DB->sql_like_escape("$value") . '%';
                         $params["email"] = '%' . $DB->sql_like_escape("$value") . '%';
+
+                        $roleids = get_config('tool_coursearchiver', 'ownerroleid');
+                        if (!empty($roleids)) {
+                            $roleids = explode(',', $roleids);
+                            list($insql, $inparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED);
+                        } else {
+                            // Default back to editing teacher.
+                            list($insql, $inparams) = [' = :roleid', ['roleid' => 3]];
+                        }
+
+                        $params = array_merge($params, $inparams);
+
                         $searchsql .= '
                     AND c.id IN (SELECT t.instanceid
                        FROM {context} t
                       WHERE t.contextlevel = 50
                         AND t.id IN (SELECT tc.contextid
                                        FROM {role_assignments} tc
-                                       WHERE tc.roleid = :roleid
+                                       WHERE tc.roleid ' . $insql . '
                                          AND tc.userid IN (SELECT tu.id
                                                              FROM {user} tu
                                                             WHERE ' . $DB->sql_like("tu.username", ":username", false, false) . '
