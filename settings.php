@@ -51,7 +51,7 @@ if ($hassiteconfig) {
     }
     $name = new lang_string('ownerroleid', 'tool_coursearchiver');
     $description = new lang_string('ownerroleid_help', 'tool_coursearchiver');
-    $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
+    $role = $DB->get_record('role', array('archetype' => 'editingteacher'));
     $default = array($role->id);
     $settings->add(new admin_setting_configmultiselect('tool_coursearchiver/ownerroleid',
                                                        $name,
