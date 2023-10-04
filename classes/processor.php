@@ -623,8 +623,6 @@ class tool_coursearchiver_processor {
         }
 
         $admin = get_admin();
-
-        $coursetobackup = $obj["course"]->id; // Set this to one existing choice cmid in your dev site.
         $userdoingthebackup = $admin->id; // Set this to the id of your admin account.
 
         try {
@@ -636,7 +634,7 @@ class tool_coursearchiver_processor {
                                 "/\\");
 
             // Prepare backup filename.
-            $suffix = '-ID-'.$obj["course"]->id;
+            $suffix = '-ID-' . $obj["course"]->id;
             if (!empty($obj["course"]->idnumber)) {
                 $suffix .= '-IDNUM-' . $obj["course"]->idnumber;
             }
@@ -662,32 +660,19 @@ class tool_coursearchiver_processor {
             }
 
             // Perform Backup.
-            $bc = new backup_controller(backup::TYPE_1COURSE, $coursetobackup, backup::FORMAT_MOODLE,
-                                        backup::INTERACTIVE_NO, backup::MODE_AUTOMATED, $userdoingthebackup);
+            $bc = new backup_controller(backup::TYPE_1COURSE, $obj["course"]->id, backup::FORMAT_MOODLE,
+                                        backup::INTERACTIVE_NO, backup::MODE_GENERAL, $userdoingthebackup);
 
             $bc->execute_plan();  // Execute backup.
             $results = $bc->get_results(); // Get the file information needed.
-            $file = $results['backup_destination'];
-
-            if (!empty($file)) {
-                $file->copy_content_to($path . '/' . $archivefile);
-            } else {
-                $config = get_config('backup');
-                $dir = $config->backup_auto_destination;
-                if (!empty($dir)) { // The backup file will have already been moved, so I have to find it.
-                    $file = $this->find_course_file($obj["course"]->id, $dir);
-                    if (!empty($file)) {
-                        rename($dir . '/' . $file, $path . '/' . $archivefile);
-                    } else {
-                        throw new Exception(get_string('errorbackup', 'tool_coursearchiver'));
-                    }
-                } else {
-                    throw new Exception(get_string('errorbackup', 'tool_coursearchiver'));
-                }
-            }
-
             $bc->destroy();
             unset($bc);
+
+            if (!empty($results['backup_destination'])) { // Course backup file area.
+                $results['backup_destination']->copy_content_to($path . '/' . $archivefile);
+            } else { // Specified backup file area.
+                throw new Exception(get_string('errorbackup', 'tool_coursearchiver'));
+            }
 
             if (file_exists($path . '/' . $archivefile)) { // Make sure file got moved.
                 $owners = $this->get_course_users_with_role($obj["course"]->id,
@@ -697,12 +682,17 @@ class tool_coursearchiver_processor {
                 foreach ($owners["owners"] as $owner) {
                     $ownerslist .= $owner->id . '|';
                 }
+
                 // Save course info to the database.
                 $record = new stdClass();
                 $record->filename = $folder . '/' . $archivefile;
                 $record->owners = $ownerslist;
                 $record->timetodelete = 0;
-                $DB->insert_record('tool_coursearchiver_archived', $record, false);
+
+                // Backup alone could overwrite a previous backup.  Don't make duplicate records.
+                if (!$DB->get_record('tool_coursearchiver_archived', ['filename' => $record->filename])) {
+                    $DB->insert_record('tool_coursearchiver_archived', $record, false);
+                }
 
                 // Remove Course.
                 if ($delete) {
