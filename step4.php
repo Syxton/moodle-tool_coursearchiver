@@ -28,6 +28,7 @@ require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 header('X-Accel-Buffering: no');
+header('Content-Encoding: identity');
 
 require_login();
 admin_externalpage_setup('toolcoursearchiver');
@@ -120,11 +121,18 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
                     $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php');
                     redirect($returnurl);
                 }
+
                 $processor = new tool_coursearchiver_processor(array("mode" => $mode, "data" => $courses));
                 if (!empty($folder)) {
                     $processor->folder = $folder;
                 }
+
+                // Automatic refreshing iframe to keep sessions alive during long script execution.
+                echo '<iframe style="display:none" src="' . $CFG->wwwroot . '/admin/tool/coursearchiver/keepalive.php"></iframe>';
+
+                // Execute process.
                 $processor->execute(tool_coursearchiver_tracker::OUTPUT_HTML, null);
+
                 echo $OUTPUT->footer();
                 break;
             default:
