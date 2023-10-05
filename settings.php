@@ -45,14 +45,21 @@ if ($hassiteconfig) {
 
     // Default role of course owners.
     $ownernewroles = array();
+    $default = array();
     $roles = role_fix_names(get_all_roles(), null, ROLENAME_ORIGINALANDSHORT);
     foreach ($roles as $role) {
+        if ($role->archetype == "editingteacher") {
+            $default[] = $role->id;
+        }
         $ownernewroles[$role->id] = $role->localname;
+    }
+
+    // If no role was selected by default choose the first role.
+    if (empty($default)) {
+        $default[] = $roles[0]->id;
     }
     $name = new lang_string('ownerroleid', 'tool_coursearchiver');
     $description = new lang_string('ownerroleid_help', 'tool_coursearchiver');
-    $role = $DB->get_record('role', array('archetype' => 'editingteacher'));
-    $default = array($role->id);
     $settings->add(new admin_setting_configmultiselect('tool_coursearchiver/ownerroleid',
                                                        $name,
                                                        $description,
