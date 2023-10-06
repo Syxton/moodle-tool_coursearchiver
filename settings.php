@@ -56,7 +56,7 @@ if ($hassiteconfig) {
 
     // If no role was selected by default choose the first role.
     if (empty($default)) {
-        $default[] = $roles[0]->id;
+        $default[] = array_values($roles)[0]->id;
     }
     $name = new lang_string('ownerroleid', 'tool_coursearchiver');
     $description = new lang_string('ownerroleid_help', 'tool_coursearchiver');
