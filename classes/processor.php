@@ -146,7 +146,8 @@ class tool_coursearchiver_processor {
                                                                      self::MODE_DELETE,
                                                                      self::MODE_HIDEEMAIL,
                                                                      self::MODE_ARCHIVEEMAIL,
-                                                                     self::MODE_OPTOUT,])) {
+                                                                     self::MODE_OPTOUT,
+                                                                    ])) {
             throw new coding_exception('Unknown process mode');
         }
 
@@ -182,7 +183,8 @@ class tool_coursearchiver_processor {
                                         self::MODE_DELETE,
                                         self::MODE_HIDEEMAIL,
                                         self::MODE_ARCHIVEEMAIL,
-                                        self::MODE_OPTOUT,])) {
+                                        self::MODE_OPTOUT,
+                                       ])) {
                 if (empty($mform)) {
                     throw new coding_exception(get_string('errornoform', 'tool_coursearchiver'));
                 } else {

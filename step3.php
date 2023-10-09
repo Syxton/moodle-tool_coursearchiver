@@ -77,7 +77,7 @@ if (!empty($submitted)) { // FORM 3 SUBMITTED.
                     $temp = $owners[$t[1]]['courses'];
                     $owners[$t[1]]['courses'] = array_merge($temp, [$t[0] => get_course($t[0])]);
                 } else {
-                    $owners[$t[1]]['courses'] = [$t[0] => get_course($t[0]]);
+                    $owners[$t[1]]['courses'] = [$t[0] => get_course($t[0])];
                     $owners[$t[1]]['user'] = $DB->get_record("user", ["id" => $t[1]]);
                 }
             }
