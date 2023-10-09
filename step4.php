@@ -59,13 +59,14 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
     }
 
     if ($submitted == get_string('confirm', 'tool_coursearchiver')) {
-        if (!isset($mode) || !in_array($mode, array(tool_coursearchiver_processor::MODE_HIDE,
-                                                    tool_coursearchiver_processor::MODE_BACKUP,
-                                                    tool_coursearchiver_processor::MODE_ARCHIVE,
-                                                    tool_coursearchiver_processor::MODE_DELETE,
-                                                    tool_coursearchiver_processor::MODE_HIDEEMAIL,
-                                                    tool_coursearchiver_processor::MODE_ARCHIVEEMAIL,
-                                                    tool_coursearchiver_processor::MODE_OPTOUT))) {
+        if (!isset($mode) || !in_array($mode, [tool_coursearchiver_processor::MODE_HIDE,
+                                               tool_coursearchiver_processor::MODE_BACKUP,
+                                               tool_coursearchiver_processor::MODE_ARCHIVE,
+                                               tool_coursearchiver_processor::MODE_DELETE,
+                                               tool_coursearchiver_processor::MODE_HIDEEMAIL,
+                                               tool_coursearchiver_processor::MODE_ARCHIVEEMAIL,
+                                               tool_coursearchiver_processor::MODE_OPTOUT,
+                                              ])) {
             throw new coding_exception('Unknown process mode');
         }
 
@@ -78,17 +79,17 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
                                                 'tool_coursearchiver');
 
                 $selected = unserialize($formdata);
-                $owners = array();
+                $owners = [];
                 foreach ($selected as $s) {
                     $t = explode("_", $s);
                     if (count($t) == 2) { // Both a course and an owner are needed.
                         if (substr($t[0], 0, 1) !== 'x') { // User is selected.
                             if (array_key_exists($t[1], $owners)) {
                                 $temp = $owners[$t[1]]['courses'];
-                                $owners[$t[1]]['courses'] = array_merge($temp, array($t[0] => get_course($t[0])));
+                                $owners[$t[1]]['courses'] = array_merge($temp, [$t[0] => get_course($t[0])]);
                             } else {
-                                $owners[$t[1]]['courses'] = array($t[0] => get_course($t[0]));
-                                $owners[$t[1]]['user'] = $DB->get_record("user", array("id" => $t[1]));
+                                $owners[$t[1]]['courses'] = [$t[0] => get_course($t[0])];
+                                $owners[$t[1]]['user'] = $DB->get_record("user", ["id" => $t[1]]);
                             }
                         }
                     }
@@ -100,7 +101,7 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
                     $returnurl = new moodle_url('/admin/tool/coursearchiver/step3.php');
                     redirect($returnurl);
                 }
-                $processor = new tool_coursearchiver_processor(array("mode" => $mode, "data" => $owners));
+                $processor = new tool_coursearchiver_processor(["mode" => $mode, "data" => $owners]);
                 $processor->execute(tool_coursearchiver_tracker::OUTPUT_HTML);
                 echo $OUTPUT->footer();
                 break;
@@ -122,7 +123,7 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
                     redirect($returnurl);
                 }
 
-                $processor = new tool_coursearchiver_processor(array("mode" => $mode, "data" => $courses));
+                $processor = new tool_coursearchiver_processor(["mode" => $mode, "data" => $courses]);
                 if (!empty($folder)) {
                     $processor->folder = $folder;
                 }
@@ -150,8 +151,8 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
         echo $OUTPUT->container($error, 'coursearchiver_myformerror');
     }
 
-    $param = array("mode" => $mode, "formdata" => $formdata);
-    $mform = new tool_coursearchiver_step4_form(null, array("processor_data" => $param));
+    $param = ["mode" => $mode, "formdata" => $formdata];
+    $mform = new tool_coursearchiver_step4_form(null, ["processor_data" => $param]);
 
     $mform->display();
     echo $OUTPUT->footer();

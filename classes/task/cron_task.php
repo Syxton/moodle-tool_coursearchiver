@@ -59,12 +59,12 @@ class cron_task extends \core\task\scheduled_task {
                   FROM {tool_coursearchiver_archived}
                  WHERE timetodelete > 0 AND timetodelete <= :timetodelete';
 
-        if ($markedfordeletion = $DB->get_records_sql($sql, array('timetodelete' => time()))) {
+        if ($markedfordeletion = $DB->get_records_sql($sql, ['timetodelete' => time()])) {
             foreach ($markedfordeletion as $fileinfo) {
                 $file = $rootpath . '/' . $archivepath . '/' . $fileinfo->filename;
                 if (file_exists($file)) {
                     if (unlink($file)) { // Delete file.
-                        $DB->delete_records('tool_coursearchiver_archived', array('id' => $fileinfo->id));
+                        $DB->delete_records('tool_coursearchiver_archived', ['id' => $fileinfo->id]);
                         mtrace($file . ' deleted');
                     } else {
                         mtrace('!!! FAILED TO DELETE: ' . $file);

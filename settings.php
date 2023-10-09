@@ -44,8 +44,8 @@ if ($hassiteconfig) {
                                                 $default));
 
     // Default role of course owners.
-    $ownernewroles = array();
-    $default = array();
+    $ownernewroles = [];
+    $default = [];
     $roles = role_fix_names(get_all_roles(), null, ROLENAME_ORIGINALANDSHORT);
     foreach ($roles as $role) {
         if ($role->archetype == "editingteacher") {

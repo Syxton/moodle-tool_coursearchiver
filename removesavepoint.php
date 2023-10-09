@@ -47,12 +47,12 @@ echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchive
 // Check to see if the attempt is coming from a valid email.
 if (sha1($CFG->dbpass . $savepointid) == $key) {
     if ($savepoint = $DB->get_record('tool_coursearchiver_saves', ['id' => $savepointid])) {
-        $params = array("id" => $savepointid);
+        $params = ["id" => $savepointid];
         $DB->delete_records('tool_coursearchiver_saves', $params);
 
         echo $OUTPUT->container(html_writer::tag('div',
                                 get_string('savepoint_removed', 'tool_coursearchiver'),
-                                array('style' => 'margin: 15px;text-align:center;font-size:1.4em;font-weight:bold')));
+                                ['style' => 'margin: 15px;text-align:center;font-size:1.4em;font-weight:bold']));
     } else {
         echo $OUTPUT->container(get_string('error_savepointid', 'tool_coursearchiver'), 'coursearchiver_myformerror');
     }

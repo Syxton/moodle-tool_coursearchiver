@@ -50,7 +50,7 @@ if (sha1($CFG->dbpass . $courseid . $userid) == $key) {
     if ($course = tool_coursearchiver_processor::optout_course($courseid, $userid)) {
         echo $OUTPUT->container(html_writer::tag('div',
                                 get_string('course_skipped', 'tool_coursearchiver', $course),
-                                array('style' => 'margin: 15px;text-align:center;font-size:1.4em;font-weight:bold')));
+                                ['style' => 'margin: 15px;text-align:center;font-size:1.4em;font-weight:bold']));
     } else {
         echo $OUTPUT->container(get_string('error_nocourseid', 'tool_coursearchiver'), 'coursearchiver_myformerror');
     }

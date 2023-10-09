@@ -76,7 +76,7 @@ class tool_coursearchiver_step1_form extends moodleform {
         $mform->setType('searches[teacher]', PARAM_TEXT);
         $mform->setDefault('searches[teacher]', "");
 
-        $displaylist = array(get_string('anycategory', 'tool_coursearchiver'));
+        $displaylist = [get_string('anycategory', 'tool_coursearchiver')];
 
         // Moodle < 3.6 compatibility.
         if (!class_exists('core_course_category')) {
@@ -93,13 +93,13 @@ class tool_coursearchiver_step1_form extends moodleform {
 
         $mform->addElement('header', 'timecreated', get_string('createdbeforeafter', 'tool_coursearchiver'));
 
-        $createdbefore = array();
+        $createdbefore = [];
         $createdbefore[] =& $mform->createElement('date_selector', 'createdbefore');
         $createdbefore[] =& $mform->createElement('checkbox', 'createdbeforeenabled', '', get_string('enable'));
         $mform->addGroup($createdbefore, 'createdbefore', get_string('createdbefore', 'tool_coursearchiver'), ' ', false);
         $mform->disabledIf('createdbefore', 'createdbeforeenabled');
 
-        $createdafter = array();
+        $createdafter = [];
         $createdafter[] =& $mform->createElement('date_selector', 'createdafter');
         $createdafter[] =& $mform->createElement('checkbox', 'createdafterenabled', '', get_string('enable'));
         $mform->addGroup($createdafter, 'createdafter', get_string('createdafter', 'tool_coursearchiver'), ' ', false);
@@ -107,13 +107,13 @@ class tool_coursearchiver_step1_form extends moodleform {
 
         $mform->addElement('header', 'timeaccessed', get_string('accessbeforeafter', 'tool_coursearchiver'));
 
-        $accessbeforegroup = array();
+        $accessbeforegroup = [];
         $accessbeforegroup[] =& $mform->createElement('date_selector', 'accessbefore');
         $accessbeforegroup[] =& $mform->createElement('checkbox', 'accessbeforeenabled', '', get_string('enable'));
         $mform->addGroup($accessbeforegroup, 'accessbeforegroup', get_string('accessbefore', 'tool_coursearchiver'), ' ', false);
         $mform->disabledIf('accessbeforegroup', 'accessbeforeenabled');
 
-        $accessaftergroup = array();
+        $accessaftergroup = [];
         $accessaftergroup[] =& $mform->createElement('date_selector', 'accessafter');
         $accessaftergroup[] =& $mform->createElement('checkbox', 'accessafterenabled', '', get_string('enable'));
         $mform->addGroup($accessaftergroup, 'accessaftergroup', get_string('accessafter', 'tool_coursearchiver'), ' ', false);
@@ -124,25 +124,25 @@ class tool_coursearchiver_step1_form extends moodleform {
 
         $mform->addElement('header', 'timestarted', get_string('startend', 'tool_coursearchiver'));
 
-        $startbeforegroup = array();
+        $startbeforegroup = [];
         $startbeforegroup[] =& $mform->createElement('date_selector', 'startbefore');
         $startbeforegroup[] =& $mform->createElement('checkbox', 'startbeforeenabled', '', get_string('enable'));
         $mform->addGroup($startbeforegroup, 'startbeforegroup', get_string('startbefore', 'tool_coursearchiver'), ' ', false);
         $mform->disabledIf('startbeforegroup', 'startbeforeenabled');
 
-        $startaftergroup = array();
+        $startaftergroup = [];
         $startaftergroup[] =& $mform->createElement('date_selector', 'startafter');
         $startaftergroup[] =& $mform->createElement('checkbox', 'startafterenabled', '', get_string('enable'));
         $mform->addGroup($startaftergroup, 'startaftergroup', get_string('startafter', 'tool_coursearchiver'), ' ', false);
         $mform->disabledIf('startaftergroup', 'startafterenabled');
 
-        $endbeforegroup = array();
+        $endbeforegroup = [];
         $endbeforegroup[] =& $mform->createElement('date_selector', 'endbefore');
         $endbeforegroup[] =& $mform->createElement('checkbox', 'endbeforeenabled', '', get_string('enable'));
         $mform->addGroup($endbeforegroup, 'endbeforegroup', get_string('endbefore', 'tool_coursearchiver'), ' ', false);
         $mform->disabledIf('endbeforegroup', 'endbeforeenabled');
 
-        $endaftergroup = array();
+        $endaftergroup = [];
         $endaftergroup[] =& $mform->createElement('date_selector', 'endafter');
         $endaftergroup[] =& $mform->createElement('checkbox', 'endafterenabled', '', get_string('enable'));
         $mform->addGroup($endaftergroup, 'endaftergroup', get_string('endafter', 'tool_coursearchiver'), ' ', false);

@@ -37,7 +37,7 @@ $formdata   = isset($SESSION->formdata) ? $SESSION->formdata : optional_param('f
 $error      = isset($SESSION->error) ? $SESSION->error : optional_param('error', false, PARAM_RAW);
 $resume     = isset($SESSION->resume) ? $SESSION->resume : optional_param('resume', false, PARAM_RAW);
 $title      = optional_param('save_title', false, PARAM_TEXT);
-$selected   = optional_param_array('course_selected', array(), PARAM_INT);
+$selected   = optional_param_array('course_selected', [], PARAM_INT);
 $submitted  = optional_param('submit_button', false, PARAM_RAW);
 
 unset($SESSION->formdata);
@@ -58,7 +58,7 @@ if (!empty($submitted)) { // FORM 2 SUBMITTED.
     }
 
     // Clean selected course array.
-    $courses = array();
+    $courses = [];
     foreach ($selected as $c) {
         if ($c > 0) {
             $courses[] = $c;
@@ -127,15 +127,15 @@ if (!empty($submitted)) { // FORM 2 SUBMITTED.
         $searches = $data;
         $searches["resume"] = true;
     } else {
-        $searches = array();
+        $searches = [];
         foreach ($data as $key => $value) {
             $searches["$key"] = $value;
         }
     }
 
 
-    $param = array("mode" => tool_coursearchiver_processor::MODE_COURSELIST, "searches" => $searches);
-    $mform = new tool_coursearchiver_step2_form(null, array("processor_data" => $param));
+    $param = ["mode" => tool_coursearchiver_processor::MODE_COURSELIST, "searches" => $searches];
+    $mform = new tool_coursearchiver_step2_form(null, ["processor_data" => $param]);
 
     $mform->display();
     echo $OUTPUT->footer();

@@ -47,11 +47,11 @@ class tool_coursearchiver_step2_form extends moodleform {
         $mform->addElement('header', 'searchresultshdr', get_string('courseselector', 'tool_coursearchiver'));
 
         // Do search here and display results.
-        $processor = new tool_coursearchiver_processor(array("mode" => $data["mode"], "data" => $data["searches"]));
+        $processor = new tool_coursearchiver_processor(["mode" => $data["mode"], "data" => $data["searches"]]);
         $processor->execute(tool_coursearchiver_tracker::OUTPUT_HTML, null, $mform, $this);
 
         if ($processor->total > 0) {
-            $buttonarray = array();
+            $buttonarray = [];
             $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('email', 'tool_coursearchiver'));
             $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('hide', 'tool_coursearchiver'));
             $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('backup', 'tool_coursearchiver'));
@@ -59,13 +59,13 @@ class tool_coursearchiver_step2_form extends moodleform {
             $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('delete', 'tool_coursearchiver'));
             $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('optout', 'tool_coursearchiver'));
 
-            $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+            $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
             $mform->closeHeaderBefore('buttonar');
 
-            $savearray = array();
+            $savearray = [];
             $savearray[] = &$mform->createElement('text', 'save_title');
             $savearray[] = &$mform->createElement('submit', 'submit_button', get_string('save', 'tool_coursearchiver'));
-            $mform->addGroup($savearray, 'savear', '', array(' '), false);
+            $mform->addGroup($savearray, 'savear', '', [' '], false);
             $mform->closeHeaderBefore('savear');
             $mform->setType('save_title', PARAM_TEXT);
             $mform->setDefault('save_title', get_string('step2savetitle', 'tool_coursearchiver', date('l jS \of F Y h:i:s A')));

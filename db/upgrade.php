@@ -45,12 +45,12 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
         $table->add_field('optouttime', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
         // Adding keys to table tool_coursearchiver_optout.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Adding indexes to table tool_coursearchiver_optout.
-        $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
-        $table->add_index('courseid', XMLDB_INDEX_NOTUNIQUE, array('courseid'));
-        $table->add_index('optouttime', XMLDB_INDEX_NOTUNIQUE, array('optouttime'));
+        $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, ['userid']);
+        $table->add_index('courseid', XMLDB_INDEX_NOTUNIQUE, ['courseid']);
+        $table->add_index('optouttime', XMLDB_INDEX_NOTUNIQUE, ['optouttime']);
 
         // Conditionally launch create table for tool_coursearchiver_optout.
         if (!$dbman->table_exists($table)) {
@@ -68,11 +68,11 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
         $table->add_field('savedate', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
         // Adding keys to table tool_coursearchiver_saves.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Adding indexes to table tool_coursearchiver_saves.
-        $table->add_index('step', XMLDB_INDEX_NOTUNIQUE, array('step'));
-        $table->add_index('savedate', XMLDB_INDEX_NOTUNIQUE, array('savedate'));
+        $table->add_index('step', XMLDB_INDEX_NOTUNIQUE, ['step']);
+        $table->add_index('savedate', XMLDB_INDEX_NOTUNIQUE, ['savedate']);
 
         // Conditionally launch create table for tool_coursearchiver_saves.
         if (!$dbman->table_exists($table)) {
@@ -87,9 +87,10 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
                    SET name=?, value=(".$DB->sql_cast_char2int('value')." * 12)
                  WHERE plugin=? AND name=?";
 
-        $params = array("optoutmonthssetting",
-                        "tool_coursearchiver",
-                        "optoutyearssetting");
+        $params = ["optoutmonthssetting",
+                   "tool_coursearchiver",
+                   "optoutyearssetting",
+                  ];
         $DB->execute($sql, $params);
 
         // Monitor savepoint reached.
@@ -108,7 +109,7 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
                    SET optoutlength=?";
 
         $config = get_config('tool_coursearchiver');
-        $params = array($config->optoutmonthssetting);
+        $params = [$config->optoutmonthssetting];
         $DB->execute($sql, $params);
 
         // Monitor savepoint reached.
@@ -126,12 +127,12 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
         $table->add_field('timetodelete', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
         // Adding keys to table tool_coursearchiver_archived.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Adding indexes to table tool_coursearchiver_archived.
-        $table->add_index('filename', XMLDB_INDEX_NOTUNIQUE, array('filename'));
-        $table->add_index('owners', XMLDB_INDEX_NOTUNIQUE, array('owners'));
-        $table->add_index('timetodelete', XMLDB_INDEX_NOTUNIQUE, array('timetodelete'));
+        $table->add_index('filename', XMLDB_INDEX_NOTUNIQUE, ['filename']);
+        $table->add_index('owners', XMLDB_INDEX_NOTUNIQUE, ['owners']);
+        $table->add_index('timetodelete', XMLDB_INDEX_NOTUNIQUE, ['timetodelete']);
 
         // Conditionally launch create table for tool_coursearchiver_archived.
         if (!$dbman->table_exists($table)) {

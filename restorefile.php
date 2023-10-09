@@ -49,14 +49,15 @@ $archive = $rootpath . '/' . $archivepath . '/' . $filepath . '/' . $filename;
 if (file_exists($archive)) {
     $context = context_course::instance(SITEID);
     $fs = get_file_storage();
-    $fileinfo = array('contextid' => $context->id,
-                         'component' => 'backup',
-                         'filearea' => 'course',
-                         'itemid' => 0,
-                         'filepath' => '/',
-                         'filename' => $filename,
-                         'timecreated' => time(),
-                         'timemodified' => time());
+    $fileinfo = ['contextid' => $context->id,
+                 'component' => 'backup',
+                 'filearea' => 'course',
+                 'itemid' => 0,
+                 'filepath' => '/',
+                 'filename' => $filename,
+                 'timecreated' => time(),
+                 'timemodified' => time(),
+                ];
 
     $fsfile = $fs->get_file($fileinfo['contextid'],
                            $fileinfo['component'],

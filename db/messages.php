@@ -23,9 +23,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-$messageproviders = array (
-    // Notify teacher that a student has submitted a quiz attempt.
-    'courseowner' => array (
-        'capability'  => 'moodle/course:update'
-    )
-);
+
+// Notify teacher that a student has submitted a quiz attempt.
+$messageproviders = ['courseowner' => ['capability'  => 'moodle/course:update']];

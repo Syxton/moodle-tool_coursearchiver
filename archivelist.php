@@ -34,7 +34,7 @@ require_login();
 $searchterm = optional_param('searchterm', "", PARAM_TEXT);
 $recover    = optional_param('recover', false, PARAM_BOOL);
 $emaillist    = optional_param('emaillist', false, PARAM_BOOL);
-$selected   = optional_param_array('selected', array(), PARAM_TEXT);
+$selected   = optional_param_array('selected', [], PARAM_TEXT);
 
 global $SESSION, $OUTPUT;
 

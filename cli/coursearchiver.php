@@ -30,54 +30,52 @@ require_once($CFG->libdir . '/clilib.php');
 $courseconfig = get_config('moodlecourse');
 
 // Now get cli options.
-list($options, $unrecognized) = cli_get_params(array(
-    'short' => false,
-    'full' => false,
-    'id' => false,
-    'idnum' => false,
-    'teacher' => false,
-    'catid' => false,
-    'subcats' => false,
-    'help' => false,
-    'createdbefore' => false,
-    'createdafter' => false,
-    'accessbefore' => false,
-    'accessafter' => false,
-    'startbefore' => false,
-    'startafter' => false,
-    'endbefore' => false,
-    'endafter' => false,
-    'mode' => false,
-    'location' => false,
-    'empty' => false,
-    'ignadmins' => false,
-    'ignsiteroles' => false,
-    'verbose' => false,
-),
-array(
-    's' => 'short',
-    'f' => 'full',
-    'i' => 'id',
-    'n' => 'idnum',
-    'h' => 'help',
-    't' => 'teacher',
-    'c' => 'catid',
-    'r' => 'subcats',
-    'b' => 'createdbefore',
-    'a' => 'createdafter',
-    'B' => 'accessbefore',
-    'A' => 'accessafter',
-    'o' => 'startbefore',
-    'O' => 'startafter',
-    'd' => 'endbefore',
-    'D' => 'endafter',
-    'i' => 'ignadmins',
-    'I' => 'ignsiteroles',
-    'm' => 'mode',
-    'l' => 'location',
-    'e' => 'empty',
-    'v' => 'verbose'
-));
+list($options, $unrecognized) = cli_get_params(['short' => false,
+                                                'full' => false,
+                                                'id' => false,
+                                                'idnum' => false,
+                                                'teacher' => false,
+                                                'catid' => false,
+                                                'subcats' => false,
+                                                'help' => false,
+                                                'createdbefore' => false,
+                                                'createdafter' => false,
+                                                'accessbefore' => false,
+                                                'accessafter' => false,
+                                                'startbefore' => false,
+                                                'startafter' => false,
+                                                'endbefore' => false,
+                                                'endafter' => false,
+                                                'mode' => false,
+                                                'location' => false,
+                                                'empty' => false,
+                                                'ignadmins' => false,
+                                                'ignsiteroles' => false,
+                                                'verbose' => false,
+                                               ],
+                                               ['s' => 'short',
+                                                'f' => 'full',
+                                                'i' => 'id',
+                                                'n' => 'idnum',
+                                                'h' => 'help',
+                                                't' => 'teacher',
+                                                'c' => 'catid',
+                                                'r' => 'subcats',
+                                                'b' => 'createdbefore',
+                                                'a' => 'createdafter',
+                                                'B' => 'accessbefore',
+                                                'A' => 'accessafter',
+                                                'o' => 'startbefore',
+                                                'O' => 'startafter',
+                                                'd' => 'endbefore',
+                                                'D' => 'endafter',
+                                                'i' => 'ignadmins',
+                                                'I' => 'ignsiteroles',
+                                                'm' => 'mode',
+                                                'l' => 'location',
+                                                'e' => 'empty',
+                                                'v' => 'verbose',
+                                               ]);
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
@@ -119,17 +117,16 @@ if (!empty($options['help'])) {
 }
 
 // Confirm that the mode is valid.
-$modes = array(
-    'courselist' => tool_coursearchiver_processor::MODE_COURSELIST,
-    'emaillist' => tool_coursearchiver_processor::MODE_GETEMAILS,
-    'hideemail' => tool_coursearchiver_processor::MODE_HIDEEMAIL,
-    'hide' => tool_coursearchiver_processor::MODE_HIDE,
-    'archiveemail' => tool_coursearchiver_processor::MODE_ARCHIVEEMAIL,
-    'backup' => tool_coursearchiver_processor::MODE_BACKUP,
-    'archive' => tool_coursearchiver_processor::MODE_ARCHIVE,
-    'delete' => tool_coursearchiver_processor::MODE_DELETE,
-    'optout' => tool_coursearchiver_processor::MODE_OPTOUT,
-);
+$modes = ['courselist' => tool_coursearchiver_processor::MODE_COURSELIST,
+          'emaillist' => tool_coursearchiver_processor::MODE_GETEMAILS,
+          'hideemail' => tool_coursearchiver_processor::MODE_HIDEEMAIL,
+          'hide' => tool_coursearchiver_processor::MODE_HIDE,
+          'archiveemail' => tool_coursearchiver_processor::MODE_ARCHIVEEMAIL,
+          'backup' => tool_coursearchiver_processor::MODE_BACKUP,
+          'archive' => tool_coursearchiver_processor::MODE_ARCHIVE,
+          'delete' => tool_coursearchiver_processor::MODE_DELETE,
+          'optout' => tool_coursearchiver_processor::MODE_OPTOUT,
+];
 
 if (!isset($options['mode']) || empty($modes[$options['mode']])) {
     echo get_string('invalidmode', 'tool_coursearchiver')."\n";
@@ -188,8 +185,9 @@ $question = "";
 switch ($processoroptions['mode']) {
     case tool_coursearchiver_processor::MODE_COURSELIST:
         // Show courselist and die...
-        $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST,
-                                                             "data" => $options));
+        $processor = new tool_coursearchiver_processor(["mode" => tool_coursearchiver_processor::MODE_COURSELIST,
+                                                        "data" => $options,
+                                                       ]);
         if (!empty($options['empty'])) {
             $processor->emptyonly = true;
         }
@@ -197,16 +195,18 @@ switch ($processoroptions['mode']) {
         die();
     break;
     case tool_coursearchiver_processor::MODE_GETEMAILS:
-        $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST,
-                                                             "data" => $options));
+        $processor = new tool_coursearchiver_processor(["mode" => tool_coursearchiver_processor::MODE_COURSELIST,
+                                                        "data" => $options,
+                                                       ]);
         if (!empty($options['empty'])) {
             $processor->emptyonly = true;
         }
         $courses = $processor->execute($output);
 
         if (!empty($courses)) {
-            $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_GETEMAILS,
-                                                                 "data" => $courses));
+            $processor = new tool_coursearchiver_processor(["mode" => tool_coursearchiver_processor::MODE_GETEMAILS,
+                                                            "data" => $courses,
+                                                           ]);
             $processor->execute(tool_coursearchiver_tracker::OUTPUT_CLI);
         } else {
             echo get_string('cli_cannot_continue', 'tool_coursearchiver');
@@ -215,16 +215,18 @@ switch ($processoroptions['mode']) {
     break;
     case tool_coursearchiver_processor::MODE_HIDEEMAIL:
     case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
-        $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST,
-                                                             "data" => $options));
+        $processor = new tool_coursearchiver_processor(["mode" => tool_coursearchiver_processor::MODE_COURSELIST,
+                                                        "data" => $options,
+                                                       ]);
         if (!empty($options['empty'])) {
             $processor->emptyonly = true;
         }
         $courses = $processor->execute($output);
 
         if (!empty($courses)) {
-            $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_GETEMAILS,
-                                                                 "data" => $courses));
+            $processor = new tool_coursearchiver_processor(["mode" => tool_coursearchiver_processor::MODE_GETEMAILS,
+                                                            "data" => $courses,
+                                                           ]);
             $selected = $processor->execute(tool_coursearchiver_tracker::OUTPUT_CLI);
         }
 
@@ -242,8 +244,9 @@ switch ($processoroptions['mode']) {
     case tool_coursearchiver_processor::MODE_DELETE:
     case tool_coursearchiver_processor::MODE_OPTOUT:
         // Show courselist and die...
-        $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_COURSELIST,
-                                                             "data" => $options));
+        $processor = new tool_coursearchiver_processor(["mode" => tool_coursearchiver_processor::MODE_COURSELIST,
+                                                        "data" => $options,
+                                                       ]);
         if (!empty($options['empty'])) {
             $processor->emptyonly = true;
         }
@@ -274,12 +277,12 @@ switch ($processoroptions['mode']) {
     case tool_coursearchiver_processor::MODE_HIDE:
     case tool_coursearchiver_processor::MODE_DELETE:
     case tool_coursearchiver_processor::MODE_OPTOUT:
-        $processor = new tool_coursearchiver_processor(array("mode" => $processoroptions['mode'], "data" => $courses));
+        $processor = new tool_coursearchiver_processor(["mode" => $processoroptions['mode'], "data" => $courses]);
         $processor->execute(tool_coursearchiver_tracker::OUTPUT_CLI);
         break;
     case tool_coursearchiver_processor::MODE_BACKUP:
     case tool_coursearchiver_processor::MODE_ARCHIVE:
-        $processor = new tool_coursearchiver_processor(array("mode" => $processoroptions['mode'], "data" => $courses));
+        $processor = new tool_coursearchiver_processor(["mode" => $processoroptions['mode'], "data" => $courses]);
         if (!empty($options['location'])) {
             $processor->folder = $options['location'];
         }
@@ -287,20 +290,20 @@ switch ($processoroptions['mode']) {
         break;
     case tool_coursearchiver_processor::MODE_HIDEEMAIL:
     case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
-        $owners = array();
+        $owners = [];
         foreach ($selected as $s) {
             $t = explode("_", $s);
             if (count($t) == 2) { // Both a course and an owner are needed.
                 if (array_key_exists($t[1], $owners)) {
                     $temp = $owners[$t[1]]['courses'];
-                    $owners[$t[1]]['courses'] = array_merge($temp, array($t[0] => get_course($t[0])));
+                    $owners[$t[1]]['courses'] = array_merge($temp, [$t[0] => get_course($t[0])]);
                 } else {
-                    $owners[$t[1]]['courses'] = array($t[0] => get_course($t[0]));
-                    $owners[$t[1]]['user'] = $DB->get_record("user", array("id" => $t[1]));
+                    $owners[$t[1]]['courses'] = [$t[0] => get_course($t[0])];
+                    $owners[$t[1]]['user'] = $DB->get_record("user", ["id" => $t[1]]);
                 }
             }
         }
-        $processor = new tool_coursearchiver_processor(array("mode" => $processoroptions['mode'], "data" => $owners));
+        $processor = new tool_coursearchiver_processor(["mode" => $processoroptions['mode'], "data" => $owners]);
         $processor->execute(tool_coursearchiver_tracker::OUTPUT_CLI);
     break;
     default:

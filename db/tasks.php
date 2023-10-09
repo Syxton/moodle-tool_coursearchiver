@@ -25,14 +25,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$tasks = array(
-    array(
-        'classname' => 'tool_coursearchiver\task\cron_task',
-        'blocking' => 0,
-        'minute' => '*',
-        'hour' => '1',
-        'day' => '*',
-        'month' => '*',
-        'dayofweek' => '*'
-    )
-);
+$tasks = [['classname' => 'tool_coursearchiver\task\cron_task',
+           'blocking' => 0,
+           'minute' => '*',
+           'hour' => '1',
+           'day' => '*',
+           'month' => '*',
+           'dayofweek' => '*',
+          ]];

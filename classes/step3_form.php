@@ -47,21 +47,22 @@ class tool_coursearchiver_step3_form extends moodleform {
         $mform->addElement('header', 'emaillist', get_string('emailselector', 'tool_coursearchiver'));
 
         // Do search here and display results.
-        $processor = new tool_coursearchiver_processor(array("mode" => tool_coursearchiver_processor::MODE_GETEMAILS,
-                                                             "data" => $data["courses"]));
+        $processor = new tool_coursearchiver_processor(["mode" => tool_coursearchiver_processor::MODE_GETEMAILS,
+                                                        "data" => $data["courses"],
+                                                       ]);
         $processor->execute(tool_coursearchiver_tracker::OUTPUT_HTML, null, $mform, $this);
 
         if ($processor->total > 0) {
-            $buttonarray = array();
+            $buttonarray = [];
             $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('hideemail', 'tool_coursearchiver'));
             $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('archiveemail', 'tool_coursearchiver'));
-            $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+            $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
             $mform->closeHeaderBefore('buttonar');
 
-            $savearray = array();
+            $savearray = [];
             $savearray[] = &$mform->createElement('text', 'save_title');
             $savearray[] = &$mform->createElement('submit', 'submit_button', get_string('save', 'tool_coursearchiver'));
-            $mform->addGroup($savearray, 'savear', '', array(' '), false);
+            $mform->addGroup($savearray, 'savear', '', [' '], false);
             $mform->closeHeaderBefore('savear');
             $mform->setType('save_title', PARAM_TEXT);
             $mform->setDefault('save_title', get_string('step3savetitle', 'tool_coursearchiver', date('l jS \of F Y h:i:s A')));

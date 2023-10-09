@@ -51,7 +51,7 @@ class tool_coursearchiver_step4_form extends moodleform {
         $count = count(unserialize($data["formdata"]));
         if (empty($count)) {
             $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php',
-                                        array("error" => get_string('unknownerror', 'tool_coursearchiver')));
+                                        ["error" => get_string('unknownerror', 'tool_coursearchiver')]);
             redirect($returnurl);
         }
 
@@ -89,7 +89,7 @@ class tool_coursearchiver_step4_form extends moodleform {
                 break;
             default:
                 $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php',
-                                            array("error" => get_string('unknownerror', 'tool_coursearchiver')));
+                                            ["error" => get_string('unknownerror', 'tool_coursearchiver')]);
                 redirect($returnurl);
         }
 
@@ -105,10 +105,10 @@ class tool_coursearchiver_step4_form extends moodleform {
             $mform->setDefault('folder', date('Y'));
         }
 
-        $buttonarray = array();
+        $buttonarray = [];
         $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('back', 'tool_coursearchiver'));
         $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('confirm', 'tool_coursearchiver'));
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
         $mform->closeHeaderBefore('buttonar');
 
         $this->set_data($data);

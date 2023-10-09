@@ -38,7 +38,7 @@ $mode       = isset($SESSION->mode) ? $SESSION->mode : optional_param('mode', fa
 $error      = isset($SESSION->error) ? $SESSION->error : optional_param('error', false, PARAM_RAW);
 $resume     = isset($SESSION->resume) ? $SESSION->resume : optional_param('resume', false, PARAM_RAW);
 $title      = optional_param('save_title', false, PARAM_TEXT);
-$selected   = optional_param_array('user_selected', array(), PARAM_RAW);
+$selected   = optional_param_array('user_selected', [], PARAM_RAW);
 $submitted  = optional_param('submit_button', false, PARAM_RAW);
 
 unset($SESSION->formdata);
@@ -60,7 +60,7 @@ if (!empty($submitted)) { // FORM 3 SUBMITTED.
     }
 
     // Clean selected users array.
-    $users = array();
+    $users = [];
     foreach ($selected as $c) {
         if ($c > 0) {
             $users[] = $c;
@@ -68,17 +68,17 @@ if (!empty($submitted)) { // FORM 3 SUBMITTED.
     }
 
     // Fully develop array.
-    $owners = array();
+    $owners = [];
     foreach ($users as $s) {
         $t = explode("_", $s);
         if (count($t) == 2) { // Both a course and an owner are needed.
             if (substr($t[0], 0, 1) !== 'x') { // User is selected.
                 if (array_key_exists($t[1], $owners)) {
                     $temp = $owners[$t[1]]['courses'];
-                    $owners[$t[1]]['courses'] = array_merge($temp, array($t[0] => get_course($t[0])));
+                    $owners[$t[1]]['courses'] = array_merge($temp, [$t[0] => get_course($t[0])]);
                 } else {
-                    $owners[$t[1]]['courses'] = array($t[0] => get_course($t[0]));
-                    $owners[$t[1]]['user'] = $DB->get_record("user", array("id" => $t[1]));
+                    $owners[$t[1]]['courses'] = [$t[0] => get_course($t[0]]);
+                    $owners[$t[1]]['user'] = $DB->get_record("user", ["id" => $t[1]]);
                 }
             }
         }
@@ -132,8 +132,8 @@ if (!empty($submitted)) { // FORM 3 SUBMITTED.
         redirect($returnurl);
     }
 
-    $param = array("mode" => tool_coursearchiver_processor::MODE_GETEMAILS, "courses" => $data);
-    $mform = new tool_coursearchiver_step3_form(null, array("processor_data" => $param));
+    $param = ["mode" => tool_coursearchiver_processor::MODE_GETEMAILS, "courses" => $data];
+    $mform = new tool_coursearchiver_step3_form(null, ["processor_data" => $param]);
 
     $mform->display();
 
