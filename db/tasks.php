@@ -32,4 +32,5 @@ $tasks = [['classname' => 'tool_coursearchiver\task\cron_task',
            'day' => '*',
            'month' => '*',
            'dayofweek' => '*',
-          ]];
+          ],
+];
