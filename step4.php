@@ -129,7 +129,8 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
                 }
 
                 // Automatic refreshing iframe to keep sessions alive during long script execution.
-                echo '<iframe style="display:none" src="' . $CFG->wwwroot . '/admin/tool/coursearchiver/keepalive.php"></iframe>';
+                $keepalive = new moodle_url('/admin/tool/coursearchiver/keepalive.php');
+                echo '<iframe style="display:none" src="' . $keepalive . '"></iframe>';
 
                 // Execute process.
                 $processor->execute(tool_coursearchiver_tracker::OUTPUT_HTML, null);
