@@ -24,8 +24,6 @@
 
 namespace tool_coursearchiver\task;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Delete Course after archiving.
  *
@@ -33,7 +31,6 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2015 Matthew Davidson
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class delete_course extends \core\task\adhoc_task {
     /**
      * get_name
@@ -50,8 +47,6 @@ class delete_course extends \core\task\adhoc_task {
      * @return bool
      */
     public function execute(): bool {
-        global $OUTPUT, $PAGE;
-
         $data = $this->get_custom_data();
 
         mtrace(get_string('attemptdeletingcourse', 'tool_coursearchiver', $data->course));
