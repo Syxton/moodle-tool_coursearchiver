@@ -198,6 +198,9 @@ class tool_coursearchiver_processor {
         core_php_time_limit::raise(0);
         raise_memory_limit(MEMORY_EXTRA);
 
+        // Close the session so that it doesn't lock other tabs/windows.
+        \core\session\manager::write_close();
+
         switch ($this->mode) {
             case self::MODE_COURSELIST:
                 $tracker->start();
