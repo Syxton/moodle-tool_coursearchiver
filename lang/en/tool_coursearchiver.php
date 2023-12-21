@@ -37,6 +37,7 @@ $string['archiverecoverform'] = 'Pending Deletion';
 $string['archiveemail'] = 'Send "Course to be Archived" Emails';
 $string['archivelist'] = 'Course Archives';
 $string['archivelocation'] = 'Course archive subdirectory';
+$string['attemptdeletingcourse'] = 'Deleting Course: ({$a->id}) {$a->fullname}.';
 $string['back'] = 'Start Over';
 $string['backup'] = 'Backup Courses';
 $string['cannotdeletecoursenotexist'] = 'Cannot delete a course that does not exist';

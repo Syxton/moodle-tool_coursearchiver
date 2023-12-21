@@ -198,9 +198,6 @@ class tool_coursearchiver_processor {
         core_php_time_limit::raise(0);
         raise_memory_limit(MEMORY_EXTRA);
 
-        // Close the session so that it doesn't lock other tabs/windows.
-        \core\session\manager::write_close();
-
         switch ($this->mode) {
             case self::MODE_COURSELIST:
                 $tracker->start();
@@ -665,6 +662,9 @@ class tool_coursearchiver_processor {
                 }
             }
 
+            // Close the session so that it doesn't lock other tabs/windows.
+            \core\session\manager::write_close();
+
             // Perform Backup.
             $bc = new backup_controller(backup::TYPE_1COURSE, $obj["course"]->id, backup::FORMAT_MOODLE,
                                         backup::INTERACTIVE_NO, backup::MODE_GENERAL, $userdoingthebackup);
@@ -702,7 +702,10 @@ class tool_coursearchiver_processor {
 
                 // Remove Course.
                 if ($delete) {
-                    delete_course($obj["course"]->id, false);
+                    // Remove Course.
+                    $task = new \tool_coursearchiver\task\delete_course();
+                    $task->set_custom_data(['course' => $obj["course"]]);
+                    \core\task\manager::queue_adhoc_task($task, true);
                 }
             } else {
                 throw new Exception(get_string('errorarchivefile', 'tool_coursearchiver'));
