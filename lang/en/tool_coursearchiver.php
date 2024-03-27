@@ -26,6 +26,9 @@ $string['pluginname'] = 'Course Archiver';
 
 // Privacy strings.
 $string['privacy:metadata'] = 'The plugin does not contain user data.';
+$string['privacy:metadata:tool_coursearchiver'] = 'Data related to users that optouts.';
+$string['privacy:metadata:tool_coursearchiver_optout:userid'] = 'ID of user who opted out.';
+$string['privacy:metadata:tool_coursearchiver_optout_user'] = 'Data related to users that optout.';
 
 // General strings.
 $string['accessafter'] = 'Last accessed after';
