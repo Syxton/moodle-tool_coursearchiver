@@ -315,11 +315,13 @@ class tool_coursearchiver_processor {
                     // Loop over the course array.
                     $tracker->jobsize = count($courses);
                     foreach ($courses as $currentcourse) {
-                        if ($this->archivecourse($currentcourse, $delete)) {
+                        $archivestatus = $this->archivecourse($currentcourse, $delete);
+                        if ($archivestatus === true) {
                             $tracker->error = false;
                             $this->total++;
                         } else {
                             $tracker->error = true;
+                            $currentcourse["course"]->error = $archivestatus;
                             $this->errors[] = get_string('errorarchivingcourse', 'tool_coursearchiver', $currentcourse["course"]);
                         }
                         $tracker->jobsdone++;
@@ -622,7 +624,7 @@ class tool_coursearchiver_processor {
         require_once($CFG->dirroot . '/backup/controller/backup_controller.class.php');
 
         if (empty($CFG->siteadmins)) {  // Should not happen on an ordinary site.
-            return false;
+            throw new Exception(get_string('errornoadmins', 'tool_coursearchiver'));
         }
 
         $admin = get_admin();
@@ -710,9 +712,8 @@ class tool_coursearchiver_processor {
             } else {
                 throw new Exception(get_string('errorarchivefile', 'tool_coursearchiver'));
             }
-
         } catch (Exception $e) {
-            return false;
+            return $e->getMessage();
         }
         return true;
     }
