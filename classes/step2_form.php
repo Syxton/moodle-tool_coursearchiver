@@ -36,7 +36,7 @@ class tool_coursearchiver_step2_form extends moodleform {
      * The standard form definiton.
      * @return void.
      */
-    public function definition () {
+    public function definition() {
         $mform = $this->_form;
         $data  = $this->_customdata['processor_data'];
 

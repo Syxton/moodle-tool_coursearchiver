@@ -160,6 +160,9 @@ class tool_coursearchiver_tracker {
             case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
                 $modetext = "archiveemail";
                 break;
+            case tool_coursearchiver_processor::MODE_DELETEEMAIL:
+                $modetext = "deleteemail";
+                break;
             case tool_coursearchiver_processor::MODE_HIDE:
                 $modetext = "hide";
                 break;
@@ -284,6 +287,7 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_DELETEEMAIL:
                 case tool_coursearchiver_processor::MODE_OPTOUT:
                     break;
             }
@@ -396,6 +400,7 @@ class tool_coursearchiver_tracker {
                     break;
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_DELETEEMAIL:
                     $buffer = new progress_trace_buffer(new text_progress_trace());
                     $buffer->output('<h3>' . get_string('processemailing', 'tool_coursearchiver') .
                                     '</h3><div class="coursearchiver_progress_bar_spacing"></div><br />');
@@ -466,6 +471,7 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_DELETEEMAIL:
                 case tool_coursearchiver_processor::MODE_OPTOUT:
                     $out = $this->get_progressbar();
                     do {
@@ -598,6 +604,7 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_DELETEEMAIL:
                 case tool_coursearchiver_processor::MODE_OPTOUT:
                     $this->buffer->output($this->get_progressbar());
                     break;
@@ -666,6 +673,7 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_DELETEEMAIL:
                 case tool_coursearchiver_processor::MODE_OPTOUT:
                     $this->buffer->output('<div class="coursearchiver_completedmsg">' .
                                           get_string('processcomplete', 'tool_coursearchiver') .

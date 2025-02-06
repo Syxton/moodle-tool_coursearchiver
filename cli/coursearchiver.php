@@ -69,8 +69,8 @@ list($options, $unrecognized) = cli_get_params(['short' => false,
                                                 'O' => 'startafter',
                                                 'd' => 'endbefore',
                                                 'D' => 'endafter',
-                                                'g' => 'ignadmins',
-                                                's' => 'ignsiteroles',
+                                                'I' => 'ignadmins',
+                                                'S' => 'ignsiteroles',
                                                 'm' => 'mode',
                                                 'l' => 'location',
                                                 'e' => 'empty',
@@ -100,9 +100,9 @@ Options:
 -O, --startafter        Course starts after UNIX TIMESTAMP
 -d, --endbefore         Course ends before UNIX TIMESTAMP
 -D, --endafter          Course ends after UNIX TIMESTAMP
--i, --ignadmins         Ignore admin account accesses
--I, --ignsiteroles      Ignore site role accesses
--m, --mode              courselist,emaillist,hide,backup,archive,delete,hideemail,archiveemail
+-I, --ignadmins         Ignore admin account accesses
+-S, --ignsiteroles      Ignore site role accesses
+-m, --mode              courselist,emaillist,hide,backup,archive,delete,hideemail,archiveemail,deleteemail
 -l, --location          Folder name to store archived courses (optional)
 -e, --empty             Only return empty courses
 -v, --verbose           Maximum output from tool (optional)
@@ -122,6 +122,7 @@ $modes = ['courselist' => tool_coursearchiver_processor::MODE_COURSELIST,
           'hideemail' => tool_coursearchiver_processor::MODE_HIDEEMAIL,
           'hide' => tool_coursearchiver_processor::MODE_HIDE,
           'archiveemail' => tool_coursearchiver_processor::MODE_ARCHIVEEMAIL,
+          'deleteemail' => tool_coursearchiver_processor::MODE_DELETEEMAIL,
           'backup' => tool_coursearchiver_processor::MODE_BACKUP,
           'archive' => tool_coursearchiver_processor::MODE_ARCHIVE,
           'delete' => tool_coursearchiver_processor::MODE_DELETE,
@@ -215,6 +216,7 @@ switch ($processoroptions['mode']) {
     break;
     case tool_coursearchiver_processor::MODE_HIDEEMAIL:
     case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+    case tool_coursearchiver_processor::MODE_DELETEEMAIL:
         $processor = new tool_coursearchiver_processor(["mode" => tool_coursearchiver_processor::MODE_COURSELIST,
                                                         "data" => $options,
                                                        ]);
@@ -290,6 +292,7 @@ switch ($processoroptions['mode']) {
         break;
     case tool_coursearchiver_processor::MODE_HIDEEMAIL:
     case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+    case tool_coursearchiver_processor::MODE_DELETEEMAIL:
         $owners = [];
         foreach ($selected as $s) {
             $t = explode("_", $s);

@@ -83,6 +83,16 @@ if ($hassiteconfig) {
                                                     $name,
                                                     $description,
                                                     $default));
+
+    // Default email for upcoming course deletion.
+    $name = new lang_string('deletewarningemailsetting', 'tool_coursearchiver');
+    $description = new lang_string('deletewarningemailsetting_help', 'tool_coursearchiver');
+    $default = get_string('deletewarningemailsettingdefault', 'tool_coursearchiver');
+    $settings->add(new admin_setting_configtextarea('tool_coursearchiver/deletewarningemailsetting',
+                                                    $name,
+                                                    $description,
+                                                    $default));
+
     // Enable opt out via email link.
     $settings->add(new admin_setting_configcheckbox('tool_coursearchiver/optoutbyemailsetting',
                    get_string('optoutbyemailsetting', 'tool_coursearchiver'),

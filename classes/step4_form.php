@@ -36,7 +36,7 @@ class tool_coursearchiver_step4_form extends moodleform {
      * The standard form definiton.
      * @return void.
      */
-    public function definition () {
+    public function definition() {
         $mform = $this->_form;
         $data  = $this->_customdata['processor_data'];
 
@@ -71,6 +71,14 @@ class tool_coursearchiver_step4_form extends moodleform {
                     }
                 }
                 $message = get_string('confirmmessagearchiveemail', 'tool_coursearchiver', $count);
+                break;
+            case tool_coursearchiver_processor::MODE_DELETEEMAIL:
+                foreach (unserialize($data["formdata"]) as $r) { // Loop through every possible user.
+                    if (substr($r, 0, 1) == 'x') { // Determine if they were NOT selected.
+                        $count--; // Remove 1 from count.
+                    }
+                }
+                $message = get_string('confirmmessagedeleteemail', 'tool_coursearchiver', $count);
                 break;
             case tool_coursearchiver_processor::MODE_HIDE:
                 $message = get_string('confirmmessagehide', 'tool_coursearchiver', $count);
