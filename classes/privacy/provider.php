@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,13 +13,15 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Privacy Subsystem implementation for tool_coursearchiver.
+ * File containing processor class.
  *
  * @package    tool_coursearchiver
  * @copyright  2015 Matthew Davidson
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace tool_coursearchiver\privacy;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\contextlist;

@@ -65,6 +65,7 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
                                                tool_coursearchiver_processor::MODE_DELETE,
                                                tool_coursearchiver_processor::MODE_HIDEEMAIL,
                                                tool_coursearchiver_processor::MODE_ARCHIVEEMAIL,
+                                               tool_coursearchiver_processor::MODE_DELETEEMAIL,
                                                tool_coursearchiver_processor::MODE_OPTOUT,
                                               ])) {
             throw new coding_exception('Unknown process mode');
@@ -73,6 +74,7 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
         switch($mode) {
             case tool_coursearchiver_processor::MODE_HIDEEMAIL:
             case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+            case tool_coursearchiver_processor::MODE_DELETEEMAIL:
                 echo $OUTPUT->header();
                 echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'),
                                                 'coursearchiver',

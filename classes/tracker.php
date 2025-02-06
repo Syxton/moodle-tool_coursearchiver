@@ -160,6 +160,9 @@ class tool_coursearchiver_tracker {
             case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
                 $modetext = "archiveemail";
                 break;
+            case tool_coursearchiver_processor::MODE_DELETEEMAIL:
+                $modetext = "deleteemail";
+                break;
             case tool_coursearchiver_processor::MODE_HIDE:
                 $modetext = "hide";
                 break;
@@ -284,6 +287,7 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_DELETEEMAIL:
                 case tool_coursearchiver_processor::MODE_OPTOUT:
                     break;
             }
@@ -396,6 +400,7 @@ class tool_coursearchiver_tracker {
                     break;
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_DELETEEMAIL:
                     $buffer = new progress_trace_buffer(new text_progress_trace());
                     $buffer->output('<h3>' . get_string('processemailing', 'tool_coursearchiver') .
                                     '</h3><div class="coursearchiver_progress_bar_spacing"></div><br />');
@@ -419,7 +424,7 @@ class tool_coursearchiver_tracker {
      * @return void
      */
     public function output($data, $info = false) {
-        global $CFG;
+        global $CFG, $DB;
 
         $return = 1; // By default we are returning the a single process as finished.
 
@@ -436,9 +441,10 @@ class tool_coursearchiver_tracker {
                         $cliicon = get_string('visible', 'tool_coursearchiver');
                     }
                     $empty = $this->empty ? ";" . get_string('empty', 'tool_coursearchiver') . " " : " ";
-                    $date = get_string('never', 'tool_coursearchiver');
                     if (!empty($data->timeaccess)) {
                         $date = date("m/d/y", $data->timeaccess);
+                    } else {
+                        $date = $this->get_lastaccessed($data->id);
                     }
                     $this->buffer->output(sprintf($this->maskcourses,
                                                   $cliicon . $empty,
@@ -466,6 +472,7 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_DELETEEMAIL:
                 case tool_coursearchiver_processor::MODE_OPTOUT:
                     $out = $this->get_progressbar();
                     do {
@@ -506,9 +513,10 @@ class tool_coursearchiver_tracker {
                     }
 
                     $hiddenclass = empty($data->visible) ? 'coursearchiver_alreadyhidden' : '';
-                    $date = get_string('never', 'tool_coursearchiver');
                     if (!empty($data->timeaccess)) {
                         $date = date("m/d/y", $data->timeaccess);
+                    } else {
+                        $date = $this->get_lastaccessed($data->id);
                     }
                     $this->mform->addElement('html',
                                              html_writer::end_tag('td') .
@@ -598,6 +606,7 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_DELETEEMAIL:
                 case tool_coursearchiver_processor::MODE_OPTOUT:
                     $this->buffer->output($this->get_progressbar());
                     break;
@@ -666,6 +675,7 @@ class tool_coursearchiver_tracker {
                 case tool_coursearchiver_processor::MODE_DELETE:
                 case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
+                case tool_coursearchiver_processor::MODE_DELETEEMAIL:
                 case tool_coursearchiver_processor::MODE_OPTOUT:
                     $this->buffer->output('<div class="coursearchiver_completedmsg">' .
                                           get_string('processcomplete', 'tool_coursearchiver') .
@@ -712,5 +722,38 @@ class tool_coursearchiver_tracker {
                 <div class="coursearchiver_bar" style="width:'.$percentage.'%;">'.$percentage.'%</div>
             </div>';
         }
+    }
+
+    /**
+     * Gets latest course access date.
+     * @param int $courseid the course id.
+     * @return string
+     */
+    protected function get_lastaccessed($courseid) {
+        global $DB;
+        $adminsandmanagers = tool_coursearchiver_processor::get_list_of_admins_and_managers_static();
+        $sql = "SELECT c.id, a.timeaccess
+                  FROM {course} c
+             LEFT JOIN (
+                        SELECT a.courseid, a.timeaccess
+                          FROM {user_lastaccess} a
+                          JOIN (
+                                SELECT courseid, MAX(timeaccess) as timeaccess
+                                  FROM {user_lastaccess} b
+                                 WHERE b.userid NOT IN ($adminsandmanagers)
+                              GROUP BY courseid
+                                ) b ON (
+                                        a.courseid = b.courseid
+                                        AND
+                                        a.timeaccess = b.timeaccess
+                                        )
+                       ) a ON c.id = a.courseid
+                WHERE c.id = :courseid
+                ORDER BY a.timeaccess LIMIT 1";
+
+        if (!$data = $DB->get_record_sql($sql, ['courseid' => $courseid])) {
+            return get_string('never', 'tool_coursearchiver');
+        }
+        return date("m/d/y", $data->timeaccess);
     }
 }

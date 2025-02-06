@@ -68,14 +68,19 @@ class tool_coursearchiver_processor {
     const MODE_ARCHIVEEMAIL = 7;
 
     /**
+     * Send emails about pending course deletion.
+     */
+    const MODE_DELETEEMAIL = 8;
+
+    /**
      * Delete courses.
      */
-    const MODE_DELETE = 8;
+    const MODE_DELETE = 9;
 
     /**
      * Optout courses.
      */
-    const MODE_OPTOUT = 9;
+    const MODE_OPTOUT = 10;
 
     /** @var int processor mode. */
     protected $mode;
@@ -146,6 +151,7 @@ class tool_coursearchiver_processor {
                                                                      self::MODE_DELETE,
                                                                      self::MODE_HIDEEMAIL,
                                                                      self::MODE_ARCHIVEEMAIL,
+                                                                     self::MODE_DELETEEMAIL,
                                                                      self::MODE_OPTOUT,
                                                                     ])) {
             throw new coding_exception('Unknown process mode');
@@ -183,6 +189,7 @@ class tool_coursearchiver_processor {
                                         self::MODE_DELETE,
                                         self::MODE_HIDEEMAIL,
                                         self::MODE_ARCHIVEEMAIL,
+                                        self::MODE_DELETEEMAIL,
                                         self::MODE_OPTOUT,
                                        ])) {
                 if (empty($mform)) {
@@ -366,6 +373,7 @@ class tool_coursearchiver_processor {
                 break;
             case self::MODE_HIDEEMAIL:
             case self::MODE_ARCHIVEEMAIL:
+            case self::MODE_DELETEEMAIL:
                 $tracker->start();
                 if (!empty($this->data)) {
                     // Loop over the user array.
@@ -819,6 +827,10 @@ class tool_coursearchiver_processor {
                 $subject = get_string('archivewarningsubject', 'tool_coursearchiver');
                 $message = $config->archivewarningemailsetting;
                 break;
+            case self::MODE_DELETEEMAIL:
+                $subject = get_string('deletewarningsubject', 'tool_coursearchiver');
+                $message = $config->deletewarningemailsetting;
+                break;
             default:
                 $this->errors[] = get_string('invalidmode', 'tool_coursearchiver');
                 return false;
@@ -826,10 +838,10 @@ class tool_coursearchiver_processor {
 
         // Note: get_email_courses() may return an empty HTML table.
         if (strstr($message, '%courses_nolink')) {
-            $courses = $this->get_email_courses($obj, false);
+            $courses = $this->get_email_courses($obj, $config->optoutbyemailsetting);
             $placeholder = '%courses_nolink';
         } else {
-            $courses = $this->get_email_courses($obj);
+            $courses = $this->get_email_courses($obj, $config->optoutbyemailsetting);
             $placeholder = '%courses';
         }
 
@@ -1341,6 +1353,16 @@ class tool_coursearchiver_processor {
     }
 
     /**
+     * Static method to get list of the userid's of admin and other users with course view capability
+     *
+     * @return string
+     */
+    public static function get_list_of_admins_and_managers_static() {
+        $processor = new self(["mode" => self::MODE_COURSELIST, "data" => []]);
+        return $processor->get_list_of_admins_and_managers();
+    }
+
+    /**
      * Get an HTML table listing courses to put in the email.
      *
      * @param object $obj an array of userObject->courseObjects
@@ -1354,6 +1376,8 @@ class tool_coursearchiver_processor {
             $optoutbutton = get_string('optouthide', 'tool_coursearchiver');
         } else if ($this->mode == self::MODE_ARCHIVEEMAIL) {
             $optoutbutton = get_string('optoutarchive', 'tool_coursearchiver');
+        } else if ($this->mode == self::MODE_DELETEEMAIL) {
+            $optoutbutton = get_string('optoutdelete', 'tool_coursearchiver');
         }
 
         $tablehtml = [];
@@ -1365,30 +1389,35 @@ class tool_coursearchiver_processor {
             // Create security key for each link.
             $key = sha1($CFG->dbpass . $course->id . $obj["user"]->id);
 
-            // Only add courses that are visible if mode is HIDEEMAIL.
-            if ($this->mode == self::MODE_ARCHIVEEMAIL || $course->visible) {
-                $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
-                $linkstring = "";
-                if ($links) {
-                    $linkstring = html_writer::tag('td', '', ['width' => '5px']) .
-                                  html_writer::tag('td',
-                                    html_writer::link(new moodle_url('/admin/tool/coursearchiver/optout.php',
-                                                                     ['courseid' => $course->id,
-                                                                      'userid' => $obj["user"]->id,
-                                                                      'key' => $key,
-                                                                     ]),
-                                                      $optoutbutton));
-                }
-
-                $tablehtml[] = html_writer::tag('tr',
-                                 html_writer::tag('td',
-                                   html_writer::link(new moodle_url('/course/view.php',
-                                                                    ['id' => $course->id]),
-                                                     $course->fullname)) . $linkstring,
-                                 ['style' => 'background-color:' . $rowcolor]);
-            } else { // This course is not included in the email.
+            // Only add courses that are not hidden if mode is HIDEEMAIL.
+            if ($this->mode == self::MODE_HIDEEMAIL && !$course->visible) {
                 $this->notices[] = get_string('noticecoursehidden', 'tool_coursearchiver', $course);
+                continue;
             }
+
+            // Change rowcolor.
+            $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
+
+            // Add optout links.
+            $linkstring = "";
+            if ($links) {
+                $linkstring = html_writer::tag('td', '', ['width' => '5px']) .
+                              html_writer::tag('td',
+                                               html_writer::link(new moodle_url('/admin/tool/coursearchiver/optout.php',
+                                                                                ['courseid' => $course->id,
+                                                                                 'userid' => $obj["user"]->id,
+                                                                                 'key' => $key,
+                                                                                ]),
+                                                                 $optoutbutton));
+            }
+
+            $tablehtml[] = html_writer::tag('tr',
+                                html_writer::tag('td',
+                                html_writer::link(new moodle_url('/course/view.php',
+                                                                ['id' => $course->id]),
+                                                    $course->fullname)) . $linkstring,
+                                ['style' => 'background-color:' . $rowcolor]);
+
         }
         $tablehtml[] = html_writer::end_tag('table');
 

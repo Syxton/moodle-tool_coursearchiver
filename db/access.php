@@ -1,5 +1,5 @@
 <?php
-// This file is part of
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version info.
+ * Plugin capabilities for the tool_coursearchiver plugin.
  *
  * @package    tool_coursearchiver
  * @copyright  2015 Matthew Davidson
@@ -24,9 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin = new stdClass();
-$plugin->version   = 2023122112;                // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2014111000;                // Requires this Moodle version.
-$plugin->component = 'tool_coursearchiver';     // Full name of the plugin (used for diagnostics).
-$plugin->release  = '4.1.9 (Build: 2016090200)';
-$plugin->maturity  = MATURITY_STABLE;
+$capabilities = [
+    // Ability to use the plugin.
+    'tool/coursearchiver:use' => [
+        'riskbitmask'  => RISK_SPAM | RISK_DATALOSS | RISK_CONFIG,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+    ],
+];

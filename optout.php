@@ -45,17 +45,30 @@ $PAGE->set_title(get_string('coursearchiver', 'tool_coursearchiver'));
 echo $OUTPUT->header();
 echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');
 
-// Check to see if the attempt is coming from a valid email.
-if (sha1($CFG->dbpass . $courseid . $userid) == $key) {
-    if ($course = tool_coursearchiver_processor::optout_course($courseid, $userid)) {
-        echo $OUTPUT->container(html_writer::tag('div',
-                                get_string('course_skipped', 'tool_coursearchiver', $course),
-                                ['style' => 'margin: 15px;text-align:center;font-size:1.4em;font-weight:bold']));
-    } else {
-        echo $OUTPUT->container(get_string('error_nocourseid', 'tool_coursearchiver'), 'coursearchiver_myformerror');
-    }
-} else { // You shouldn't be here.
-    echo $OUTPUT->container(get_string('error_key', 'tool_coursearchiver'), 'coursearchiver_myformerror');
+// Check to see if the optout by email setting is enabled.
+$config = get_config('tool_coursearchiver');
+if (!$config->optoutbyemailsetting) {
+    echo $OUTPUT->container(get_string('optoutbyemaildisabled', 'tool_coursearchiver'), 'coursearchiver_myformerror');
+    echo $OUTPUT->footer();
+    die();
 }
+
+// Check to see if the attempt is coming from a valid email.
+if (!sha1($CFG->dbpass . $courseid . $userid) == $key) {
+    echo $OUTPUT->container(get_string('error_key', 'tool_coursearchiver'), 'coursearchiver_myformerror');
+    echo $OUTPUT->footer();
+    die();
+}
+
+// Check to see if the course exists.
+if (!$course = tool_coursearchiver_processor::optout_course($courseid, $userid)) {
+    echo $OUTPUT->container(get_string('error_nocourseid', 'tool_coursearchiver'), 'coursearchiver_myformerror');
+    echo $OUTPUT->footer();
+    die();
+}
+
+echo $OUTPUT->container(html_writer::tag('div',
+                                         get_string('course_skipped', 'tool_coursearchiver', $course),
+                                         ['style' => 'margin:15px;text-align:center;font-size:1.4em;font-weight:bold']));
 
 echo $OUTPUT->footer();

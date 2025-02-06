@@ -36,7 +36,7 @@ class tool_coursearchiver_step3_form extends moodleform {
      * The standard form definiton.
      * @return void.
      */
-    public function definition () {
+    public function definition() {
         $mform = $this->_form;
         $data  = $this->_customdata['processor_data'];
 
@@ -56,6 +56,7 @@ class tool_coursearchiver_step3_form extends moodleform {
             $buttonarray = [];
             $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('hideemail', 'tool_coursearchiver'));
             $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('archiveemail', 'tool_coursearchiver'));
+            $buttonarray[] = &$mform->createElement('submit', 'submit_button', get_string('deleteemail', 'tool_coursearchiver'));
             $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
             $mform->closeHeaderBefore('buttonar');
 
