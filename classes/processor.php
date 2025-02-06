@@ -1353,6 +1353,16 @@ class tool_coursearchiver_processor {
     }
 
     /**
+     * Static method to get list of the userid's of admin and other users with course view capability
+     *
+     * @return string
+     */
+    public static function get_list_of_admins_and_managers_static() {
+        $processor = new self(["mode" => self::MODE_COURSELIST, "data" => []]);
+        return $processor->get_list_of_admins_and_managers();
+    }
+
+    /**
      * Get an HTML table listing courses to put in the email.
      *
      * @param object $obj an array of userObject->courseObjects
