@@ -24,24 +24,29 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-if ($hassiteconfig) {
-    $settings = new admin_settingpage('tool_coursearchiver', get_string('coursearchiver_settings', 'tool_coursearchiver'));
+if ($hassiteconfig || has_capability('tool/coursearchiver:use', context_system::instance())) {
+    $settings = new admin_settingpage('tool_coursearchiver',
+                                      get_string('coursearchiver_settings', 'tool_coursearchiver'),
+                                      'tool/coursearchiver:use');
 
-    $name = new lang_string('coursearchiverrootpath', 'tool_coursearchiver');
-    $description = new lang_string('coursearchiverrootpath_help', 'tool_coursearchiver');
-    $default = $CFG->dataroot;
-    $settings->add(new admin_setting_configtext('tool_coursearchiver/coursearchiverrootpath',
-                                                $name,
-                                                $description,
-                                                $default));
+    // Admin only settings.
+    if ($hassiteconfig) {
+        $name = new lang_string('coursearchiverrootpath', 'tool_coursearchiver');
+        $description = new lang_string('coursearchiverrootpath_help', 'tool_coursearchiver');
+        $default = $CFG->dataroot;
+        $settings->add(new admin_setting_configtext('tool_coursearchiver/coursearchiverrootpath',
+                                                    $name,
+                                                    $description,
+                                                    $default));
 
-    $name = new lang_string('coursearchiverpath', 'tool_coursearchiver');
-    $description = new lang_string('coursearchiverpath_help', 'tool_coursearchiver');
-    $default = 'CourseArchives';
-    $settings->add(new admin_setting_configtext('tool_coursearchiver/coursearchiverpath',
-                                                $name,
-                                                $description,
-                                                $default));
+        $name = new lang_string('coursearchiverpath', 'tool_coursearchiver');
+        $description = new lang_string('coursearchiverpath_help', 'tool_coursearchiver');
+        $default = 'CourseArchives';
+        $settings->add(new admin_setting_configtext('tool_coursearchiver/coursearchiverpath',
+                                                    $name,
+                                                    $description,
+                                                    $default));
+    }
 
     // Default role of course owners.
     $ownernewroles = [];
@@ -119,9 +124,12 @@ if ($hassiteconfig) {
     get_string('savelimitsetting_help', 'tool_coursearchiver'), 10, PARAM_INT));
 
     // Link to Course Archiver tool.
-    $ADMIN->add('courses', new admin_externalpage('toolcoursearchiver',
-        get_string('coursearchiver', 'tool_coursearchiver'), "$CFG->wwwroot/$CFG->admin/tool/coursearchiver/index.php"));
+    $ADMIN->add('courses',
+                new admin_externalpage('toolcoursearchiver',
+                                       get_string('coursearchiver', 'tool_coursearchiver'),
+                                       new moodle_url('/admin/tool/coursearchiver/index.php'),
+                                       'tool/coursearchiver:use'));
 
     // Add the category to the admin tree.
-    $ADMIN->add('tools', $settings);
+    $ADMIN->add('courses', $settings);
 }

@@ -75,6 +75,7 @@ $string['confirmrestore'] = 'Restore pending archive deletion?';
 $string['course_readded'] = '{$a->fullname} has been removed from the opt out list.  Thank You.';
 $string['course_skipped'] = '{$a->fullname} will be skipped for the next {$a->optoutmonths} month(s).  Thank you.';
 $string['coursearchiver'] = 'Course Archiver';
+$string['coursearchiver:use'] = 'Use Course Archiver Tool';
 $string['coursearchiver_help'] = "Search for courses using the following criteria: match shortname, fullname, idnumber, courseid, date of last course access, or *empty courses.\n
 Courses are shown as grayed out if they are already hidden.  The fullname of the course will have a line through it if the course is an *empty course.\n\n
 NOTE: The last access search will only return courses that were created before the date provided.\n
