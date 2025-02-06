@@ -826,10 +826,10 @@ class tool_coursearchiver_processor {
 
         // Note: get_email_courses() may return an empty HTML table.
         if (strstr($message, '%courses_nolink')) {
-            $courses = $this->get_email_courses($obj, false);
+            $courses = $this->get_email_courses($obj, $config->optoutbyemailsetting);
             $placeholder = '%courses_nolink';
         } else {
-            $courses = $this->get_email_courses($obj);
+            $courses = $this->get_email_courses($obj, $config->optoutbyemailsetting);
             $placeholder = '%courses';
         }
 

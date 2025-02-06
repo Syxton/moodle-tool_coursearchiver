@@ -83,6 +83,11 @@ if ($hassiteconfig) {
                                                     $name,
                                                     $description,
                                                     $default));
+    // Enable opt out via email link.
+    $settings->add(new admin_setting_configcheckbox('tool_coursearchiver/optoutbyemailsetting',
+                   get_string('optoutbyemailsetting', 'tool_coursearchiver'),
+                   get_string('optoutbyemailsetting_help', 'tool_coursearchiver'), 1, 1));
+
     // Automatic opt out in months.
     $settings->add(new admin_setting_configtext('tool_coursearchiver/optoutmonthssetting',
                    get_string('optoutmonthssetting', 'tool_coursearchiver'),

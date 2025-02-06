@@ -132,6 +132,7 @@ $string['nousersselected'] = 'To perform this action you must have at least 1 us
 $string['optout'] = 'Optout Courses';
 $string['optoutarchive'] = 'Do not archive this course';
 $string['optoutby'] = 'Requested By';
+$string['optoutbyemaildisabled'] = 'Optout by email is disabled';
 $string['optouthide'] = 'Do not hide this course';
 $string['optoutleft'] = '{$a} days left';
 $string['optoutlist'] = 'Manage Optout List';
@@ -221,6 +222,9 @@ $string['coursearchiverpath_help'] = 'This path is relative to the root path';
 
 $string['coursearchiverrootpath'] = 'System path that archiver folders are placed in';
 $string['coursearchiverrootpath_help'] = 'Defaults to CFG->dataroot';
+
+$string['optoutbyemailsetting'] = 'Allow opt out by email';
+$string['optoutbyemailsetting_help'] = 'Emails to course owners will include an opt out link.';
 
 $string['optoutmonthssetting'] = 'Course opt out persistence';
 $string['optoutmonthssetting_help'] = 'How many months will the opt out apply for each course.';
