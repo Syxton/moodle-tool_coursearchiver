@@ -105,13 +105,17 @@
                 <tr style="background-color: {{rowcolor}}">
                     <td>
                         {{#isadmin}}
-                        <input class="coursearchiveselection" type="checkbox" name="selected[]" value="{{path}}/{{file}}" onchange="
-                            let visible = $('.coursearchiveselection:checked').length ? $('.coursearchivermultibuttons').show() : $('.coursearchivermultibuttons').hide();
+                        <input type="checkbox" name="selected[]" value="{{path}}/{{file}}" onchange="
+                            if ($('input[type=checkbox]:checked', '#region-main').length) {
+                                $('.camultibuttons').show();
+                            } else {
+                                $('.camultibuttons').hide();
+                            }
                             $('.coursearchiverdownloadselected').off('click');
                             $('.coursearchiverdownloadselected').on('click', function (e) {
                                 e.preventDefault();
                                 if(confirm('{{# str }} confirmdownload, tool_coursearchiver {{/ str }}')){
-                                    $('.coursearchiveselection:checked').each(function() {
+                                    $('input[type=checkbox]:checked', '#region-main').each(function() {
                                         // Create the iframe element
                                         var iframe = $('<iframe/>', {
                                             id: '{{path}}/{{file}}',
@@ -163,18 +167,18 @@
             {{#isadmin}}
                 {{#recover}}
                     <input type="submit"
-                        class="btn btn-primary coursearchivermultibuttons"
+                        class="btn btn-primary camultibuttons"
                         onclick="return confirm('{{# str }} confirmrestore, tool_coursearchiver {{/ str }}');"
                         value="{{# str }} recover, tool_coursearchiver {{/ str }}"
                         style="display:none;" />
                 {{/recover}}
                 {{^recover}}
                     <input type="button"
-                        class="btn btn-primary coursearchiverdownloadselected coursearchivermultibuttons"
+                        class="btn btn-primary coursearchiverdownloadselected camultibuttons"
                         value="{{# str }} downloadselected, tool_coursearchiver {{/ str }}"
                         style="display:none;" />
                     <input type="submit"
-                        class="btn btn-primary coursearchivermultibuttons"
+                        class="btn btn-primary camultibuttons"
                         onclick="return confirm('{{# str }} confirmdelete, tool_coursearchiver {{/ str }}');"
                         value="{{# str }} delete, tool_coursearchiver {{/ str }}"
                         style="display:none;" />

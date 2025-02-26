@@ -1436,15 +1436,20 @@ class tool_coursearchiver_processor {
                 $(".coursearchiver_selectall #id_toggle").click(function() {
                     var text = $(this).val().length > 0 ? $(this).val() : $(this).text().trim();
                     if ("'.get_string('selectall', 'tool_coursearchiver').'" === text) {
-                         $(".coursearchiveselection").prop("checked", true);
+                         $("input[type=checkbox]", "#region-main").prop("checked", true);
                          $(".coursearchiver_selectall #id_toggle").val("'.get_string('deselectall', 'tool_coursearchiver').'");
                          $(".coursearchiver_selectall #id_toggle").text("'.get_string('deselectall', 'tool_coursearchiver').'");
                     } else if ("'.get_string('deselectall', 'tool_coursearchiver').'" === text) {
-                         $(".coursearchiveselection").prop("checked", false);
+                         $("input[type=checkbox]", "#region-main").prop("checked", false);
                          $(".coursearchiver_selectall #id_toggle").val("'.get_string('selectall', 'tool_coursearchiver').'");
                          $(".coursearchiver_selectall #id_toggle").text("'.get_string('selectall', 'tool_coursearchiver').'");
                     }
-                    let visible = $(".coursearchiveselection:checked").length ? $(".coursearchivermultibuttons").show() : $(".coursearchivermultibuttons").hide();
+
+                    if ($("input[type=checkbox]:checked", "#region-main").length) {
+                        $(".camultibuttons").show();
+                    } else {
+                        $(".camultibuttons").hide();
+                    }
                 });
             });
         ');
