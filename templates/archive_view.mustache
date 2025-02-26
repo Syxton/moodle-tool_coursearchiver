@@ -76,11 +76,13 @@
     {{/limiter}}
 
     {{#isadmin}}
-        <div class="coursearchiver_selectall" style="text-align: left;margin: 5px;">
-            <button id="id_toggle" name="toggle" class="btn btn-secondary ml-0">
-                {{# str }} selectall, tool_coursearchiver {{/ str }}
-            </button>
-        </div>
+        {{#results}}
+            <div class="coursearchiver_selectall" style="text-align: left;margin: 5px;">
+                <button id="id_toggle" name="toggle" class="btn btn-secondary ml-0">
+                    {{# str }} selectall, tool_coursearchiver {{/ str }}
+                </button>
+            </div>
+        {{/results}}
         <form class="text-center" method="POST">
     {{/isadmin}}
             <table cellpadding="5" style="border-collapse: collapse;width: 100%;text-align: left">
@@ -103,7 +105,28 @@
                 <tr style="background-color: {{rowcolor}}">
                     <td>
                         {{#isadmin}}
-                        <input type="checkbox" name="selected[]" value="{{path}}/{{file}}" />
+                        <input class="coursearchiveselection" type="checkbox" name="selected[]" value="{{path}}/{{file}}" onchange="
+                            let visible = $('.coursearchiveselection:checked').length ? $('.coursearchivermultibuttons').show() : $('.coursearchivermultibuttons').hide();
+                            $('.coursearchiverdownloadselected').off('click');
+                            $('.coursearchiverdownloadselected').on('click', function (e) {
+                                e.preventDefault();
+                                if(confirm('{{# str }} confirmdownload, tool_coursearchiver {{/ str }}')){
+                                    $('.coursearchiveselection:checked').each(function() {
+                                        // Create the iframe element
+                                        var iframe = $('<iframe/>', {
+                                            id: '{{path}}/{{file}}',
+                                            src: $(this).closest('tr').find('.coursearchivedownloadlink')[0].href,
+                                            width: '0',
+                                            height: '0',
+                                            frameborder: '0' // Optional: Remove border
+                                        });
+
+                                        // Append the iframe to the body or any other element
+                                        $('body').append(iframe);
+                                    });
+                                }
+                            });
+                        " />
                         {{/isadmin}}
                     </td>
                     <td>
@@ -113,7 +136,7 @@
                         {{path}}
                     </td>
                     <td>
-                        <a title="{{# str }} download, moodle {{/ str }}" href="{{& downloadurl}}">
+                        <a class="coursearchivedownloadlink" title="{{# str }} download, moodle {{/ str }}" href="{{& downloadurl}}">
                             <i class="fa fa-download"></i> {{# str }} download, moodle {{/ str }}
                         </a>
                         {{#isadmin}}
@@ -136,25 +159,33 @@
 
 {{#formend}}
         </table>
-        {{#isadmin}}
-            {{#recover}}
-                <input type="submit"
-                       class="btn btn-primary"
-                       onclick="return confirm('{{# str }} confirmrestore, tool_coursearchiver {{/ str }}');"
-                       value="{{# str }} recover, tool_coursearchiver {{/ str }}" />
-            {{/recover}}
-            {{^recover}}
-                <input type="submit"
-                       class="btn btn-primary"
-                       onclick="return confirm('{{# str }} confirmdelete, tool_coursearchiver {{/ str }}');"
-                       value="{{# str }} delete, tool_coursearchiver {{/ str }}" />
-            {{/recover}}
+        {{#results}}
+            {{#isadmin}}
+                {{#recover}}
+                    <input type="submit"
+                        class="btn btn-primary coursearchivermultibuttons"
+                        onclick="return confirm('{{# str }} confirmrestore, tool_coursearchiver {{/ str }}');"
+                        value="{{# str }} recover, tool_coursearchiver {{/ str }}"
+                        style="display:none;" />
+                {{/recover}}
+                {{^recover}}
+                    <input type="button"
+                        class="btn btn-primary coursearchiverdownloadselected coursearchivermultibuttons"
+                        value="{{# str }} downloadselected, tool_coursearchiver {{/ str }}"
+                        style="display:none;" />
+                    <input type="submit"
+                        class="btn btn-primary coursearchivermultibuttons"
+                        onclick="return confirm('{{# str }} confirmdelete, tool_coursearchiver {{/ str }}');"
+                        value="{{# str }} delete, tool_coursearchiver {{/ str }}"
+                        style="display:none;" />
+                {{/recover}}
 
-        </form>
-        <div class="coursearchiver_selectall" style="text-align: left;margin: 5px;">
-            <button id="id_toggle" name="toggle" class="btn btn-secondary ml-0">
-                {{# str }} selectall, tool_coursearchiver {{/ str }}
-            </button>
-        </div>
-        {{/isadmin}}
+            </form>
+            <div class="coursearchiver_selectall" style="text-align: left;margin: 5px;">
+                <button id="id_toggle" name="toggle" class="btn btn-secondary ml-0">
+                    {{# str }} selectall, tool_coursearchiver {{/ str }}
+                </button>
+            </div>
+            {{/isadmin}}
+        {{/results}}
 {{/formend}}
