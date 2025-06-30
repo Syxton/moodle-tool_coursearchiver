@@ -33,26 +33,35 @@ require_login();
 admin_externalpage_setup('toolcoursearchiver');
 
 global $SESSION;
-$formdata   = isset($SESSION->formdata) ? $SESSION->formdata : optional_param('formdata', false, PARAM_RAW);
-$error      = isset($SESSION->error) ? $SESSION->error : optional_param('error', false, PARAM_RAW);
-$resume     = isset($SESSION->resume) ? $SESSION->resume : optional_param('resume', false, PARAM_RAW);
-$title      = optional_param('save_title', false, PARAM_TEXT);
-$selected   = optional_param_array('course_selected', [], PARAM_INT);
-$submitted  = optional_param('submit_button', false, PARAM_RAW);
+$formdata   = $SESSION->coursearchiver_formdata ?? optional_param('formdata', false, PARAM_TEXT);
 
-unset($SESSION->formdata);
-unset($SESSION->error);
-unset($SESSION->resume);
+$error      = $SESSION->coursearchiver_error ?? optional_param('coursearchiver_error', false, PARAM_TEXT);
+$error      = htmlspecialchars($error, ENT_COMPAT);
+
+$resume     = $SESSION->coursearchiver_resume ?? optional_param('coursearchiver_resume', false, PARAM_TEXT);
+$resume     = htmlspecialchars($resume, ENT_COMPAT);
+
+$title      = optional_param('save_title', false, PARAM_TEXT);
+
+$selected   = optional_param_array('course_selected', [], PARAM_INT);
+
+$submitted  = optional_param('submit_button', false, PARAM_TEXT);
+$submitted  = htmlspecialchars($submitted, ENT_COMPAT);
+
+unset($SESSION->coursearchiver_formdata);
+unset($SESSION->coursearchiver_error);
+unset($SESSION->coursearchiver_resume);
 
 tool_coursearchiver_processor::select_deselect_javascript();
 
 if (!empty($submitted)) { // FORM 2 SUBMITTED.
 
-    if ($submitted == get_string('save', 'tool_coursearchiver')) { // Save has been pressed.
+    // Save has been pressed.
+    if ($submitted == htmlspecialchars(get_string('save', 'tool_coursearchiver'), ENT_COMPAT)) {
         tool_coursearchiver_processor::save_state(2, $title, $selected);
-        $SESSION->resume = true;
-        $SESSION->formdata = serialize($selected);
-        $SESSION->error = get_string('saved', 'tool_coursearchiver');
+        $SESSION->coursearchiver_resume = true;
+        $SESSION->coursearchiver_formdata = json_encode($selected);
+        $SESSION->coursearchiver_error = get_string('saved', 'tool_coursearchiver');
         $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php');
         redirect($returnurl);
     }
@@ -66,50 +75,50 @@ if (!empty($submitted)) { // FORM 2 SUBMITTED.
     }
 
     if (empty($courses)) { // If 0 courses are selected, show message and form again.
-        $SESSION->formdata = $formdata;
-        $SESSION->error = get_string('nocoursesselected', 'tool_coursearchiver');
+        $SESSION->coursearchiver_formdata = $formdata;
+        $SESSION->coursearchiver_error = get_string('nocoursesselected', 'tool_coursearchiver');
         $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php');
         redirect($returnurl);
     }
 
     switch($submitted){
-        case get_string('email', 'tool_coursearchiver'):
-            $SESSION->formdata = serialize($courses);
+        case htmlspecialchars(get_string('email', 'tool_coursearchiver'), ENT_COMPAT):
+            $SESSION->coursearchiver_formdata = json_encode($courses);
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step3.php');
             redirect($returnurl);
             break;
-        case get_string('hide', 'tool_coursearchiver'):
-            $SESSION->mode = tool_coursearchiver_processor::MODE_HIDE;
-            $SESSION->formdata = serialize($courses);
+        case htmlspecialchars(get_string('hide', 'tool_coursearchiver'), ENT_COMPAT):
+            $SESSION->coursearchiver_mode = tool_coursearchiver_processor::MODE_HIDE;
+            $SESSION->coursearchiver_formdata = json_encode($courses);
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step4.php');
             redirect($returnurl);
             break;
-        case get_string('backup', 'tool_coursearchiver'):
-            $SESSION->mode = tool_coursearchiver_processor::MODE_BACKUP;
-            $SESSION->formdata = serialize($courses);
+        case htmlspecialchars(get_string('backup', 'tool_coursearchiver'), ENT_COMPAT):
+            $SESSION->coursearchiver_mode = tool_coursearchiver_processor::MODE_BACKUP;
+            $SESSION->coursearchiver_formdata = json_encode($courses);
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step4.php');
             redirect($returnurl);
             break;
-        case get_string('archive', 'tool_coursearchiver'):
-            $SESSION->mode = tool_coursearchiver_processor::MODE_ARCHIVE;
-            $SESSION->formdata = serialize($courses);
+        case htmlspecialchars(get_string('archive', 'tool_coursearchiver'), ENT_COMPAT):
+            $SESSION->coursearchiver_mode = tool_coursearchiver_processor::MODE_ARCHIVE;
+            $SESSION->coursearchiver_formdata = json_encode($courses);
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step4.php');
             redirect($returnurl);
             break;
-        case get_string('delete', 'tool_coursearchiver'):
-            $SESSION->mode = tool_coursearchiver_processor::MODE_DELETE;
-            $SESSION->formdata = serialize($courses);
+        case htmlspecialchars(get_string('delete', 'tool_coursearchiver'), ENT_COMPAT):
+            $SESSION->coursearchiver_mode = tool_coursearchiver_processor::MODE_DELETE;
+            $SESSION->coursearchiver_formdata = json_encode($courses);
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step4.php');
             redirect($returnurl);
             break;
-        case get_string('optout', 'tool_coursearchiver'):
-            $SESSION->mode = tool_coursearchiver_processor::MODE_OPTOUT;
-            $SESSION->formdata = serialize($courses);
+        case htmlspecialchars(get_string('optout', 'tool_coursearchiver'), ENT_COMPAT):
+            $SESSION->coursearchiver_mode = tool_coursearchiver_processor::MODE_OPTOUT;
+            $SESSION->coursearchiver_formdata = json_encode($courses);
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step4.php');
             redirect($returnurl);
             break;
         default:
-            $SESSION->error = get_string('unknownerror', 'tool_coursearchiver');
+            $SESSION->coursearchiver_error = get_string('unknownerror', 'tool_coursearchiver');
             $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
             redirect($returnurl);
     }
@@ -122,10 +131,10 @@ if (!empty($submitted)) { // FORM 2 SUBMITTED.
         echo $OUTPUT->container($error, 'coursearchiver_myformerror');
     }
 
-    $data = unserialize($formdata);
+    $data = json_decode($formdata);
     if (!empty($resume)) { // Resume from save point.
         $searches = $data;
-        $searches["resume"] = true;
+        $searches->resume = true;
     } else {
         $searches = [];
         foreach ($data as $key => $value) {
@@ -140,7 +149,7 @@ if (!empty($submitted)) { // FORM 2 SUBMITTED.
     $mform->display();
     echo $OUTPUT->footer();
 } else { // IN THE EVENT OF A FAILURE, JUST GO BACK TO THE BEGINNING.
-    $SESSION->error = get_string('unknownerror', 'tool_coursearchiver');
+    $SESSION->coursearchiver_error = get_string('unknownerror', 'tool_coursearchiver');
     $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
     redirect($returnurl);
 }

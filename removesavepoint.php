@@ -45,7 +45,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');
 
 // Check to see if the attempt is coming from a valid email.
-if (sha1($CFG->dbpass . $savepointid) == $key) {
+if (sha1(tool_coursearchiver_processor::get_coursearchiver_keyid() . $savepointid) == $key) {
     if ($savepoint = $DB->get_record('tool_coursearchiver_saves', ['id' => $savepointid])) {
         $params = ["id" => $savepointid];
         $DB->delete_records('tool_coursearchiver_saves', $params);

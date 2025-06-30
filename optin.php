@@ -25,7 +25,7 @@
 define('NO_OUTPUT_BUFFERING', true);
 
 require(__DIR__ . '/../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 header('X-Accel-Buffering: no');
 
@@ -46,7 +46,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');
 
 // Check to see if the attempt is coming from a valid email.
-if (sha1($CFG->dbpass . $courseid . $userid) == $key) {
+if (sha1(tool_coursearchiver_processor::get_coursearchiver_keyid() . $courseid . $userid) == $key) {
     if ($course = get_course($courseid)) {
         $date = new DateTime("now", core_date::get_user_timezone_object());
         $optouttime = $date->getTimestamp();
