@@ -41,8 +41,8 @@ class tool_coursearchiver_step2_form extends moodleform {
         $data  = $this->_customdata['processor_data'];
 
         $mform->addElement('hidden', 'formdata');
-        $mform->setType('formdata', PARAM_RAW);
-        $mform->setDefault('formdata', serialize($data['searches']));
+        $mform->setType('formdata', PARAM_TEXT);
+        $mform->setDefault('formdata', json_encode($data['searches']));
 
         $mform->addElement('header', 'searchresultshdr', get_string('courseselector', 'tool_coursearchiver'));
 

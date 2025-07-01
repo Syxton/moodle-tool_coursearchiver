@@ -33,14 +33,17 @@ require_login();
 admin_externalpage_setup('toolcoursearchiver');
 
 global $SESSION;
-$error  = isset($SESSION->error) ? $SESSION->error : optional_param('error', false, PARAM_RAW);
-$submitted  = optional_param('submitbutton', false, PARAM_RAW);
+$error      = $SESSION->coursearchiver_error ?? optional_param('coursearchiver_error', false, PARAM_TEXT);
+$error      = htmlspecialchars($error, ENT_COMPAT);
+
+$submitted  = optional_param('submitbutton', false, PARAM_TEXT);
+$submitted  = htmlspecialchars($submitted, ENT_COMPAT);
 
 // Button to start over has been pressed.
-if ($submitted == get_string('back', 'tool_coursearchiver')) {
-    unset($SESSION->formdata);
-    unset($SESSION->mode);
-    unset($SESSION->error);
+if ($submitted == htmlspecialchars(get_string('back', 'tool_coursearchiver'), ENT_COMPAT)) {
+    unset($SESSION->coursearchiver_formdata);
+    unset($SESSION->coursearchiver_mode);
+    unset($SESSION->coursearchiver_error);
     unset($SESSION->selected);
     $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
     redirect($returnurl);
@@ -48,23 +51,23 @@ if ($submitted == get_string('back', 'tool_coursearchiver')) {
 
 // View optouts list button.
 if (!empty($submitted)) {
-    if ($submitted == get_string('optoutlist', 'tool_coursearchiver')) {
+    if ($submitted == htmlspecialchars(get_string('optoutlist', 'tool_coursearchiver'), ENT_COMPAT)) {
         $returnurl = new moodle_url('/admin/tool/coursearchiver/optoutlist.php');
         redirect($returnurl);
     }
 
-    if ($submitted == get_string('archivelist', 'tool_coursearchiver')) {
+    if ($submitted == htmlspecialchars(get_string('archivelist', 'tool_coursearchiver'), ENT_COMPAT)) {
         $returnurl = new moodle_url('/admin/tool/coursearchiver/archivelist.php');
         redirect($returnurl);
     }
 
-    if ($submitted == get_string('savestatelist', 'tool_coursearchiver')) {
+    if ($submitted == htmlspecialchars(get_string('savestatelist', 'tool_coursearchiver'), ENT_COMPAT)) {
         $returnurl = new moodle_url('/admin/tool/coursearchiver/savestatelist.php');
         redirect($returnurl);
     }
 }
 
-unset($SESSION->error);
+unset($SESSION->coursearchiver_error);
 
 $mform = new tool_coursearchiver_step1_form(null);
 
@@ -78,12 +81,12 @@ if ($mform->is_submitted()) {
             if (!empty($formdata->savestates)) {
                 $formdata->searches["savestates"] = $formdata->savestates;
                 if ($save = tool_coursearchiver_processor::get_save($formdata->savestates)) {
-                    $SESSION->formdata = $save->content;
-                    $SESSION->resume = true;
+                    $SESSION->coursearchiver_formdata = $save->content;
+                    $SESSION->coursearchiver_resume = true;
                     $returnurl = new moodle_url('/admin/tool/coursearchiver/step'.$save->step.'.php');
                     redirect($returnurl);
                 } else {
-                    $SESSION->error = get_string('unknownerror', 'tool_coursearchiver');
+                    $SESSION->coursearchiver_error = get_string('unknownerror', 'tool_coursearchiver');
                     $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
                     redirect($returnurl);
                 }
@@ -139,7 +142,7 @@ if ($mform->is_submitted()) {
                 $formdata->searches["subcats"] = true;
             }
 
-            $SESSION->formdata = serialize($formdata->searches);
+            $SESSION->coursearchiver_formdata = json_encode($formdata->searches);
             $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php');
             redirect($returnurl);
         } else { // Form 1 data did not come across correctly.

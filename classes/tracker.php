@@ -424,7 +424,7 @@ class tool_coursearchiver_tracker {
      * @return void
      */
     public function output($data, $info = false) {
-        global $CFG, $DB;
+        global $CFG;
 
         $return = 1; // By default we are returning the a single process as finished.
 
