@@ -41,8 +41,8 @@ class tool_coursearchiver_step3_form extends moodleform {
         $data  = $this->_customdata['processor_data'];
 
         $mform->addElement('hidden', 'formdata');
-        $mform->setType('formdata', PARAM_RAW);
-        $mform->setDefault('formdata', serialize($data['courses']));
+        $mform->setType('formdata', PARAM_TEXT);
+        $mform->setDefault('formdata', json_encode($data['courses']));
 
         $mform->addElement('header', 'emaillist', get_string('emailselector', 'tool_coursearchiver'));
 

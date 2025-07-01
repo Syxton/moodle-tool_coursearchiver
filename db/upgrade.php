@@ -204,5 +204,21 @@ function xmldb_tool_coursearchiver_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2020022700, 'tool', 'coursearchiver');
     }
 
+    // Update saves table to use json_encoding instead of serialize.
+    if ($oldversion < 2025070102) {
+        if ($saves = $DB->get_records('tool_coursearchiver_saves')) {
+            foreach ($saves as $save) {
+                $content = unserialize($save->content);
+                if (!empty($content)) {
+                    $save->content = json_encode($content);
+                    $DB->update_record('tool_coursearchiver_saves', $save);
+                }
+            }
+        }
+
+        // Monitor savepoint reached.
+        upgrade_plugin_savepoint(true, 2025070102, 'tool', 'coursearchiver');
+    }
+
     return true;
 }

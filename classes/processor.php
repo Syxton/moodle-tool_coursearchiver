@@ -1018,7 +1018,7 @@ class tool_coursearchiver_processor {
 
         $record = new stdClass();
         $record->title      = $title;
-        $record->content    = serialize($data);
+        $record->content    = json_encode($data);
         $record->step       = $stepid;
         $record->savedate   = $date->getTimestamp();
         if ($DB->insert_record('tool_coursearchiver_saves', $record)) {
@@ -1070,11 +1070,16 @@ class tool_coursearchiver_processor {
      * @return string
      */
     public static function get_savestatelist() {
-        global $CFG, $DB, $OUTPUT;
+        global $DB, $OUTPUT;
 
         // Back button.
         $savelist = html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'),
                                                      get_string('back'));
+
+        $savelist .= html_writer::tag('h3',
+                                     get_string('savestatelist', 'tool_coursearchiver'),
+                                     ['style' => 'text-align: center']);
+
         // Table.
         $savelist .= html_writer::start_tag('table', ['style' => 'border-collapse: collapse;width: 100%;',
                                                           'cellpadding' => '5',
@@ -1099,7 +1104,7 @@ class tool_coursearchiver_processor {
         if ($saves) {
             foreach ($saves as $savepoint) {
                 // Create security key for each link.
-                $key = sha1($CFG->dbpass . $savepoint->id);
+                $key = sha1(self::get_coursearchiver_keyid() . $savepoint->id);
 
                 $link = new moodle_url('/admin/tool/coursearchiver/removesavepoint.php',
                                        ['savepointid' => $savepoint->id, 'key' => $key]);
@@ -1353,6 +1358,21 @@ class tool_coursearchiver_processor {
     }
 
     /**
+     * Get a unique server id to serve as the key.  ID must not change between key creation and use.
+     *
+     * @return string
+     */
+    public static function get_coursearchiver_keyid() {
+        global $DB;
+
+        return $DB->get_field(
+            "config_plugins",
+            "id",
+            ["plugin" => "tool_coursearchiver", "name" => "version"],
+        );
+    }
+
+    /**
      * Static method to get list of the userid's of admin and other users with course view capability
      *
      * @return string
@@ -1370,8 +1390,6 @@ class tool_coursearchiver_processor {
      * @return array Full HTML table listing the $courses
      */
     public function get_email_courses($obj, $links = true) {
-        global $CFG;
-
         if ($this->mode == self::MODE_HIDEEMAIL) {
             $optoutbutton = get_string('optouthide', 'tool_coursearchiver');
         } else if ($this->mode == self::MODE_ARCHIVEEMAIL) {
@@ -1387,7 +1405,7 @@ class tool_coursearchiver_processor {
         $rowcolor = "#FFF";
         foreach ($obj["courses"] as $course) {
             // Create security key for each link.
-            $key = sha1($CFG->dbpass . $course->id . $obj["user"]->id);
+            $key = sha1(self::get_coursearchiver_keyid() . $course->id . $obj["user"]->id);
 
             // Only add courses that are not hidden if mode is HIDEEMAIL.
             if ($this->mode == self::MODE_HIDEEMAIL && !$course->visible) {
@@ -1498,41 +1516,43 @@ class tool_coursearchiver_processor {
      * @return string
      */
     public static function get_optoutlist() {
-        global $CFG, $DB, $OUTPUT;
+        global $DB, $OUTPUT;
 
-        $sql = "SELECT *
-                  FROM {tool_coursearchiver_optout}
-                 ORDER BY optouttime";
+        $sql = "SELECT * FROM {tool_coursearchiver_optout} ORDER BY optouttime";
         $optouts = $DB->get_records_sql($sql);
 
         // Back button.
-        $courses = html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'),
-                                                     get_string('back'));
+        $courses = html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'), get_string('back'));
+
+        $courses .= html_writer::tag('h3',
+            get_string('optoutlist', 'tool_coursearchiver'),
+            ['style' => 'text-align: center']);
+
         // Archive table.
         $courses .= html_writer::start_tag('table', ['style' => 'border-collapse: collapse;width: 100%;',
                                                      'cellpadding' => '5',
                                                     ]);
         $rowcolor = "#FFF";
         $courses .= html_writer::tag('tr',
-                                     html_writer::tag('th',
-                                                      get_string('course')) .
-                                     html_writer::tag('th',
-                                                      get_string('optouttime', 'tool_coursearchiver'),
-                                                      ['style' => 'text-align: center']) .
-                                     html_writer::tag('th',
-                                                      get_string('optoutby', 'tool_coursearchiver'),
-                                                      ['style' => 'text-align: center']) .
-                                     html_writer::tag('th',
-                                                      get_string('actions'),
-                                                      ['width' => '100px', 'style' => 'text-align: center']),
-                                     ['style' => 'background-color:' . $rowcolor]);
+            html_writer::tag('th',
+                            get_string('course')) .
+            html_writer::tag('th',
+                            get_string('optouttime', 'tool_coursearchiver'),
+                            ['style' => 'text-align: center']) .
+            html_writer::tag('th',
+                            get_string('optoutby', 'tool_coursearchiver'),
+                            ['style' => 'text-align: center']) .
+            html_writer::tag('th',
+                            get_string('actions'),
+                            ['width' => '100px', 'style' => 'text-align: center']),
+            ['style' => 'background-color:' . $rowcolor]);
 
         if ($optouts) {
             foreach ($optouts as $optout) {
                 $user = $DB->get_record('user', ['id' => $optout->userid]);
                 if ($course = $DB->get_record('course', ['id' => $optout->courseid], '*', IGNORE_MISSING)) {
                     // Create security key for each link.
-                    $key = sha1($CFG->dbpass . $course->id . $optout->userid);
+                    $key = sha1(self::get_coursearchiver_keyid() . $course->id . $optout->userid);
 
                     if ($optout->optoutlength == 0) {
                         $ago = "∞";
@@ -1613,23 +1633,29 @@ class tool_coursearchiver_processor {
                                         $config->coursearchiverpath),
                             "/\\");
 
+        $params = [];
+
         // Get either archives that are not marked for deletion or those that have been.
-        $select = !$recover ? 'timetodelete = 0' : 'timetodelete > 0';
+        $sql = !$recover ? 'timetodelete = 0' : 'timetodelete > 0';
 
         // Search criteria.
-        $select .= !empty($search) ? " AND filename LIKE '%$search%'" : '';
+        $params['filename'] = '%' . $DB->sql_like_escape($search) . '%';
+        $sql .= !empty($search) ? " AND " . $DB->sql_like("filename", ":filename", false, false) : '';
 
         // Only show user files.
-        $select .= $isadmin ? '' : " AND owners LIKE '%|$USER->id|%'";
+        $params['owners'] = '%|' . $DB->sql_like_escape($USER->id) . '|%';
+        $sql .= $isadmin ? '' : " AND " . $DB->sql_like("owners", ":owners", false, false);
 
-        $archives = $DB->get_records_select('tool_coursearchiver_archived',
-                                            $select,
-                                            null,
-                                            'filename',
-                                            '*',
-                                            0,
-                                            $config->archivelimit);
-
+        $archives = $DB->get_records_select(
+            'tool_coursearchiver_archived',
+            $sql,
+            $params,
+            'filename',
+            '*',
+            0,
+            $config->archivelimit
+        );
+      
         // Form start.
         $rowcolor = "#FFF";
         $data = [

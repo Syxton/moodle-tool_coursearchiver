@@ -54,7 +54,7 @@ if (!$config->optoutbyemailsetting) {
 }
 
 // Check to see if the attempt is coming from a valid email.
-if (!sha1($CFG->dbpass . $courseid . $userid) == $key) {
+if (!sha1(tool_coursearchiver_processor::get_coursearchiver_keyid() . $courseid . $userid) == $key) {
     echo $OUTPUT->container(get_string('error_key', 'tool_coursearchiver'), 'coursearchiver_myformerror');
     echo $OUTPUT->footer();
     die();
