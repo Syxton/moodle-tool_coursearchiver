@@ -1655,7 +1655,7 @@ class tool_coursearchiver_processor {
             0,
             $config->archivelimit
         );
-      
+
         // Form start.
         $rowcolor = "#FFF";
         $data = [
