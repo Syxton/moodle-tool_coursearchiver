@@ -1453,15 +1453,20 @@ class tool_coursearchiver_processor {
             require(["jquery"], function($) {
                 $(".coursearchiver_selectall #id_toggle").click(function() {
                     var text = $(this).val().length > 0 ? $(this).val() : $(this).text().trim();
-                    if("'.get_string('selectall', 'tool_coursearchiver').'" === text) {
-                         $("input:checkbox").prop("checked", true);
+                    if ("'.get_string('selectall', 'tool_coursearchiver').'" === text) {
+                         $("input[type=checkbox]", "#region-main").prop("checked", true);
                          $(".coursearchiver_selectall #id_toggle").val("'.get_string('deselectall', 'tool_coursearchiver').'");
                          $(".coursearchiver_selectall #id_toggle").text("'.get_string('deselectall', 'tool_coursearchiver').'");
-                    }
-                    else if("'.get_string('deselectall', 'tool_coursearchiver').'" === text) {
-                         $("input:checkbox").prop("checked", false);
+                    } else if ("'.get_string('deselectall', 'tool_coursearchiver').'" === text) {
+                         $("input[type=checkbox]", "#region-main").prop("checked", false);
                          $(".coursearchiver_selectall #id_toggle").val("'.get_string('selectall', 'tool_coursearchiver').'");
                          $(".coursearchiver_selectall #id_toggle").text("'.get_string('selectall', 'tool_coursearchiver').'");
+                    }
+
+                    if ($("input[type=checkbox]:checked", "#region-main").length) {
+                        $(".camultibuttons").show();
+                    } else {
+                        $(".camultibuttons").hide();
                     }
                 });
             });
@@ -1627,17 +1632,6 @@ class tool_coursearchiver_processor {
                                         '',
                                         $config->coursearchiverpath),
                             "/\\");
-        // Form start.
-        $rowcolor = "#FFF";
-        $data = [
-            "formstart"   => true,
-            "isadmin"     => $isadmin,
-            "recover"     => $recover,
-            "searchterm"  => $search,
-            "rowcolor"    => $rowcolor,
-            "limiter"     => $config->archivelimit,
-        ];
-        $courses = $OUTPUT->render_from_template('tool_coursearchiver/archive_view', $data);
 
         $params = [];
 
@@ -1662,6 +1656,19 @@ class tool_coursearchiver_processor {
             $config->archivelimit
         );
 
+        // Form start.
+        $rowcolor = "#FFF";
+        $data = [
+            "formstart"   => true,
+            "results"     => ($archives),
+            "isadmin"     => $isadmin,
+            "recover"     => $recover,
+            "searchterm"  => $search,
+            "rowcolor"    => $rowcolor,
+            "limiter"     => $config->archivelimit,
+        ];
+        $courses = $OUTPUT->render_from_template('tool_coursearchiver/archive_view', $data);
+
         if ($archives) {
             foreach ($archives as $archive) {
                 $pathinfo = pathinfo($archive->filename);
@@ -1684,30 +1691,33 @@ class tool_coursearchiver_processor {
                 $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
 
                 // Form content.
-                $data = ["formcontent" => true,
-                         "isadmin"     => $isadmin,
-                         "recover"     => $recover,
-                         "rowcolor"    => $rowcolor,
-                         "file"        => $file,
-                         "path"        => $path,
-                         "downloadurl" => $downloadurl,
-                         "restoreurl"  => $restoreurl,
-                        ];
+                $data = [
+                    "formcontent" => true,
+                    "results"     => ($archives),
+                    "isadmin"     => $isadmin,
+                    "recover"     => $recover,
+                    "rowcolor"    => $rowcolor,
+                    "file"        => $file,
+                    "path"        => $path,
+                    "downloadurl" => $downloadurl,
+                    "restoreurl"  => $restoreurl,
+                ];
                 $courses .= $OUTPUT->render_from_template('tool_coursearchiver/archive_view', $data);
             }
         } else {
             $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
             // Form content.
-            $data = ["nocontent" => true,
-                     "isadmin"   => $isadmin,
-                     "recover"   => $recover,
-                     "rowcolor"  => $rowcolor,
-                    ];
+            $data = [
+                "nocontent" => true,
+                "isadmin"   => $isadmin,
+                "recover"   => $recover,
+                "rowcolor"  => $rowcolor,
+            ];
             $courses .= $OUTPUT->render_from_template('tool_coursearchiver/archive_view', $data);
         }
 
         // Form end.
-        $data = ["formend" => true, "recover" => $recover, "isadmin"   => $isadmin];
+        $data = ["formend" => true, "recover" => $recover, "isadmin"   => $isadmin, "results" => ($archives)];
         $courses .= $OUTPUT->render_from_template('tool_coursearchiver/archive_view', $data);
 
         return $courses;

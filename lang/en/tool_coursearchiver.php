@@ -61,7 +61,8 @@ $string['cli_question_deleteemail'] = 'Send these {$a} users a "Course to be del
 $string['cli_question_hide'] = 'Hide these {$a} courses?';
 $string['cli_question_hideemail'] = 'Send these {$a} users a "Course to be hidden" email?';
 $string['confirm'] = 'Continue';
-$string['confirmdelete'] = 'Are you sure you want to delete?';
+$string['confirmdelete'] = 'Are you sure you want to delete these archived files?';
+$string['confirmdownload'] = 'Are you sure you want to download these archived files?';
 $string['confirmmessage'] = 'Are you sure you want to {$a}';
 $string['confirmmessagearchive'] = 'archive and remove these {$a} courses?';
 $string['confirmmessagearchiveemail'] = 'send an email notification of pending course archival to these {$a} course owners?';
@@ -118,6 +119,7 @@ Thank you.
 ';
 $string['deletewarningsubject'] = 'Notice: Courses will be deleted soon.';
 $string['deselectall'] = 'Deselect All';
+$string['downloadselected'] = 'Download Selected';
 $string['email'] = 'Send Email';
 $string['emailselector'] = 'Users selected to receive emails.';
 $string['empty'] = 'empty';
