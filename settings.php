@@ -24,28 +24,41 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-if ($hassiteconfig || has_capability('tool/coursearchiver:use', context_system::instance())) {
-    $settings = new admin_settingpage('tool_coursearchiver',
-                                      get_string('coursearchiver_settings', 'tool_coursearchiver'),
-                                      'tool/coursearchiver:use');
+if (
+    $hassiteconfig ||
+    has_capability('tool/coursearchiver:use', context_system::instance())
+) {
+    $settings = new admin_settingpage(
+        'tool_coursearchiver',
+        get_string('coursearchiver_settings', 'tool_coursearchiver'),
+        'tool/coursearchiver:use'
+    );
 
     // Admin only settings.
     if ($hassiteconfig) {
         $name = new lang_string('coursearchiverrootpath', 'tool_coursearchiver');
         $description = new lang_string('coursearchiverrootpath_help', 'tool_coursearchiver');
         $default = $CFG->dataroot;
-        $settings->add(new admin_setting_configtext('tool_coursearchiver/coursearchiverrootpath',
-                                                    $name,
-                                                    $description,
-                                                    $default));
+        $settings->add(
+            new admin_setting_configtext(
+                'tool_coursearchiver/coursearchiverrootpath',
+                $name,
+                $description,
+                $default
+            )
+        );
 
         $name = new lang_string('coursearchiverpath', 'tool_coursearchiver');
         $description = new lang_string('coursearchiverpath_help', 'tool_coursearchiver');
         $default = 'CourseArchives';
-        $settings->add(new admin_setting_configtext('tool_coursearchiver/coursearchiverpath',
-                                                    $name,
-                                                    $description,
-                                                    $default));
+        $settings->add(
+            new admin_setting_configtext(
+                'tool_coursearchiver/coursearchiverpath',
+                $name,
+                $description,
+                $default
+            )
+        );
     }
 
     // Default role of course owners.
@@ -65,70 +78,120 @@ if ($hassiteconfig || has_capability('tool/coursearchiver:use', context_system::
     }
     $name = new lang_string('ownerroleid', 'tool_coursearchiver');
     $description = new lang_string('ownerroleid_help', 'tool_coursearchiver');
-    $settings->add(new admin_setting_configmultiselect('tool_coursearchiver/ownerroleid',
-                                                       $name,
-                                                       $description,
-                                                       $default,
-                                                       $ownernewroles));
+    $settings->add(
+        new admin_setting_configmultiselect(
+            'tool_coursearchiver/ownerroleid',
+            $name,
+            $description,
+            $default,
+            $ownernewroles
+        )
+    );
 
     // Default email for upcoming hiding of courses.
     $name = new lang_string('hidewarningemailsetting', 'tool_coursearchiver');
     $description = new lang_string('hidewarningemailsetting_help', 'tool_coursearchiver');
     $default = get_string('hidewarningemailsettingdefault', 'tool_coursearchiver');
-    $settings->add(new admin_setting_configtextarea('tool_coursearchiver/hidewarningemailsetting',
-                                                    $name,
-                                                    $description,
-                                                    $default));
+    $settings->add(
+        new admin_setting_configtextarea(
+            'tool_coursearchiver/hidewarningemailsetting',
+            $name,
+            $description,
+            $default
+        )
+    );
 
     // Default email for upcoming course archiving.
     $name = new lang_string('archivewarningemailsetting', 'tool_coursearchiver');
     $description = new lang_string('archivewarningemailsetting_help', 'tool_coursearchiver');
     $default = get_string('archivewarningemailsettingdefault', 'tool_coursearchiver');
-    $settings->add(new admin_setting_configtextarea('tool_coursearchiver/archivewarningemailsetting',
-                                                    $name,
-                                                    $description,
-                                                    $default));
+    $settings->add(
+        new admin_setting_configtextarea(
+            'tool_coursearchiver/archivewarningemailsetting',
+            $name,
+            $description,
+            $default
+        )
+    );
 
     // Default email for upcoming course deletion.
     $name = new lang_string('deletewarningemailsetting', 'tool_coursearchiver');
     $description = new lang_string('deletewarningemailsetting_help', 'tool_coursearchiver');
     $default = get_string('deletewarningemailsettingdefault', 'tool_coursearchiver');
-    $settings->add(new admin_setting_configtextarea('tool_coursearchiver/deletewarningemailsetting',
-                                                    $name,
-                                                    $description,
-                                                    $default));
+    $settings->add(
+        new admin_setting_configtextarea(
+            'tool_coursearchiver/deletewarningemailsetting',
+            $name,
+            $description,
+            $default
+        )
+    );
 
     // Enable opt out via email link.
-    $settings->add(new admin_setting_configcheckbox('tool_coursearchiver/optoutbyemailsetting',
-                   get_string('optoutbyemailsetting', 'tool_coursearchiver'),
-                   get_string('optoutbyemailsetting_help', 'tool_coursearchiver'), 1, 1));
+    $settings->add(
+        new admin_setting_configcheckbox(
+            'tool_coursearchiver/optoutbyemailsetting',
+            get_string('optoutbyemailsetting', 'tool_coursearchiver'),
+            get_string('optoutbyemailsetting_help', 'tool_coursearchiver'),
+            1,
+            1
+        )
+    );
 
     // Automatic opt out in months.
-    $settings->add(new admin_setting_configtext('tool_coursearchiver/optoutmonthssetting',
-                   get_string('optoutmonthssetting', 'tool_coursearchiver'),
-                   get_string('optoutmonthssetting_help', 'tool_coursearchiver'), 24, PARAM_INT));
+    $settings->add(
+        new admin_setting_configtext(
+            'tool_coursearchiver/optoutmonthssetting',
+            get_string('optoutmonthssetting', 'tool_coursearchiver'),
+            get_string('optoutmonthssetting_help', 'tool_coursearchiver'),
+            24,
+            PARAM_INT
+        )
+    );
 
     // Archive deletion delay in days.
-    $settings->add(new admin_setting_configtext('tool_coursearchiver/delaydeletesetting',
-                   get_string('archivedeletesetting', 'tool_coursearchiver'),
-                   get_string('archivedeletesetting_help', 'tool_coursearchiver'), 7, PARAM_INT));
+    $settings->add(
+        new admin_setting_configtext(
+            'tool_coursearchiver/delaydeletesetting',
+            get_string('archivedeletesetting', 'tool_coursearchiver'),
+            get_string('archivedeletesetting_help', 'tool_coursearchiver'),
+            7,
+            PARAM_INT
+        )
+    );
 
     // Limit archive files shown.
-    $settings->add(new admin_setting_configtext('tool_coursearchiver/archivelimit',
-                   get_string('archivelimit', 'tool_coursearchiver'),
-                   get_string('archivelimit_help', 'tool_coursearchiver'), 200, PARAM_INT));
+    $settings->add(
+        new admin_setting_configtext(
+            'tool_coursearchiver/archivelimit',
+            get_string('archivelimit', 'tool_coursearchiver'),
+            get_string('archivelimit_help', 'tool_coursearchiver'),
+            200,
+            PARAM_INT
+        )
+    );
 
     // Limit savepoints listed in select.
-    $settings->add(new admin_setting_configtext('tool_coursearchiver/savelimitsetting',
-    get_string('savelimitsetting', 'tool_coursearchiver'),
-    get_string('savelimitsetting_help', 'tool_coursearchiver'), 10, PARAM_INT));
+    $settings->add(
+        new admin_setting_configtext(
+            'tool_coursearchiver/savelimitsetting',
+            get_string('savelimitsetting', 'tool_coursearchiver'),
+            get_string('savelimitsetting_help', 'tool_coursearchiver'),
+            10,
+            PARAM_INT
+        )
+    );
 
     // Link to Course Archiver tool.
-    $ADMIN->add('courses',
-                new admin_externalpage('toolcoursearchiver',
-                                       get_string('coursearchiver', 'tool_coursearchiver'),
-                                       new moodle_url('/admin/tool/coursearchiver/index.php'),
-                                       'tool/coursearchiver:use'));
+    $ADMIN->add(
+        'courses',
+        new admin_externalpage(
+            'toolcoursearchiver',
+            get_string('coursearchiver', 'tool_coursearchiver'),
+            new moodle_url('/admin/tool/coursearchiver/index.php'),
+            'tool/coursearchiver:use'
+        )
+    );
 
     // Add the category to the admin tree.
     $ADMIN->add('courses', $settings);

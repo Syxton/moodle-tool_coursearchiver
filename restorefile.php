@@ -25,8 +25,8 @@
 define('NO_OUTPUT_BUFFERING', true);
 
 require(__DIR__ . '/../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/filelib.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->libdir . '/filelib.php');
 
 header('X-Accel-Buffering: no');
 
@@ -39,11 +39,18 @@ $download    = optional_param('download', false, PARAM_BOOL);
 
 global $CFG, $DB;
 
-$rootpath = rtrim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
-$archivepath = trim(str_replace(str_split(':*?"<>|'),
-                                '',
-                                get_config('tool_coursearchiver', 'coursearchiverpath')),
-                    "/\\");
+$rootpath = rtrim(
+    get_config('tool_coursearchiver', 'coursearchiverrootpath'),
+    "/\\"
+);
+$archivepath = trim(
+    str_replace(
+        str_split(':*?"<>|'),
+        '',
+        get_config('tool_coursearchiver', 'coursearchiverpath')
+    ),
+    "/\\"
+);
 
 $archive = $rootpath . '/' . $archivepath . '/' . $filepath . '/' . $filename;
 if (file_exists($archive)) {
@@ -59,12 +66,14 @@ if (file_exists($archive)) {
                  'timemodified' => time(),
                 ];
 
-    $fsfile = $fs->get_file($fileinfo['contextid'],
-                           $fileinfo['component'],
-                           $fileinfo['filearea'],
-                           $fileinfo['itemid'],
-                           $fileinfo['filepath'],
-                           $fileinfo['filename']);
+    $fsfile = $fs->get_file(
+        $fileinfo['contextid'],
+        $fileinfo['component'],
+        $fileinfo['filearea'],
+        $fileinfo['itemid'],
+        $fileinfo['filepath'],
+        $fileinfo['filename']
+    );
     if (!$fsfile) {
         $fsfile = $fs->create_file_from_pathname($fileinfo, $archive);
     }

@@ -31,7 +31,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_coursearchiver_step4_form extends moodleform {
-
     /**
      * The standard form definiton.
      * @return void.
@@ -50,12 +49,14 @@ class tool_coursearchiver_step4_form extends moodleform {
 
         $count = count(json_decode($data["formdata"]));
         if (empty($count)) {
-            $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php',
-                                        ["error" => get_string('unknownerror', 'tool_coursearchiver')]);
+            $returnurl = new moodle_url(
+                '/admin/tool/coursearchiver/index.php',
+                ["error" => get_string('unknownerror', 'tool_coursearchiver')]
+            );
             redirect($returnurl);
         }
 
-        switch($data["mode"]) {
+        switch ($data["mode"]) {
             case tool_coursearchiver_processor::MODE_HIDEEMAIL:
                 foreach (json_decode($data["formdata"]) as $r) { // Loop through every possible user.
                     if (substr($r, 0, 1) == 'x') { // Determine if they were NOT selected.
@@ -96,18 +97,24 @@ class tool_coursearchiver_step4_form extends moodleform {
                 $message = get_string('confirmmessageoptout', 'tool_coursearchiver', $count);
                 break;
             default:
-                $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php',
-                                            ["error" => get_string('unknownerror', 'tool_coursearchiver')]);
+                $returnurl = new moodle_url(
+                    '/admin/tool/coursearchiver/index.php',
+                    ["error" => get_string('unknownerror', 'tool_coursearchiver')]
+                );
                 redirect($returnurl);
         }
 
-        $mform->addElement('html',
-                           '<div class="coursearchiver_myformconfirm">' .
-                                get_string('confirmmessage', 'tool_coursearchiver', $message) .
-                           '</div>');
+        $mform->addElement(
+            'html',
+            '<div class="coursearchiver_myformconfirm">
+            ' . get_string('confirmmessage', 'tool_coursearchiver', $message) . '
+            </div>'
+        );
 
-        if ($data["mode"] == tool_coursearchiver_processor::MODE_ARCHIVE ||
-            $data["mode"] == tool_coursearchiver_processor::MODE_BACKUP) {
+        if (
+            $data["mode"] == tool_coursearchiver_processor::MODE_ARCHIVE ||
+            $data["mode"] == tool_coursearchiver_processor::MODE_BACKUP
+        ) {
             $mform->addElement('text', 'folder', get_string('archivelocation', 'tool_coursearchiver'));
             $mform->setType('folder', PARAM_TEXT);
             $mform->setDefault('folder', date('Y'));

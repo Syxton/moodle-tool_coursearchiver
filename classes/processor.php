@@ -31,7 +31,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_coursearchiver_processor {
-
     /**
      * Only Show the Course list.
      */
@@ -143,17 +142,24 @@ class tool_coursearchiver_processor {
      * @param array $options options of the process
      */
     public function __construct(array $options) {
-        if (!isset($options['mode']) || !in_array($options['mode'], [self::MODE_COURSELIST,
-                                                                     self::MODE_GETEMAILS,
-                                                                     self::MODE_HIDE,
-                                                                     self::MODE_BACKUP,
-                                                                     self::MODE_ARCHIVE,
-                                                                     self::MODE_DELETE,
-                                                                     self::MODE_HIDEEMAIL,
-                                                                     self::MODE_ARCHIVEEMAIL,
-                                                                     self::MODE_DELETEEMAIL,
-                                                                     self::MODE_OPTOUT,
-                                                                    ])) {
+        if (
+            !isset($options['mode']) ||
+            !in_array(
+                $options['mode'],
+                [
+                    self::MODE_COURSELIST,
+                    self::MODE_GETEMAILS,
+                    self::MODE_HIDE,
+                    self::MODE_BACKUP,
+                    self::MODE_ARCHIVE,
+                    self::MODE_DELETE,
+                    self::MODE_HIDEEMAIL,
+                    self::MODE_ARCHIVEEMAIL,
+                    self::MODE_DELETEEMAIL,
+                    self::MODE_OPTOUT,
+                ]
+            )
+        ) {
             throw new coding_exception('Unknown process mode');
         }
 
@@ -183,15 +189,21 @@ class tool_coursearchiver_processor {
         }
 
         if ($outputtype == tool_coursearchiver_tracker::OUTPUT_HTML) {
-            if (!in_array($this->mode, [self::MODE_HIDE,
-                                        self::MODE_BACKUP,
-                                        self::MODE_ARCHIVE,
-                                        self::MODE_DELETE,
-                                        self::MODE_HIDEEMAIL,
-                                        self::MODE_ARCHIVEEMAIL,
-                                        self::MODE_DELETEEMAIL,
-                                        self::MODE_OPTOUT,
-                                       ])) {
+            if (
+                !in_array(
+                    $this->mode,
+                    [
+                        self::MODE_HIDE,
+                        self::MODE_BACKUP,
+                        self::MODE_ARCHIVE,
+                        self::MODE_DELETE,
+                        self::MODE_HIDEEMAIL,
+                        self::MODE_ARCHIVEEMAIL,
+                        self::MODE_DELETEEMAIL,
+                        self::MODE_OPTOUT,
+                    ]
+                )
+            ) {
                 if (empty($mform)) {
                     throw new coding_exception(get_string('errornoform', 'tool_coursearchiver'));
                 } else {
@@ -322,6 +334,7 @@ class tool_coursearchiver_processor {
                     // Loop over the course array.
                     $tracker->jobsize = count($courses);
                     foreach ($courses as $currentcourse) {
+                        $tracker->output($currentcourse);
                         if ($this->archivecourse($currentcourse, $delete)) {
                             $tracker->error = false;
                             $this->total++;
@@ -350,6 +363,7 @@ class tool_coursearchiver_processor {
                     // Loop over the course array.
                     $tracker->jobsize = count($courses);
                     foreach ($courses as $currentcourse) {
+                        $tracker->output($currentcourse);
                         // Remove Course.
                         if (delete_course($currentcourse["course"]->id, false)) {
                             $tracker->error = false;
@@ -406,6 +420,7 @@ class tool_coursearchiver_processor {
                     // Loop over the course array.
                     $tracker->jobsize = count($courses);
                     foreach ($courses as $currentcourse) {
+                        $tracker->output($currentcourse);
                         // Opt out Course.
                         if ($this->optout_course($currentcourse["course"]->id, false)) {
                             $tracker->error = false;
@@ -439,8 +454,10 @@ class tool_coursearchiver_processor {
         $owners = [];
         foreach ($this->data as $course) {
             if ($this->exists($course)) {
-                $owners[$course] = $this->get_course_users_with_role($course,
-                                                                     get_config('tool_coursearchiver', 'ownerroleid'));
+                $owners[$course] = $this->get_course_users_with_role(
+                    $course,
+                    get_config('tool_coursearchiver', 'ownerroleid')
+                );
             }
         }
 
@@ -462,10 +479,10 @@ class tool_coursearchiver_processor {
 
             if (!empty($roleids)) {
                 $roleids = explode(',', $roleids);
-                list($insql, $inparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED);
+                [$insql, $inparams] = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED);
             } else {
                 // Default back to editing teacher.
-                list($insql, $inparams) = [' = :roleid', ['roleid' => 3]];
+                [$insql, $inparams] = [' = :roleid', ['roleid' => 3]];
             }
 
             $params = array_merge($params, $inparams);
@@ -549,10 +566,10 @@ class tool_coursearchiver_processor {
             $roleids = get_config('tool_coursearchiver', 'ownerroleid');
             if (!empty($roleids)) {
                 $roleids = explode(',', $roleids);
-                list($insql, $inparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED);
+                [$insql, $inparams] = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED);
             } else {
                 // Default back to editing teacher.
-                list($insql, $inparams) = [' = :roleid', ['roleid' => 3]];
+                [$insql, $inparams] = [' = :roleid', ['roleid' => 3]];
             }
 
             $params = array_merge($params, $inparams);
@@ -576,21 +593,29 @@ class tool_coursearchiver_processor {
                 if (array_key_exists($user->id, $owners)) {
                     if ($this->exists($course)) {
                         $temp = $owners[$user->id]['courses'];
-                        $owners[$user->id]['courses'] = array_merge($temp,
-                                                                    [$course => $DB->get_record('course',
-                                                                                                ['id' => $course],
-                                                                                                '*',
-                                                                                                IGNORE_MISSING),
-                                                                    ]);
+                        $owners[$user->id]['courses'] = array_merge(
+                            $temp,
+                            [
+                                $course => $DB->get_record(
+                                    'course',
+                                    ['id' => $course],
+                                    '*',
+                                    IGNORE_MISSING
+                                ),
+                            ]
+                        );
                     }
                 } else {
                     if ($this->exists($course)) {
                         $owners[$user->id]['user'] = $user;
-                        $owners[$user->id]['courses'] = [$course => $DB->get_record('course',
-                                                                                    ['id' => $course],
-                                                                                    '*',
-                                                                                    IGNORE_MISSING),
-                                                        ];
+                        $owners[$user->id]['courses'] = [
+                            $course => $DB->get_record(
+                                'course',
+                                ['id' => $course],
+                                '*',
+                                IGNORE_MISSING
+                            ),
+                        ];
                     }
                 }
             }
@@ -639,10 +664,14 @@ class tool_coursearchiver_processor {
         try {
             // Prepare path.
             $rootpath = rtrim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
-            $archivepath = trim(str_replace(str_split(':*?"<>|'),
-                                            '',
-                                            get_config('tool_coursearchiver', 'coursearchiverpath')),
-                                "/\\");
+            $archivepath = trim(
+                str_replace(
+                    str_split(':*?"<>|'),
+                    '',
+                    get_config('tool_coursearchiver', 'coursearchiverpath')
+                ),
+                "/\\"
+            );
 
             // Prepare backup filename.
             $suffix = '-ID-' . $obj["course"]->id;
@@ -674,8 +703,14 @@ class tool_coursearchiver_processor {
             \core\session\manager::write_close();
 
             // Perform Backup.
-            $bc = new backup_controller(backup::TYPE_1COURSE, $obj["course"]->id, backup::FORMAT_MOODLE,
-                                        backup::INTERACTIVE_NO, backup::MODE_GENERAL, $userdoingthebackup);
+            $bc = new backup_controller(
+                backup::TYPE_1COURSE,
+                $obj["course"]->id,
+                backup::FORMAT_MOODLE,
+                backup::INTERACTIVE_NO,
+                backup::MODE_GENERAL,
+                $userdoingthebackup
+            );
 
             $bc->execute_plan();  // Execute backup.
             $results = $bc->get_results(); // Get the file information needed.
@@ -689,8 +724,10 @@ class tool_coursearchiver_processor {
             }
 
             if (file_exists($path . '/' . $archivefile)) { // Make sure file got moved.
-                $owners = $this->get_course_users_with_role($obj["course"]->id,
-                                                            get_config('tool_coursearchiver', 'ownerroleid'));
+                $owners = $this->get_course_users_with_role(
+                    $obj["course"]->id,
+                    get_config('tool_coursearchiver', 'ownerroleid')
+                );
 
                 $ownerslist = '|';
                 foreach ($owners["owners"] as $owner) {
@@ -718,7 +755,6 @@ class tool_coursearchiver_processor {
             } else {
                 throw new Exception(get_string('errorarchivefile', 'tool_coursearchiver'));
             }
-
         } catch (Exception $e) {
             return false;
         }
@@ -757,10 +793,12 @@ class tool_coursearchiver_processor {
             }
 
             // Make sure this backup concerns the course and site we are looking for.
-            if ($bcinfo->format === backup::FORMAT_MOODLE &&
-                    $bcinfo->type === backup::TYPE_1COURSE &&
-                    $bcinfo->original_course_id == $courseid &&
-                    backup_general_helper::backup_is_samesite($bcinfo)) {
+            if (
+                $bcinfo->format === backup::FORMAT_MOODLE &&
+                $bcinfo->type === backup::TYPE_1COURSE &&
+                $bcinfo->original_course_id == $courseid &&
+                backup_general_helper::backup_is_samesite($bcinfo)
+            ) {
                 $files[$file] = $bcinfo->backup_date;
             }
         }
@@ -1051,9 +1089,17 @@ class tool_coursearchiver_processor {
     public static function get_saves() {
         global $DB;
         $config = get_config('tool_coursearchiver');
-        if ($result = $DB->get_records_select_menu('tool_coursearchiver_saves',
-                                                   '', [], 'savedate DESC', 'id, title',
-                                                   0, $config->savelimitsetting)) {
+        if (
+            $result = $DB->get_records_select_menu(
+                'tool_coursearchiver_saves',
+                '',
+                [],
+                'savedate DESC',
+                'id, title',
+                0,
+                $config->savelimitsetting
+            )
+        ) {
             $saves = ["0" => get_string('resumeselect', 'tool_coursearchiver')];
             foreach ($result as $key => $value) {
                 $saves[$key] = $value;
@@ -1073,28 +1119,47 @@ class tool_coursearchiver_processor {
         global $DB, $OUTPUT;
 
         // Back button.
-        $savelist = html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'),
-                                                     get_string('back'));
+        $savelist = html_writer::link(
+            new moodle_url('/admin/tool/coursearchiver/index.php'),
+            get_string('back')
+        );
 
-        $savelist .= html_writer::tag('h3',
-                                     get_string('savestatelist', 'tool_coursearchiver'),
-                                     ['style' => 'text-align: center']);
+        $savelist .= html_writer::tag(
+            'h3',
+            get_string('savestatelist', 'tool_coursearchiver'),
+            ['style' => 'text-align: center']
+        );
 
         // Table.
-        $savelist .= html_writer::start_tag('table', ['style' => 'border-collapse: collapse;width: 100%;',
-                                                          'cellpadding' => '5',
-                                                     ]);
+        $savelist .= html_writer::start_tag(
+            'table',
+            [
+                'style' => 'border-collapse: collapse;width: 100%;',
+                'cellpadding' => '5',
+            ]
+        );
         $rowcolor = "#FFF";
-        $savelist .= html_writer::tag('tr',
-                                      html_writer::tag('th',
-                                                       get_string('name')) .
-                                      html_writer::tag('th',
-                                                       get_string('saveddate', 'tool_coursearchiver'),
-                                                       ['style' => 'text-align: center']) .
-                                      html_writer::tag('th',
-                                                       get_string('actions'),
-                                                       ['width' => '100px', 'style' => 'text-align: center']),
-                                      ['style' => 'background-color:' . $rowcolor]);
+        $savelist .= html_writer::tag(
+            'tr',
+            html_writer::tag(
+                'th',
+                get_string('name')
+            ) .
+            html_writer::tag(
+                'th',
+                get_string('saveddate', 'tool_coursearchiver'),
+                ['style' => 'text-align: center']
+            ) .
+            html_writer::tag(
+                'th',
+                get_string('actions'),
+                [
+                    'width' => '100px',
+                    'style' => 'text-align: center',
+                ]
+            ),
+            ['style' => 'background-color:' . $rowcolor]
+        );
 
         $sql = "SELECT *
                   FROM {tool_coursearchiver_saves}
@@ -1106,38 +1171,58 @@ class tool_coursearchiver_processor {
                 // Create security key for each link.
                 $key = sha1(self::get_coursearchiver_keyid() . $savepoint->id);
 
-                $link = new moodle_url('/admin/tool/coursearchiver/removesavepoint.php',
-                                       ['savepointid' => $savepoint->id, 'key' => $key]);
+                $link = new moodle_url(
+                    '/admin/tool/coursearchiver/removesavepoint.php',
+                    [
+                        'savepointid' => $savepoint->id,
+                        'key' => $key,
+                    ]
+                );
                 $action = new popup_action('click', $link, 'removesave');
-                $content = $OUTPUT->action_link($link,
-                                                get_string('remove'),
-                                                $action,
-                                                ['title' => get_string('optoutlist', 'tool_coursearchiver'),
-                                                 'onclick' => "this.parentElement.parentElement.style.display='none'",
-                                                ]);
+                $content = $OUTPUT->action_link(
+                    $link,
+                    get_string('remove'),
+                    $action,
+                    [
+                        'title' => get_string('optoutlist', 'tool_coursearchiver'),
+                        'onclick' => "this.parentElement.parentElement.style.display='none'",
+                    ]
+                );
 
                 $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
-                $savelist .= html_writer::tag('tr',
-                                                html_writer::tag('td',
-                                                    $savepoint->title
-                                                ) .
-                                                html_writer::tag('td',
-                                                                date("m/d/y", $savepoint->savedate),
-                                                                ['align' => 'center']) .
-                                                html_writer::tag('td',
-                                                                $content,
-                                                                ['align' => 'center']),
-                                                ['style' => 'background-color:' . $rowcolor]);
+                $savelist .= html_writer::tag(
+                    'tr',
+                    html_writer::tag(
+                        'td',
+                        $savepoint->title
+                    ) .
+                    html_writer::tag(
+                        'td',
+                        date("m/d/y", $savepoint->savedate),
+                        ['align' => 'center']
+                    ) .
+                    html_writer::tag(
+                        'td',
+                        $content,
+                        ['align' => 'center']
+                    ),
+                    ['style' => 'background-color:' . $rowcolor]
+                );
             }
         } else {
             $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
-            $savelist .= html_writer::tag('tr',
-                                          html_writer::tag('td',
-                                                           'None Found',
-                                                           ['colspan' => 3,
-                                                            'align' => 'center',
-                                                            'style' => "background-color: $rowcolor",
-                                                           ]));
+            $savelist .= html_writer::tag(
+                'tr',
+                html_writer::tag(
+                    'td',
+                    'None Found',
+                    [
+                        'colspan' => 3,
+                        'align' => 'center',
+                        'style' => "background-color: $rowcolor",
+                    ]
+                )
+            );
         }
         $savelist .= html_writer::end_tag('table');
 
@@ -1184,10 +1269,13 @@ class tool_coursearchiver_processor {
                         $roleids = get_config('tool_coursearchiver', 'ownerroleid');
                         if (!empty($roleids)) {
                             $roleids = explode(',', $roleids);
-                            list($insql, $inparams) = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED);
+                            [$insql, $inparams] = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED);
                         } else {
                             // Default back to editing teacher.
-                            list($insql, $inparams) = [' = :roleid', ['roleid' => 3]];
+                            [$insql, $inparams] = [
+                                ' = :roleid',
+                                ['roleid' => 3],
+                            ];
                         }
 
                         $params = array_merge($params, $inparams);
@@ -1251,7 +1339,7 @@ class tool_coursearchiver_processor {
                     } else if ($truekey == "ignsiteroles") {
                         $this->ignsiteroles = true;
                     } else {
-                        $params[$truekey] = '%' .$value . '%';
+                        $params[$truekey] = '%' . $value . '%';
                         $searchsql .= " AND " . $DB->sql_like("c.$truekey", ":$truekey", false, false);
                     }
                 }
@@ -1419,23 +1507,41 @@ class tool_coursearchiver_processor {
             // Add optout links.
             $linkstring = "";
             if ($links) {
-                $linkstring = html_writer::tag('td', '', ['width' => '5px']) .
-                              html_writer::tag('td',
-                                               html_writer::link(new moodle_url('/admin/tool/coursearchiver/optout.php',
-                                                                                ['courseid' => $course->id,
-                                                                                 'userid' => $obj["user"]->id,
-                                                                                 'key' => $key,
-                                                                                ]),
-                                                                 $optoutbutton));
+                $linkstring = html_writer::tag(
+                    'td',
+                    '',
+                    ['width' => '5px']
+                ) .
+                html_writer::tag(
+                    'td',
+                    html_writer::link(
+                        new moodle_url(
+                            '/admin/tool/coursearchiver/optout.php',
+                            [
+                                'courseid' => $course->id,
+                                'userid' => $obj["user"]->id,
+                                'key' => $key,
+                            ]
+                        ),
+                        $optoutbutton
+                    )
+                );
             }
 
-            $tablehtml[] = html_writer::tag('tr',
-                                html_writer::tag('td',
-                                html_writer::link(new moodle_url('/course/view.php',
-                                                                ['id' => $course->id]),
-                                                    $course->fullname)) . $linkstring,
-                                ['style' => 'background-color:' . $rowcolor]);
-
+            $tablehtml[] = html_writer::tag(
+                'tr',
+                html_writer::tag(
+                    'td',
+                    html_writer::link(
+                        new moodle_url(
+                            '/course/view.php',
+                            ['id' => $course->id]
+                        ),
+                        $course->fullname
+                    )
+                ) . $linkstring,
+                ['style' => 'background-color:' . $rowcolor]
+            );
         }
         $tablehtml[] = html_writer::end_tag('table');
 
@@ -1453,14 +1559,14 @@ class tool_coursearchiver_processor {
             require(["jquery"], function($) {
                 $(".coursearchiver_selectall #id_toggle").click(function() {
                     var text = $(this).val().length > 0 ? $(this).val() : $(this).text().trim();
-                    if ("'.get_string('selectall', 'tool_coursearchiver').'" === text) {
+                    if ("' . get_string('selectall', 'tool_coursearchiver') . '" === text) {
                          $("input[type=checkbox]", "#region-main").prop("checked", true);
-                         $(".coursearchiver_selectall #id_toggle").val("'.get_string('deselectall', 'tool_coursearchiver').'");
-                         $(".coursearchiver_selectall #id_toggle").text("'.get_string('deselectall', 'tool_coursearchiver').'");
-                    } else if ("'.get_string('deselectall', 'tool_coursearchiver').'" === text) {
+                         $(".coursearchiver_selectall #id_toggle").val("' . get_string('deselectall', 'tool_coursearchiver') . '");
+                         $(".coursearchiver_selectall #id_toggle").text("' . get_string('deselectall', 'tool_coursearchiver') . '");
+                    } else if ("' . get_string('deselectall', 'tool_coursearchiver') . '" === text) {
                          $("input[type=checkbox]", "#region-main").prop("checked", false);
-                         $(".coursearchiver_selectall #id_toggle").val("'.get_string('selectall', 'tool_coursearchiver').'");
-                         $(".coursearchiver_selectall #id_toggle").text("'.get_string('selectall', 'tool_coursearchiver').'");
+                         $(".coursearchiver_selectall #id_toggle").val("' . get_string('selectall', 'tool_coursearchiver') . '");
+                         $(".coursearchiver_selectall #id_toggle").text("' . get_string('selectall', 'tool_coursearchiver') . '");
                     }
 
                     if ($("input[type=checkbox]:checked", "#region-main").length) {
@@ -1524,28 +1630,47 @@ class tool_coursearchiver_processor {
         // Back button.
         $courses = html_writer::link(new moodle_url('/admin/tool/coursearchiver/index.php'), get_string('back'));
 
-        $courses .= html_writer::tag('h3',
+        $courses .= html_writer::tag(
+            'h3',
             get_string('optoutlist', 'tool_coursearchiver'),
-            ['style' => 'text-align: center']);
+            ['style' => 'text-align: center']
+        );
 
         // Archive table.
-        $courses .= html_writer::start_tag('table', ['style' => 'border-collapse: collapse;width: 100%;',
-                                                     'cellpadding' => '5',
-                                                    ]);
+        $courses .= html_writer::start_tag(
+            'table',
+            [
+                'style' => 'border-collapse: collapse;width: 100%;',
+                'cellpadding' => '5',
+            ]
+        );
         $rowcolor = "#FFF";
-        $courses .= html_writer::tag('tr',
-            html_writer::tag('th',
-                            get_string('course')) .
-            html_writer::tag('th',
-                            get_string('optouttime', 'tool_coursearchiver'),
-                            ['style' => 'text-align: center']) .
-            html_writer::tag('th',
-                            get_string('optoutby', 'tool_coursearchiver'),
-                            ['style' => 'text-align: center']) .
-            html_writer::tag('th',
-                            get_string('actions'),
-                            ['width' => '100px', 'style' => 'text-align: center']),
-            ['style' => 'background-color:' . $rowcolor]);
+        $courses .= html_writer::tag(
+            'tr',
+            html_writer::tag(
+                'th',
+                get_string('course')
+            ) .
+            html_writer::tag(
+                'th',
+                get_string('optouttime', 'tool_coursearchiver'),
+                ['style' => 'text-align: center']
+            ) .
+            html_writer::tag(
+                'th',
+                get_string('optoutby', 'tool_coursearchiver'),
+                ['style' => 'text-align: center']
+            ) .
+            html_writer::tag(
+                'th',
+                get_string('actions'),
+                [
+                    'width' => '100px',
+                    'style' => 'text-align: center',
+                ]
+            ),
+            ['style' => 'background-color:' . $rowcolor]
+        );
 
         if ($optouts) {
             foreach ($optouts as $optout) {
@@ -1568,48 +1693,72 @@ class tool_coursearchiver_processor {
                         }
                     }
 
-                    $link = new moodle_url('/admin/tool/coursearchiver/optin.php',
-                                           ['courseid' => $course->id,
-                                            'userid' => $optout->userid,
-                                            'key' => $key,
-                                           ]);
+                    $link = new moodle_url(
+                        '/admin/tool/coursearchiver/optin.php',
+                        [
+                            'courseid' => $course->id,
+                            'userid' => $optout->userid,
+                            'key' => $key,
+                        ]
+                    );
                     $action = new popup_action('click', $link, 'optbackin');
-                    $content = $OUTPUT->action_link($link,
-                                                    get_string('remove'),
-                                                    $action,
-                                                    ['title' => get_string('optoutlist', 'tool_coursearchiver'),
-                                                     'onclick' => "this.parentElement.parentElement.style.display='none'",
-                                                    ]);
+                    $content = $OUTPUT->action_link(
+                        $link,
+                        get_string('remove'),
+                        $action,
+                        [
+                            'title' => get_string('optoutlist', 'tool_coursearchiver'),
+                            'onclick' => "this.parentElement.parentElement.style.display='none'",
+                        ]
+                    );
 
                     $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
-                    $courses .= html_writer::tag('tr',
-                                                  html_writer::tag('td',
-                                                       html_writer::link(new moodle_url('/course/view.php',
-                                                                                        ['id' => $course->id]),
-                                                                         $course->fullname,
-                                                                         ['target' => '_blank'])
-                                                  ) .
-                                                  html_writer::tag('td',
-                                                                   get_string('optoutleft', 'tool_coursearchiver', $ago),
-                                                                   ['align' => 'center']) .
-                                                  html_writer::tag('td',
-                                                                   $user->firstname . ' ' . $user->lastname,
-                                                                   ['align' => 'center']) .
-                                                  html_writer::tag('td',
-                                                                   $content,
-                                                                   ['align' => 'center']),
-                                                  ['style' => 'background-color:' . $rowcolor]);
+                    $courses .= html_writer::tag(
+                        'tr',
+                        html_writer::tag(
+                            'td',
+                            html_writer::link(
+                                new moodle_url(
+                                    '/course/view.php',
+                                    ['id' => $course->id]
+                                ),
+                                $course->fullname,
+                                ['target' => '_blank']
+                            )
+                        ) .
+                        html_writer::tag(
+                            'td',
+                            get_string('optoutleft', 'tool_coursearchiver', $ago),
+                            ['align' => 'center']
+                        ) .
+                        html_writer::tag(
+                            'td',
+                            $user->firstname . ' ' . $user->lastname,
+                            ['align' => 'center']
+                        ) .
+                        html_writer::tag(
+                            'td',
+                            $content,
+                            ['align' => 'center']
+                        ),
+                        ['style' => 'background-color:' . $rowcolor]
+                    );
                 }
             }
         } else {
                 $rowcolor = $rowcolor == "#FFF" ? "#EEE" : "#FFF";
-                $courses .= html_writer::tag('tr',
-                                              html_writer::tag('td',
-                                                               'None Found',
-                                                               ['colspan' => 4,
-                                                                'align' => 'center',
-                                                                'style' => "background-color: $rowcolor",
-                                                               ]));
+                $courses .= html_writer::tag(
+                    'tr',
+                    html_writer::tag(
+                        'td',
+                        'None Found',
+                        [
+                            'colspan' => 4,
+                            'align' => 'center',
+                            'style' => "background-color: $rowcolor",
+                        ]
+                    )
+                );
         }
         $courses .= html_writer::end_tag('table');
 
@@ -1628,10 +1777,14 @@ class tool_coursearchiver_processor {
         $config = get_config('tool_coursearchiver');
 
         $rootpath = rtrim($config->coursearchiverrootpath, "/\\");
-        $archivepath = trim(str_replace(str_split(':*?"<>|'),
-                                        '',
-                                        $config->coursearchiverpath),
-                            "/\\");
+        $archivepath = trim(
+            str_replace(
+                str_split(':*?"<>|'),
+                '',
+                $config->coursearchiverpath
+            ),
+            "/\\"
+        );
 
         $params = [];
 
@@ -1733,10 +1886,14 @@ class tool_coursearchiver_processor {
 
         $config = get_config('tool_coursearchiver');
         $rootpath = rtrim($config->coursearchiverrootpath, "/\\");
-        $archivepath = trim(str_replace(str_split(':*?"<>|'),
-                                        '',
-                                        $config->coursearchiverpath),
-                            "/\\");
+        $archivepath = trim(
+            str_replace(
+                str_split(':*?"<>|'),
+                '',
+                $config->coursearchiverpath
+            ),
+            "/\\"
+        );
         $delaydelete = $config->delaydeletesetting;
         foreach ($selected as $course) {
             if (file_exists($rootpath . '/' . $archivepath . '/' . $course)) {
@@ -1769,10 +1926,14 @@ class tool_coursearchiver_processor {
         global $DB;
 
         $rootpath = rtrim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
-        $archivepath = trim(str_replace(str_split(':*?"<>|'),
-                                        '',
-                                        get_config('tool_coursearchiver', 'coursearchiverpath')),
-                            "/\\");
+        $archivepath = trim(
+            str_replace(
+                str_split(':*?"<>|'),
+                '',
+                get_config('tool_coursearchiver', 'coursearchiverpath')
+            ),
+            "/\\"
+        );
 
         foreach ($selected as $course) {
             $file = $rootpath . '/' . $archivepath . '/' . $course;

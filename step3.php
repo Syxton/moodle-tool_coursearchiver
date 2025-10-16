@@ -57,7 +57,6 @@ unset($SESSION->coursearchiver_resume);
 tool_coursearchiver_processor::select_deselect_javascript();
 
 if (!empty($submitted)) { // FORM 3 SUBMITTED.
-
     // Save has been pressed.
     if ($submitted == htmlspecialchars(get_string('save', 'tool_coursearchiver'), ENT_COMPAT)) {
         tool_coursearchiver_processor::save_state(3, $title, $selected);
@@ -100,7 +99,7 @@ if (!empty($submitted)) { // FORM 3 SUBMITTED.
         redirect($returnurl);
     }
 
-    switch($submitted){
+    switch ($submitted) {
         case htmlspecialchars(get_string('hideemail', 'tool_coursearchiver'), ENT_COMPAT):
             $mode = tool_coursearchiver_processor::MODE_HIDEEMAIL;
             $SESSION->coursearchiver_formdata = json_encode($users);
@@ -127,7 +126,6 @@ if (!empty($submitted)) { // FORM 3 SUBMITTED.
             $returnurl = new moodle_url('/admin/tool/coursearchiver/index.php');
             redirect($returnurl);
     }
-
 } else if (!empty($formdata)) {  // FORM 2 SUBMITTED, SHOW FORM 3.
     echo $OUTPUT->header();
     echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');

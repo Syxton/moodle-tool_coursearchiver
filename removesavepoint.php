@@ -25,7 +25,7 @@
 define('NO_OUTPUT_BUFFERING', true);
 
 require(__DIR__ . '/../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 header('X-Accel-Buffering: no');
 
@@ -42,7 +42,11 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('coursearchiver', 'tool_coursearchiver'));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');
+echo $OUTPUT->heading_with_help(
+    get_string('coursearchiver', 'tool_coursearchiver'),
+    'coursearchiver',
+    'tool_coursearchiver'
+);
 
 // Check to see if the attempt is coming from a valid email.
 if (sha1(tool_coursearchiver_processor::get_coursearchiver_keyid() . $savepointid) == $key) {
@@ -50,14 +54,24 @@ if (sha1(tool_coursearchiver_processor::get_coursearchiver_keyid() . $savepointi
         $params = ["id" => $savepointid];
         $DB->delete_records('tool_coursearchiver_saves', $params);
 
-        echo $OUTPUT->container(html_writer::tag('div',
-                                get_string('savepoint_removed', 'tool_coursearchiver'),
-                                ['style' => 'margin: 15px;text-align:center;font-size:1.4em;font-weight:bold']));
+        echo $OUTPUT->container(
+            html_writer::tag(
+                'div',
+                get_string('savepoint_removed', 'tool_coursearchiver'),
+                ['style' => 'margin: 15px;text-align:center;font-size:1.4em;font-weight:bold']
+            )
+        );
     } else {
-        echo $OUTPUT->container(get_string('error_savepointid', 'tool_coursearchiver'), 'coursearchiver_myformerror');
+        echo $OUTPUT->container(
+            get_string('error_savepointid', 'tool_coursearchiver'),
+            'coursearchiver_myformerror'
+        );
     }
 } else { // You shouldn't be here.
-    echo $OUTPUT->container(get_string('error_key', 'tool_coursearchiver'), 'coursearchiver_myformerror');
+    echo $OUTPUT->container(
+        get_string('error_key', 'tool_coursearchiver'),
+        'coursearchiver_myformerror'
+    );
 }
 
 echo $OUTPUT->footer();

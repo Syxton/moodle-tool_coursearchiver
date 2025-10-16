@@ -67,8 +67,12 @@ if (!$course = tool_coursearchiver_processor::optout_course($courseid, $userid))
     die();
 }
 
-echo $OUTPUT->container(html_writer::tag('div',
-                                         get_string('course_skipped', 'tool_coursearchiver', $course),
-                                         ['style' => 'margin:15px;text-align:center;font-size:1.4em;font-weight:bold']));
+echo $OUTPUT->container(
+    html_writer::tag(
+        'div',
+        get_string('course_skipped', 'tool_coursearchiver', $course),
+        ['style' => 'margin:15px;text-align:center;font-size:1.4em;font-weight:bold']
+    )
+);
 
 echo $OUTPUT->footer();

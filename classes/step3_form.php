@@ -31,7 +31,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_coursearchiver_step3_form extends moodleform {
-
     /**
      * The standard form definiton.
      * @return void.

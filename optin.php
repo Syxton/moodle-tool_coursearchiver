@@ -54,9 +54,13 @@ if (sha1(tool_coursearchiver_processor::get_coursearchiver_keyid() . $courseid .
         $params = ["courseid" => $courseid];
         $DB->delete_records('tool_coursearchiver_optout', $params);
 
-        echo $OUTPUT->container(html_writer::tag('div',
-                                get_string('course_readded', 'tool_coursearchiver', $course),
-                                ['style' => 'margin: 15px;text-align:center;font-size:1.4em;font-weight:bold']));
+        echo $OUTPUT->container(
+            html_writer::tag(
+                'div',
+                get_string('course_readded', 'tool_coursearchiver', $course),
+                ['style' => 'margin: 15px;text-align:center;font-size:1.4em;font-weight:bold']
+            )
+        );
     } else {
         echo $OUTPUT->container(get_string('error_nocourseid', 'tool_coursearchiver'), 'coursearchiver_myformerror');
     }

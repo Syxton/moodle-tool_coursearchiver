@@ -28,7 +28,8 @@ require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 header('X-Accel-Buffering: no');
-header('Accept-Encoding: identity');
+header("Content-Encoding: none"); // Force no encoding for streaming output.
+header('Accept-Encoding: none'); // Force no encoding for streaming output.
 
 require_login();
 admin_externalpage_setup('toolcoursearchiver');
@@ -49,8 +50,12 @@ unset($SESSION->coursearchiver_formdata);
 unset($SESSION->coursearchiver_error);
 unset($SESSION->coursearchiver_mode);
 
-if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMITTED.
-
+// FORM 4 SUBMITTED.
+if (
+    !empty($submitted) &&
+    !empty($formdata) &&
+    !empty($mode)
+) {
     // Button to start over has been pressed.
     if ($submitted == htmlspecialchars(get_string('back', 'tool_coursearchiver'), ENT_COMPAT)) {
         unset($SESSION->coursearchiver_formdata);
@@ -65,26 +70,35 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
     }
 
     if ($submitted == htmlspecialchars(get_string('confirm', 'tool_coursearchiver'), ENT_COMPAT)) {
-        if (!isset($mode) || !in_array($mode, [tool_coursearchiver_processor::MODE_HIDE,
-                                               tool_coursearchiver_processor::MODE_BACKUP,
-                                               tool_coursearchiver_processor::MODE_ARCHIVE,
-                                               tool_coursearchiver_processor::MODE_DELETE,
-                                               tool_coursearchiver_processor::MODE_HIDEEMAIL,
-                                               tool_coursearchiver_processor::MODE_ARCHIVEEMAIL,
-                                               tool_coursearchiver_processor::MODE_DELETEEMAIL,
-                                               tool_coursearchiver_processor::MODE_OPTOUT,
-                                              ])) {
+        if (
+            !isset($mode) ||
+            !in_array(
+                $mode,
+                [
+                    tool_coursearchiver_processor::MODE_HIDE,
+                    tool_coursearchiver_processor::MODE_BACKUP,
+                    tool_coursearchiver_processor::MODE_ARCHIVE,
+                    tool_coursearchiver_processor::MODE_DELETE,
+                    tool_coursearchiver_processor::MODE_HIDEEMAIL,
+                    tool_coursearchiver_processor::MODE_ARCHIVEEMAIL,
+                    tool_coursearchiver_processor::MODE_DELETEEMAIL,
+                    tool_coursearchiver_processor::MODE_OPTOUT,
+                ]
+            )
+        ) {
             throw new coding_exception('Unknown process mode');
         }
 
-        switch($mode) {
+        switch ($mode) {
             case tool_coursearchiver_processor::MODE_HIDEEMAIL:
             case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
             case tool_coursearchiver_processor::MODE_DELETEEMAIL:
                 echo $OUTPUT->header();
-                echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'),
-                                                'coursearchiver',
-                                                'tool_coursearchiver');
+                echo $OUTPUT->heading_with_help(
+                    get_string('coursearchiver', 'tool_coursearchiver'),
+                    'coursearchiver',
+                    'tool_coursearchiver'
+                );
 
                 $selected = json_decode($formdata);
                 $owners = [];
@@ -119,9 +133,11 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
             case tool_coursearchiver_processor::MODE_DELETE:
             case tool_coursearchiver_processor::MODE_OPTOUT:
                 echo $OUTPUT->header();
-                echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'),
-                                                'coursearchiver',
-                                                'tool_coursearchiver');
+                echo $OUTPUT->heading_with_help(
+                    get_string('coursearchiver', 'tool_coursearchiver'),
+                    'coursearchiver',
+                    'tool_coursearchiver'
+                );
 
                 $courses = json_decode($formdata);
                 if (!is_array($courses) || empty($courses)) { // If 0 courses are selected, show message and form again.
@@ -151,7 +167,6 @@ if (!empty($submitted) && !empty($formdata) && !empty($mode)) { // FORM 4 SUBMIT
                 redirect($returnurl);
         }
     }
-
 } else if (!empty($formdata) && !empty($mode)) {  // FORM 3 SUBMITTED, SHOW FORM 4.
     echo $OUTPUT->header();
     echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');

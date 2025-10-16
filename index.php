@@ -83,7 +83,7 @@ if ($mform->is_submitted()) {
                 if ($save = tool_coursearchiver_processor::get_save($formdata->savestates)) {
                     $SESSION->coursearchiver_formdata = $save->content;
                     $SESSION->coursearchiver_resume = true;
-                    $returnurl = new moodle_url('/admin/tool/coursearchiver/step'.$save->step.'.php');
+                    $returnurl = new moodle_url('/admin/tool/coursearchiver/step' . $save->step . '.php');
                     redirect($returnurl);
                 } else {
                     $SESSION->coursearchiver_error = get_string('unknownerror', 'tool_coursearchiver');
@@ -147,9 +147,11 @@ if ($mform->is_submitted()) {
             redirect($returnurl);
         } else { // Form 1 data did not come across correctly.
             echo $OUTPUT->header();
-            echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'),
-                                            'coursearchiver',
-                                            'tool_coursearchiver');
+            echo $OUTPUT->heading_with_help(
+                get_string('coursearchiver', 'tool_coursearchiver'),
+                'coursearchiver',
+                'tool_coursearchiver'
+            );
             if (!empty($error)) {
                 echo $OUTPUT->container($error, 'coursearchiver_myformerror');
             }
@@ -159,9 +161,11 @@ if ($mform->is_submitted()) {
         }
     } else {
         echo $OUTPUT->header();
-        echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'),
-                                        'coursearchiver',
-                                        'tool_coursearchiver');
+        echo $OUTPUT->heading_with_help(
+            get_string('coursearchiver', 'tool_coursearchiver'),
+            'coursearchiver',
+            'tool_coursearchiver'
+        );
         if (!empty($error)) {
             echo $OUTPUT->container($error, 'coursearchiver_myformerror');
         }

@@ -30,52 +30,56 @@ require_once($CFG->libdir . '/clilib.php');
 $courseconfig = get_config('moodlecourse');
 
 // Now get cli options.
-list($options, $unrecognized) = cli_get_params(['short' => false,
-                                                'full' => false,
-                                                'id' => false,
-                                                'idnum' => false,
-                                                'teacher' => false,
-                                                'catid' => false,
-                                                'subcats' => false,
-                                                'help' => false,
-                                                'createdbefore' => false,
-                                                'createdafter' => false,
-                                                'accessbefore' => false,
-                                                'accessafter' => false,
-                                                'startbefore' => false,
-                                                'startafter' => false,
-                                                'endbefore' => false,
-                                                'endafter' => false,
-                                                'mode' => false,
-                                                'location' => false,
-                                                'empty' => false,
-                                                'ignadmins' => false,
-                                                'ignsiteroles' => false,
-                                                'verbose' => false,
-                                               ],
-                                               ['s' => 'short',
-                                                'f' => 'full',
-                                                'i' => 'id',
-                                                'n' => 'idnum',
-                                                'h' => 'help',
-                                                't' => 'teacher',
-                                                'c' => 'catid',
-                                                'r' => 'subcats',
-                                                'b' => 'createdbefore',
-                                                'a' => 'createdafter',
-                                                'B' => 'accessbefore',
-                                                'A' => 'accessafter',
-                                                'o' => 'startbefore',
-                                                'O' => 'startafter',
-                                                'd' => 'endbefore',
-                                                'D' => 'endafter',
-                                                'I' => 'ignadmins',
-                                                'S' => 'ignsiteroles',
-                                                'm' => 'mode',
-                                                'l' => 'location',
-                                                'e' => 'empty',
-                                                'v' => 'verbose',
-                                               ]);
+[$options, $unrecognized] = cli_get_params(
+    [
+        'short' => false,
+        'full' => false,
+        'id' => false,
+        'idnum' => false,
+        'teacher' => false,
+        'catid' => false,
+        'subcats' => false,
+        'help' => false,
+        'createdbefore' => false,
+        'createdafter' => false,
+        'accessbefore' => false,
+        'accessafter' => false,
+        'startbefore' => false,
+        'startafter' => false,
+        'endbefore' => false,
+        'endafter' => false,
+        'mode' => false,
+        'location' => false,
+        'empty' => false,
+        'ignadmins' => false,
+        'ignsiteroles' => false,
+        'verbose' => false,
+    ],
+    [
+        's' => 'short',
+        'f' => 'full',
+        'i' => 'id',
+        'n' => 'idnum',
+        'h' => 'help',
+        't' => 'teacher',
+        'c' => 'catid',
+        'r' => 'subcats',
+        'b' => 'createdbefore',
+        'a' => 'createdafter',
+        'B' => 'accessbefore',
+        'A' => 'accessafter',
+        'o' => 'startbefore',
+        'O' => 'startafter',
+        'd' => 'endbefore',
+        'D' => 'endafter',
+        'I' => 'ignadmins',
+        'S' => 'ignsiteroles',
+        'm' => 'mode',
+        'l' => 'location',
+        'e' => 'empty',
+        'v' => 'verbose',
+    ]
+);
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
@@ -112,76 +116,72 @@ php admin/tool/coursearchiver/cli/coursearchiver.php --short=ma101 --idnum=2012 
 ";
 
 if (!empty($options['help'])) {
-    echo $help;
+    echo $help . "\n";
     die();
 }
 
 // Confirm that the mode is valid.
-$modes = ['courselist' => tool_coursearchiver_processor::MODE_COURSELIST,
-          'emaillist' => tool_coursearchiver_processor::MODE_GETEMAILS,
-          'hideemail' => tool_coursearchiver_processor::MODE_HIDEEMAIL,
-          'hide' => tool_coursearchiver_processor::MODE_HIDE,
-          'archiveemail' => tool_coursearchiver_processor::MODE_ARCHIVEEMAIL,
-          'deleteemail' => tool_coursearchiver_processor::MODE_DELETEEMAIL,
-          'backup' => tool_coursearchiver_processor::MODE_BACKUP,
-          'archive' => tool_coursearchiver_processor::MODE_ARCHIVE,
-          'delete' => tool_coursearchiver_processor::MODE_DELETE,
-          'optout' => tool_coursearchiver_processor::MODE_OPTOUT,
+$modes = [
+    'courselist' => tool_coursearchiver_processor::MODE_COURSELIST,
+    'emaillist' => tool_coursearchiver_processor::MODE_GETEMAILS,
+    'hideemail' => tool_coursearchiver_processor::MODE_HIDEEMAIL,
+    'hide' => tool_coursearchiver_processor::MODE_HIDE,
+    'archiveemail' => tool_coursearchiver_processor::MODE_ARCHIVEEMAIL,
+    'deleteemail' => tool_coursearchiver_processor::MODE_DELETEEMAIL,
+    'backup' => tool_coursearchiver_processor::MODE_BACKUP,
+    'archive' => tool_coursearchiver_processor::MODE_ARCHIVE,
+    'delete' => tool_coursearchiver_processor::MODE_DELETE,
+    'optout' => tool_coursearchiver_processor::MODE_OPTOUT,
 ];
 
+$errors = false;
 if (!isset($options['mode']) || empty($modes[$options['mode']])) {
-    echo get_string('invalidmode', 'tool_coursearchiver')."\n";
-    die();
+    $errors .= get_string('invalidmode', 'tool_coursearchiver') . "\n";
 }
 
-$processoroptions['mode'] = $modes[$options['mode']];
-
 if (!empty($options['id']) && !is_numeric($options['id'])) {
-    echo get_string('errornonnumericid', 'tool_coursearchiver'). "\n";
-    die();
+    $errors .= get_string('errornonnumericid', 'tool_coursearchiver') . "\n";
 }
 
 if (!empty($options['createdbefore']) && !is_numeric($options['createdbefore'])) {
-    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
-    die();
+    $errors .= get_string('errornonnumerictimestamp', 'tool_coursearchiver') . "\n";
 }
 
 if (!empty($options['createdafter']) && !is_numeric($options['createdafter'])) {
-    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
-    die();
+    $errors .= get_string('errornonnumerictimestamp', 'tool_coursearchiver') . "\n";
 }
 
 if (!empty($options['accessbefore']) && !is_numeric($options['accessbefore'])) {
-    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
-    die();
+    $errors .= get_string('errornonnumerictimestamp', 'tool_coursearchiver') . "\n";
 }
 
 if (!empty($options['accessafter']) && !is_numeric($options['accessafter'])) {
-    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
-    die();
+    $errors .= get_string('errornonnumerictimestamp', 'tool_coursearchiver') . "\n";
 }
 
 if (!empty($options['startbefore']) && !is_numeric($options['startbefore'])) {
-    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
-    die();
+    $errors .= get_string('errornonnumerictimestamp', 'tool_coursearchiver') . "\n";
 }
 
 if (!empty($options['startafter']) && !is_numeric($options['startafter'])) {
-    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
-    die();
+    $errors .= get_string('errornonnumerictimestamp', 'tool_coursearchiver') . "\n";
 }
 
 if (!empty($options['endbefore']) && !is_numeric($options['endbefore'])) {
-    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
-    die();
+    $errors .= get_string('errornonnumerictimestamp', 'tool_coursearchiver') . "\n";
 }
 
 if (!empty($options['endafter']) && !is_numeric($options['endafter'])) {
-    echo get_string('errornonnumerictimestamp', 'tool_coursearchiver'). "\n";
+    $errors .= get_string('errornonnumerictimestamp', 'tool_coursearchiver') . "\n";
+}
+
+if ($errors) {
+    echo $errors . "\n";
     die();
 }
 
 $output = !empty($options['verbose']) ? tool_coursearchiver_tracker::OUTPUT_CLI : tool_coursearchiver_tracker::NO_OUTPUT;
+$processoroptions['mode'] = $modes[$options['mode']];
 $question = "";
 switch ($processoroptions['mode']) {
     case tool_coursearchiver_processor::MODE_COURSELIST:
@@ -238,8 +238,8 @@ switch ($processoroptions['mode']) {
             die();
         }
 
-        $question = get_string('cli_question_'.$options['mode'], 'tool_coursearchiver', count($selected));
-    break;
+        $question = get_string('cli_question_' . $options['mode'], 'tool_coursearchiver', count($selected));
+        break;
     case tool_coursearchiver_processor::MODE_HIDE:
     case tool_coursearchiver_processor::MODE_BACKUP:
     case tool_coursearchiver_processor::MODE_ARCHIVE:
@@ -259,8 +259,8 @@ switch ($processoroptions['mode']) {
             die();
         }
 
-        $question = get_string('cli_question_'.$options['mode'], 'tool_coursearchiver', count($courses));
-    break;
+        $question = get_string('cli_question_' . $options['mode'], 'tool_coursearchiver', count($courses));
+        break;
 }
 
 // ASK FOR PERMISSION TO CONTINUE.
@@ -308,7 +308,7 @@ switch ($processoroptions['mode']) {
         }
         $processor = new tool_coursearchiver_processor(["mode" => $processoroptions['mode'], "data" => $owners]);
         $processor->execute(tool_coursearchiver_tracker::OUTPUT_CLI);
-    break;
+        break;
     default:
         echo "\nFAILED TO CONTINUE";
         exit;
