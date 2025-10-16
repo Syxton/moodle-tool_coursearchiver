@@ -28,7 +28,8 @@ require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 header('X-Accel-Buffering: no');
-header('Accept-Encoding: identity');
+header("Content-Encoding: none"); // Force no encoding for streaming output.
+header('Accept-Encoding: none'); // Force no encoding for streaming output.
 
 require_login();
 admin_externalpage_setup('toolcoursearchiver');

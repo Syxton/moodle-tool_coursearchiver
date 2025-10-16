@@ -322,6 +322,7 @@ class tool_coursearchiver_processor {
                     // Loop over the course array.
                     $tracker->jobsize = count($courses);
                     foreach ($courses as $currentcourse) {
+                        $tracker->output($currentcourse);
                         if ($this->archivecourse($currentcourse, $delete)) {
                             $tracker->error = false;
                             $this->total++;
@@ -350,6 +351,7 @@ class tool_coursearchiver_processor {
                     // Loop over the course array.
                     $tracker->jobsize = count($courses);
                     foreach ($courses as $currentcourse) {
+                        $tracker->output($currentcourse);
                         // Remove Course.
                         if (delete_course($currentcourse["course"]->id, false)) {
                             $tracker->error = false;
@@ -406,6 +408,7 @@ class tool_coursearchiver_processor {
                     // Loop over the course array.
                     $tracker->jobsize = count($courses);
                     foreach ($courses as $currentcourse) {
+                        $tracker->output($currentcourse);
                         // Opt out Course.
                         if ($this->optout_course($currentcourse["course"]->id, false)) {
                             $tracker->error = false;
