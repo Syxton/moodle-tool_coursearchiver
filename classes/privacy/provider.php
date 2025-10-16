@@ -138,5 +138,4 @@ class provider implements \core_privacy\local\request\data_provider, \core_priva
      */
     public static function delete_data_for_users(approved_userlist $userlist) {
     }
-
 }

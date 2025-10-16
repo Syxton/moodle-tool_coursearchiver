@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Moodle form for step 1 of course archive tool.
@@ -34,7 +34,6 @@ require_once($CFG->libdir.'/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_coursearchiver_step1_form extends moodleform {
-
     /**
      * The standard form definiton.
      * @return void
@@ -48,10 +47,12 @@ class tool_coursearchiver_step1_form extends moodleform {
             '<i class="fa fa-gear"></i> ' . get_string('coursearchiver_settings', 'tool_coursearchiver') . '</a>');
         $mform->addElement('html', '</div><div style="clear: both;"></div>');
 
-        $mform->addElement('select',
-                           'savestates',
-                           get_string('resume', 'tool_coursearchiver'),
-                           tool_coursearchiver_processor::get_saves());
+        $mform->addElement(
+            'select',
+            'savestates',
+            get_string('resume', 'tool_coursearchiver'),
+            tool_coursearchiver_processor::get_saves()
+        );
 
         $mform->addElement('checkbox', 'emptyonly', get_string('emptyonly', 'tool_coursearchiver'));
 

@@ -33,7 +33,6 @@ namespace tool_coursearchiver\task;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cron_task extends \core\task\scheduled_task {
-
     /**
      * Get a descriptive name for this task (shown to admins).
      *
@@ -50,10 +49,14 @@ class cron_task extends \core\task\scheduled_task {
         global $DB;
 
         $rootpath = rtrim(get_config('tool_coursearchiver', 'coursearchiverrootpath'), "/\\");
-        $archivepath = trim(str_replace(str_split(':*?"<>|'),
-                                        '',
-                                        get_config('tool_coursearchiver', 'coursearchiverpath')),
-                            "/\\");
+        $archivepath = trim(
+            str_replace(
+                str_split(':*?"<>|'),
+                '',
+                get_config('tool_coursearchiver', 'coursearchiverpath')
+            ),
+            "/\\"
+        );
 
         $sql = 'SELECT *
                   FROM {tool_coursearchiver_archived}
