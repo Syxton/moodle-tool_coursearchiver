@@ -82,12 +82,13 @@ class tool_coursearchiver_step1_form extends moodleform {
         // Moodle < 3.6 compatibility.
         if (!class_exists('core_course_category')) {
             $displaylist += coursecat::make_categories_list('moodle/course:create');
+            $mform->addElement('select', 'searches[catid]', get_string('category', 'tool_coursearchiver'), $displaylist);
+            $mform->setDefault('searches[catid]', "");
         } else {
             $displaylist += core_course_category::make_categories_list('moodle/course:create');
+            $mform->addElement('autocomplete', 'searches[catid]', get_string('coursecategory'), $displaylist);
+            $mform->setDefault('searches[catid]', "");
         }
-
-        $mform->addElement('select', 'searches[catid]', get_string('category', 'tool_coursearchiver'), $displaylist);
-        $mform->setDefault('searches[catid]', "");
 
         $mform->addElement('checkbox', 'subcats', get_string('includesubcat', 'tool_coursearchiver'));
         $mform->disabledIf('subcats', 'searches[catid]', 'eq', 0);
