@@ -172,9 +172,9 @@ $string['invalidmode'] = 'A valid mode for the tool was not given.';
 $string['messageprovider:courseowner'] = 'Notifications from the course archival/hiding tool.';
 
 $string['never'] = 'Never';
-$string['nonefound'] = 'None Found';
 $string['nocoursesfound'] = 'The search has resulted in 0 courses found.';
 $string['nocoursesselected'] = 'To perform this action you must have at least 1 course selected.';
+$string['nonefound'] = 'None Found';
 $string['noticecoursehidden'] = 'Course: ({$a->id}) {$a->fullname} was already hidden.';
 $string['notices'] = 'Notices';
 $string['notices_count'] = 'Notices: {$a}';
