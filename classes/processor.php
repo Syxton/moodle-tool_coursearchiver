@@ -1134,8 +1134,7 @@ class tool_coursearchiver_processor {
         $savelist .= html_writer::start_tag(
             'table',
             [
-                'style' => 'border-collapse: collapse;width: 100%;',
-                'cellpadding' => '5',
+                'class' => 'flexible table table-striped table-hover generaltable generalbox table-sm',
             ]
         );
         $rowcolor = "#FFF";
@@ -1487,9 +1486,12 @@ class tool_coursearchiver_processor {
         }
 
         $tablehtml = [];
-        $tablehtml[] = html_writer::start_tag('table', ['style' => 'border-collapse: collapse;',
-                                                        'cellpadding' => '5',
-                                                       ]);
+        $tablehtml[] = html_writer::start_tag(
+            'table',
+            [
+                'class' => 'flexible table table-striped table-hover generaltable generalbox table-sm',
+            ]
+        );
         $rowcolor = "#FFF";
         foreach ($obj["courses"] as $course) {
             // Create security key for each link.
@@ -1640,8 +1642,7 @@ class tool_coursearchiver_processor {
         $courses .= html_writer::start_tag(
             'table',
             [
-                'style' => 'border-collapse: collapse;width: 100%;',
-                'cellpadding' => '5',
+                'class' => 'flexible table table-striped table-hover generaltable generalbox table-sm',
             ]
         );
         $rowcolor = "#FFF";
