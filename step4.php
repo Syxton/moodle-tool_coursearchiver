@@ -93,13 +93,6 @@ if (
             case tool_coursearchiver_processor::MODE_HIDEEMAIL:
             case tool_coursearchiver_processor::MODE_ARCHIVEEMAIL:
             case tool_coursearchiver_processor::MODE_DELETEEMAIL:
-                echo $OUTPUT->header();
-                echo $OUTPUT->heading_with_help(
-                    get_string('coursearchiver', 'tool_coursearchiver'),
-                    'coursearchiver',
-                    'tool_coursearchiver'
-                );
-
                 $selected = json_decode($formdata);
                 $owners = [];
                 foreach ($selected as $s) {
@@ -123,6 +116,14 @@ if (
                     $returnurl = new moodle_url('/admin/tool/coursearchiver/step3.php');
                     redirect($returnurl);
                 }
+
+                echo $OUTPUT->header();
+                echo $OUTPUT->heading_with_help(
+                    get_string('coursearchiver', 'tool_coursearchiver'),
+                    'coursearchiver',
+                    'tool_coursearchiver'
+                );
+
                 $processor = new tool_coursearchiver_processor(["mode" => $mode, "data" => $owners]);
                 $processor->execute(tool_coursearchiver_tracker::OUTPUT_HTML);
                 echo $OUTPUT->footer();
@@ -132,13 +133,6 @@ if (
             case tool_coursearchiver_processor::MODE_ARCHIVE:
             case tool_coursearchiver_processor::MODE_DELETE:
             case tool_coursearchiver_processor::MODE_OPTOUT:
-                echo $OUTPUT->header();
-                echo $OUTPUT->heading_with_help(
-                    get_string('coursearchiver', 'tool_coursearchiver'),
-                    'coursearchiver',
-                    'tool_coursearchiver'
-                );
-
                 $courses = json_decode($formdata);
                 if (!is_array($courses) || empty($courses)) { // If 0 courses are selected, show message and form again.
                     $SESSION->coursearchiver_formdata = $formdata;
@@ -146,6 +140,13 @@ if (
                     $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php');
                     redirect($returnurl);
                 }
+
+                echo $OUTPUT->header();
+                echo $OUTPUT->heading_with_help(
+                    get_string('coursearchiver', 'tool_coursearchiver'),
+                    'coursearchiver',
+                    'tool_coursearchiver'
+                );
 
                 $processor = new tool_coursearchiver_processor(["mode" => $mode, "data" => $courses]);
                 if (!empty($folder)) {

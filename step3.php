@@ -127,23 +127,24 @@ if (!empty($submitted)) { // FORM 3 SUBMITTED.
             redirect($returnurl);
     }
 } else if (!empty($formdata)) {  // FORM 2 SUBMITTED, SHOW FORM 3.
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');
-
-    if (!empty($error)) {
-        echo $OUTPUT->container($error, 'coursearchiver_myformerror');
-    }
-
     $data = json_decode($formdata);
     if (!empty($resume)) { // Resume from save point.
         $data->resume = true;
     }
 
     // Check again to make sure courses are coming across correctly.
-    if (!is_object($data) || empty($data)) {
+    if (!is_array($data) || empty($data)) {
         $SESSION->coursearchiver_error = get_string('nocoursesselected', 'tool_coursearchiver');
-        $returnurl = new moodle_url('/admin/tool/coursearchiver/step1.php');
+        $SESSION->coursearchiver_formdata = $formdata;
+        $returnurl = new moodle_url('/admin/tool/coursearchiver/step2.php');
         redirect($returnurl);
+    }
+
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading_with_help(get_string('coursearchiver', 'tool_coursearchiver'), 'coursearchiver', 'tool_coursearchiver');
+
+    if (!empty($error)) {
+        echo $OUTPUT->container($error, 'coursearchiver_myformerror');
     }
 
     $param = ["mode" => tool_coursearchiver_processor::MODE_GETEMAILS, "courses" => $data];
