@@ -1215,7 +1215,7 @@ class tool_coursearchiver_processor {
                 'tr',
                 html_writer::tag(
                     'td',
-                    'None Found',
+                    get_string('nonefound', 'tool_coursearchiver'),
                     [
                         'colspan' => 3,
                         'align' => 'center',
@@ -1751,7 +1751,7 @@ class tool_coursearchiver_processor {
                     'tr',
                     html_writer::tag(
                         'td',
-                        'None Found',
+                        get_string('nonefound', 'tool_coursearchiver'),
                         [
                             'colspan' => 4,
                             'align' => 'center',
